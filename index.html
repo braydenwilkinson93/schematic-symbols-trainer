@@ -1,0 +1,909 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="color-scheme" content="light dark" />
+    <link rel="icon" href="data:," />
+    <title>Schematic Symbols Trainer — Free Sample</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Barlow:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+    <style>
+      :root {
+        --bg: #edf0f2;
+        --grid: rgba(23, 63, 95, 0.09);
+        --panel: #ffffff;
+        --panel-2: #f4f7f8;
+        --stage: #fbfcfd;
+        --ink: #152a3a;
+        --muted: #57707f;
+        --line: #cfd9de;
+        --line-strong: #a9bcc6;
+        --navy: #173f5f;
+        --accent: #f2b234;
+        --accent-deep: #c07f06;
+        --accent-ink: #241a02;
+        --good: #177a4c;
+        --good-bg: #e2f3ea;
+        --bad: #c0392b;
+        --bad-bg: #fbe9e6;
+        --chip: #e6edf1;
+        --shadow: 0 10px 30px rgba(21, 42, 58, 0.10);
+      }
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --bg: #08141f;
+          --grid: rgba(140, 190, 235, 0.08);
+          --panel: #0e2233;
+          --panel-2: #0b1a28;
+          --stage: #0a1c2c;
+          --ink: #e9f2f8;
+          --muted: #9db4c4;
+          --line: #1f3a4f;
+          --line-strong: #33536e;
+          --navy: #7fb3dd;
+          --accent: #f2b234;
+          --accent-deep: #f2b234;
+          --accent-ink: #241a02;
+          --good: #3ecf8e;
+          --good-bg: #0f2e22;
+          --bad: #ef7d6b;
+          --bad-bg: #3a1d18;
+          --chip: #14304a;
+          --shadow: 0 10px 30px rgba(0, 0, 0, 0.45);
+        }
+      }
+      * { box-sizing: border-box; }
+      html { -webkit-text-size-adjust: 100%; }
+      body {
+        margin: 0;
+        font-family: "Barlow", system-ui, sans-serif;
+        color: var(--ink);
+        background:
+          linear-gradient(var(--grid) 1px, transparent 1px),
+          linear-gradient(90deg, var(--grid) 1px, transparent 1px),
+          var(--bg);
+        background-size: 28px 28px, 28px 28px, auto;
+        line-height: 1.45;
+      }
+      .wrap { max-width: 920px; margin: 0 auto; padding: 22px 16px 56px; }
+
+      /* ---------- header ---------- */
+      .kicker {
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase;
+        color: var(--accent-deep); font-weight: 600; margin: 0 0 6px;
+      }
+      h1 {
+        font-family: "Barlow Condensed", sans-serif;
+        font-weight: 700; font-size: clamp(34px, 7vw, 54px);
+        line-height: 0.98; margin: 0 0 10px; letter-spacing: 0.01em;
+        text-transform: uppercase;
+      }
+      .lede { font-size: 17px; color: var(--muted); max-width: 62ch; margin: 0 0 14px; }
+      .lede strong { color: var(--ink); }
+      .countdown {
+        display: inline-flex; align-items: center; gap: 8px;
+        font-family: "IBM Plex Mono", monospace; font-size: 13px;
+        background: var(--chip); border: 1px solid var(--line);
+        padding: 7px 12px; border-radius: 999px; margin-bottom: 22px;
+      }
+      .countdown .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent); flex: none; }
+
+      /* ---------- mode cards ---------- */
+      .modes { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin: 4px 0 26px; }
+      .mode-card {
+        text-align: left; cursor: pointer; font: inherit; color: var(--ink);
+        background: var(--panel); border: 1px solid var(--line); border-radius: 10px;
+        padding: 16px 16px 14px; box-shadow: var(--shadow);
+        display: flex; flex-direction: column; gap: 6px;
+        transition: transform 0.15s ease, border-color 0.15s ease;
+      }
+      .mode-card:hover { border-color: var(--accent); transform: translateY(-2px); }
+      .mode-card:focus-visible, button:focus-visible, input:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+      .mode-card .mc-tag {
+        font-family: "IBM Plex Mono", monospace; font-size: 11px; letter-spacing: 0.12em;
+        text-transform: uppercase; color: var(--accent-deep); font-weight: 600;
+      }
+      .mode-card .mc-name { font-family: "Barlow Condensed", sans-serif; font-size: 24px; font-weight: 600; line-height: 1.05; }
+      .mode-card .mc-desc { font-size: 14px; color: var(--muted); }
+      .mode-card .mc-go { margin-top: auto; font-weight: 700; font-size: 14px; color: var(--navy); }
+      @media (prefers-color-scheme: dark) { .mode-card .mc-go { color: var(--accent); } }
+
+      .cat-strip { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 8px; }
+      .cat-chip {
+        font-family: "IBM Plex Mono", monospace; font-size: 12px;
+        border: 1px solid var(--line); background: var(--panel);
+        padding: 5px 10px; border-radius: 999px; color: var(--muted);
+      }
+      .cat-chip b { color: var(--ink); font-weight: 600; }
+
+      /* ---------- schematic sheet / quiz stage ---------- */
+      .sheet {
+        background: var(--panel); border: 1.5px solid var(--line-strong);
+        border-radius: 6px; box-shadow: var(--shadow);
+      }
+      .sheet-top {
+        position: sticky; top: 0; z-index: 6;
+        background: var(--panel); border-radius: 6px 6px 0 0;
+      }
+      .sheet-head {
+        display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+        padding: 12px 16px; border-bottom: 1px solid var(--line);
+        font-family: "IBM Plex Mono", monospace; font-size: 12.5px;
+      }
+      .sheet-head .q-count { font-weight: 600; letter-spacing: 0.06em; }
+      .sheet-head .spacer { flex: 1; }
+      .pill {
+        border: 1px solid var(--line); background: var(--panel-2); border-radius: 999px;
+        padding: 3px 10px; font-family: "IBM Plex Mono", monospace; font-size: 12px;
+      }
+      .pill b { font-weight: 600; }
+      .pill.streak { border-color: var(--accent); color: var(--accent-deep); font-weight: 600; }
+      .progress { height: 6px; background: var(--panel-2); border-bottom: 1px solid var(--line); }
+      .progress > div { height: 100%; background: var(--accent); width: 0%; transition: width 0.3s ease; }
+      .sheet-body { padding: 20px 16px 8px; }
+      .q-prompt {
+        font-family: "IBM Plex Mono", monospace; font-size: 12px; letter-spacing: 0.12em;
+        text-transform: uppercase; color: var(--muted); text-align: center; margin: 0 0 6px;
+      }
+      .q-name {
+        font-family: "Barlow Condensed", sans-serif; font-weight: 600;
+        font-size: clamp(28px, 6vw, 40px); text-align: center; margin: 0 0 8px; line-height: 1.05;
+      }
+      .sym-stage {
+        background:
+          linear-gradient(var(--grid) 1px, transparent 1px),
+          linear-gradient(90deg, var(--grid) 1px, transparent 1px),
+          var(--stage);
+        background-size: 22px 22px, 22px 22px, auto;
+        border: 1px solid var(--line); border-radius: 6px;
+        display: flex; align-items: center; justify-content: center;
+        padding: 18px 12px; margin: 6px auto 4px; max-width: 520px; min-height: 148px;
+      }
+      .sym-stage svg { width: min(340px, 78vw); height: auto; display: block; }
+      .sym-stage .stage-name {
+        font-family: "Barlow Condensed", sans-serif; font-weight: 600;
+        font-size: clamp(27px, 6vw, 38px); text-align: center; line-height: 1.08; padding: 0 6px;
+      }
+      .sym { color: var(--ink); }
+      .sym text { font-family: "IBM Plex Mono", monospace; }
+
+      .opts { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; max-width: 640px; margin: 16px auto 6px; }
+      .opt {
+        font: inherit; cursor: pointer; text-align: left; color: var(--ink);
+        background: var(--panel); border: 1.5px solid var(--line-strong); border-radius: 8px;
+        padding: 13px 14px; font-size: 16.5px; font-weight: 600;
+        display: flex; align-items: center; gap: 11px; min-height: 60px;
+        -webkit-tap-highlight-color: transparent;
+        transition: border-color 0.12s ease, background 0.12s ease;
+      }
+      .opt:hover:not(:disabled) { border-color: var(--accent); }
+      .opt:disabled { cursor: default; opacity: 1; }
+      .opt .letter {
+        font-family: "IBM Plex Mono", monospace; font-size: 12.5px; font-weight: 600;
+        border: 1.5px solid var(--line-strong); border-radius: 5px;
+        width: 26px; height: 26px; flex: none; display: flex; align-items: center; justify-content: center;
+      }
+      .opt.sym-opt { justify-content: center; padding: 10px; }
+      .opt.sym-opt svg { width: 128px; height: auto; }
+      .opt.correct { border-color: var(--good); background: var(--good-bg); }
+      .opt.correct .letter { border-color: var(--good); color: var(--good); }
+      .opt.wrong { border-color: var(--bad); background: var(--bad-bg); }
+      .opt.wrong .letter { border-color: var(--bad); color: var(--bad); }
+      .opt.dim { opacity: 0.55; }
+
+      .explain {
+        max-width: 640px; margin: 14px auto 4px; border-radius: 8px; padding: 14px 16px;
+        border: 1px solid var(--line); background: var(--panel-2); display: none;
+      }
+      .explain.show { display: block; }
+      .explain .verdict { font-family: "Barlow Condensed", sans-serif; font-size: 22px; font-weight: 700; margin: 0 0 2px; }
+      .explain .verdict.good { color: var(--good); }
+      .explain .verdict.bad { color: var(--bad); }
+      .explain p { margin: 4px 0; font-size: 15.5px; }
+      .explain .tip { color: var(--muted); font-size: 14.5px; }
+      .explain .tip b { color: var(--accent-deep); font-family: "IBM Plex Mono", monospace; font-size: 11.5px; letter-spacing: 0.1em; text-transform: uppercase; }
+      .explain .hook b { color: var(--navy); font-family: "IBM Plex Mono", monospace; font-size: 11.5px; letter-spacing: 0.1em; text-transform: uppercase; }
+      @media (prefers-color-scheme: dark) { .explain .hook b { color: var(--accent); } }
+      .explain .again { color: var(--accent-deep); font-weight: 600; font-size: 14.5px; }
+
+      .sheet-actions { display: flex; gap: 10px; justify-content: center; padding: 14px 16px 20px; flex-wrap: wrap; }
+      .btn {
+        font: inherit; font-weight: 700; font-size: 16px; cursor: pointer;
+        border-radius: 8px; padding: 12px 22px; border: 1.5px solid var(--line-strong);
+        background: var(--panel); color: var(--ink);
+      }
+      .btn.primary { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+      .btn.primary:hover { filter: brightness(1.05); }
+      .btn.ghost:hover { border-color: var(--accent); }
+      .btn:disabled { opacity: 0.45; cursor: default; }
+      .title-block {
+        display: flex; flex-wrap: wrap; border-top: 1.5px solid var(--line-strong);
+        border-radius: 0 0 5px 5px;
+        font-family: "IBM Plex Mono", monospace; font-size: 10.5px; letter-spacing: 0.08em;
+        text-transform: uppercase; color: var(--muted);
+      }
+      .title-block span { padding: 7px 12px; border-right: 1px solid var(--line); }
+      .title-block span:last-child { border-right: none; margin-left: auto; }
+
+      /* ---------- results ---------- */
+      .score-big {
+        font-family: "Barlow Condensed", sans-serif; font-weight: 700;
+        font-size: clamp(52px, 12vw, 84px); line-height: 1; text-align: center; margin: 8px 0 2px;
+      }
+      .score-sub { text-align: center; color: var(--muted); font-size: 16.5px; margin: 0 auto 6px; max-width: 52ch; }
+      .pass-tag {
+        display: block; width: fit-content; margin: 10px auto 4px;
+        font-family: "IBM Plex Mono", monospace; font-size: 12.5px; font-weight: 600;
+        letter-spacing: 0.1em; text-transform: uppercase; padding: 6px 14px; border-radius: 999px;
+      }
+      .pass-tag.pass { background: var(--good-bg); color: var(--good); border: 1px solid var(--good); }
+      .pass-tag.fail { background: var(--bad-bg); color: var(--bad); border: 1px solid var(--bad); }
+      .breakdown { max-width: 560px; margin: 20px auto 4px; }
+      .breakdown h3, .review h3 {
+        font-family: "Barlow Condensed", sans-serif; font-size: 21px; font-weight: 600;
+        margin: 0 0 10px; text-transform: uppercase; letter-spacing: 0.03em;
+      }
+      .bd-row { display: grid; grid-template-columns: 1fr auto; gap: 4px 12px; align-items: center; margin-bottom: 10px; font-size: 15px; }
+      .bd-row .bd-bar { grid-column: 1 / -1; height: 7px; background: var(--panel-2); border: 1px solid var(--line); border-radius: 99px; overflow: hidden; }
+      .bd-row .bd-fill { height: 100%; background: var(--navy); }
+      .bd-row .bd-fill.low { background: var(--bad); }
+      .bd-row .bd-num { font-family: "IBM Plex Mono", monospace; font-size: 13px; color: var(--muted); }
+      .weak-list { display: flex; flex-wrap: wrap; gap: 8px; margin: 8px 0 2px; }
+      .weak-chip {
+        font-size: 14px; font-weight: 600; border-radius: 999px; padding: 4px 11px;
+        border: 1px solid var(--bad); color: var(--bad); background: var(--bad-bg);
+      }
+      .weak-chip.mastered { border-color: var(--line-strong); color: var(--muted); background: var(--panel-2); }
+      .review-banner { width: 100%; margin: 0 0 22px; min-height: 52px; }
+      .review { max-width: 640px; margin: 24px auto 4px; }
+      .miss {
+        display: grid; grid-template-columns: 108px 1fr; gap: 14px; align-items: center;
+        border: 1px solid var(--line); border-radius: 8px; padding: 10px 14px; margin-bottom: 10px;
+        background: var(--panel);
+      }
+      .miss .thumb { background: var(--stage); border: 1px solid var(--line); border-radius: 5px; padding: 6px; }
+      .miss .thumb svg { width: 100%; height: auto; display: block; }
+      .miss h4 { margin: 0 0 2px; font-size: 16.5px; }
+      .miss p { margin: 2px 0; font-size: 14.5px; color: var(--muted); }
+      .miss .yours { color: var(--bad); }
+      .allgood { text-align: center; font-size: 17px; padding: 8px 0 2px; }
+
+      /* ---------- study ---------- */
+      .study-tools { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin: 0 0 16px; }
+      .chip-btn {
+        font: inherit; font-size: 14px; font-weight: 600; cursor: pointer;
+        border: 1.5px solid var(--line-strong); background: var(--panel); color: var(--ink);
+        border-radius: 999px; padding: 7px 14px;
+      }
+      .chip-btn.active { background: var(--navy); border-color: var(--navy); color: #fff; }
+      @media (prefers-color-scheme: dark) { .chip-btn.active { color: #0a1c2c; background: var(--accent); border-color: var(--accent); } }
+      .search {
+        font: inherit; font-size: 15px; padding: 9px 13px; border-radius: 999px;
+        border: 1.5px solid var(--line-strong); background: var(--panel); color: var(--ink);
+        flex: 1; min-width: 170px;
+      }
+      .study-cat {
+        font-family: "Barlow Condensed", sans-serif; font-size: 24px; font-weight: 600;
+        text-transform: uppercase; letter-spacing: 0.03em; margin: 26px 0 12px;
+        display: flex; align-items: baseline; gap: 10px;
+      }
+      .study-cat small { font-family: "IBM Plex Mono", monospace; font-size: 12px; color: var(--muted); letter-spacing: 0.08em; }
+      .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(196px, 1fr)); gap: 12px; }
+      .flip { perspective: 900px; height: 218px; }
+      .flip-inner {
+        position: relative; width: 100%; height: 100%; transform-style: preserve-3d;
+        transition: transform 0.45s ease; cursor: pointer; background: none; border: none; padding: 0; font: inherit; text-align: left; width: 100%;
+      }
+      .flip.flipped .flip-inner { transform: rotateY(180deg); }
+      .face {
+        position: absolute; inset: 0; backface-visibility: hidden; -webkit-backface-visibility: hidden;
+        border: 1px solid var(--line); border-radius: 10px; background: var(--panel);
+        padding: 14px; display: flex; flex-direction: column; overflow: hidden;
+      }
+      .face.front { align-items: center; justify-content: center; gap: 10px; }
+      .face.front svg { width: 132px; height: auto; }
+      .face.front .tap { font-family: "IBM Plex Mono", monospace; font-size: 10.5px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); }
+      .face.back { transform: rotateY(180deg); background: var(--panel-2); }
+      .face.back h4 { margin: 0 0 4px; font-size: 17px; line-height: 1.15; }
+      .face.back p { margin: 0; font-size: 13.5px; color: var(--muted); overflow-y: auto; }
+      .missed-tag {
+        position: absolute; top: 10px; right: 10px; z-index: 2;
+        font-family: "IBM Plex Mono", monospace; font-size: 10px; font-weight: 600;
+        letter-spacing: 0.08em; text-transform: uppercase;
+        background: var(--accent); color: var(--accent-ink); border-radius: 99px; padding: 3px 8px;
+      }
+      .hidden { display: none !important; }
+      footer { margin-top: 40px; color: var(--muted); font-size: 13.5px; text-align: center; }
+      .backlink {
+        background: none; border: none; font: inherit; font-weight: 700; cursor: pointer;
+        color: var(--navy); padding: 6px 0; font-size: 15px;
+      }
+      @media (prefers-color-scheme: dark) { .backlink { color: var(--accent); } }
+
+      @media (max-width: 640px) {
+        .modes { grid-template-columns: 1fr; }
+        .opts { grid-template-columns: 1fr; }
+        .opts.symbols { grid-template-columns: 1fr 1fr; }
+        .miss { grid-template-columns: 84px 1fr; }
+        .sheet-actions .btn { flex: 1 1 100%; min-height: 52px; }
+        #view-results .sheet-actions .btn { flex: 1 1 auto; }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .flip-inner, .progress > div, .mode-card { transition: none; }
+      }
+
+      /* ---------- free-sample call to action ---------- */
+      .cta-box {
+        margin: 20px 0 6px; border: 1.5px dashed var(--accent-deep);
+        background: var(--panel); border-radius: 10px; padding: 18px 16px;
+        text-align: center; box-shadow: var(--shadow);
+      }
+      .cta-box p { margin: 0 0 12px; font-size: 16px; }
+      .cta-box .btn { display: inline-block; text-decoration: none; }
+      .cta-box.in-sheet { margin: 18px 16px 20px; }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+
+      <!-- ============ HOME ============ -->
+      <section id="view-home">
+        <p class="kicker">Electrician Exam Prep · Free Sample</p>
+        <h1>Schematic Symbols Trainer</h1>
+        <p class="lede">Schematic symbols are the alphabet of every wiring diagram you'll ever read — and they show up on the licensing exam. Drill all <strong id="sym-count">37 symbols</strong> until naming them is automatic: no hesitation, no guessing.</p>
+        <div class="countdown" id="countdown" hidden><span class="dot"></span><span id="countdown-text"></span></div>
+
+        <div class="modes">
+          <button class="mode-card" id="btn-drill">
+            <span class="mc-tag">10 questions · Instant feedback</span>
+            <span class="mc-name">Quick Drill</span>
+            <span class="mc-desc">Fast reps with the answer explained after every question. Best for daily practice.</span>
+            <span class="mc-go">Start drilling →</span>
+          </button>
+          <button class="mode-card" id="btn-study">
+            <span class="mc-tag">All symbols · Flip cards</span>
+            <span class="mc-name">Study the Symbols</span>
+            <span class="mc-desc">Browse the whole set grouped by category. Tap any card to flip it and learn what the symbol does.</span>
+            <span class="mc-go">Open study deck →</span>
+          </button>
+        </div>
+
+        <button class="btn primary review-banner hidden" id="btn-review-home"></button>
+
+        <div class="cat-strip" id="cat-strip"></div>
+
+        <div class="cta-box">
+          <p><strong>Enjoying the reps?</strong> This free sample covers 10 of the 37 symbols.</p>
+          <a class="btn primary cta-link" href="#" target="_blank" rel="noopener">Get the full trainer — all 37 symbols, mock exam &amp; weak-spots report</a>
+        </div>
+      </section>
+
+      <!-- ============ QUIZ ============ -->
+      <section id="view-quiz" class="hidden">
+        <button class="backlink" data-home>← Quit to menu</button>
+        <div class="sheet">
+          <div class="sheet-top">
+          <div class="sheet-head">
+            <span class="q-count" id="q-count">QUESTION 1 OF 10</span>
+            <span class="pill" id="q-mode">QUICK DRILL</span>
+            <span class="spacer"></span>
+            <span class="pill" id="q-timer" hidden>TIME <b>0:00</b></span>
+            <span class="pill">SCORE <b id="q-score">0</b></span>
+            <span class="pill streak" id="q-streak" hidden>STREAK <b>0</b></span>
+          </div>
+          <div class="progress"><div id="q-progress"></div></div>
+          </div>
+          <div class="sheet-body">
+            <p class="q-prompt" id="q-prompt">What is this symbol?</p>
+            <div class="sym-stage" id="q-stage"></div>
+            <h2 class="q-name hidden" id="q-name"></h2>
+            <div class="opts" id="q-opts"></div>
+            <div class="explain" id="q-explain"></div>
+          </div>
+          <div class="sheet-actions">
+            <button class="btn primary hidden" id="q-next">Next question →</button>
+          </div>
+          <div class="title-block">
+            <span>DWG NO. SYM-101</span><span id="tb-cat">Category —</span><span>Scale: None</span><span>Sheet 1 of 1</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ RESULTS ============ -->
+      <section id="view-results" class="hidden">
+        <button class="backlink" data-home>← Back to menu</button>
+        <div class="sheet">
+          <div class="sheet-body" style="padding-top:26px;">
+            <p class="q-prompt" id="r-mode">Mock Exam · Results</p>
+            <div class="score-big" id="r-score">0%</div>
+            <span class="pass-tag" id="r-pass"></span>
+            <p class="score-sub" id="r-sub"></p>
+            <div class="breakdown" id="r-weak"></div>
+            <div class="breakdown" id="r-breakdown"></div>
+            <div class="review" id="r-review"></div>
+          </div>
+          <div class="sheet-actions">
+            <button class="btn primary" id="r-retry-missed" hidden>Review your misses</button>
+            <button class="btn ghost" id="r-again">Retake</button>
+            <button class="btn ghost" id="r-study">Study the symbols</button>
+          </div>
+        <div class="cta-box in-sheet">
+          <p><strong>That was the sample — 10 of the 37 symbols.</strong> The full trainer covers every symbol, with the mock exam and the weak-spots report.</p>
+          <a class="btn primary cta-link" href="#" target="_blank" rel="noopener">Get the full trainer — all 37 symbols, mock exam &amp; weak-spots report</a>
+        </div>
+          <div class="title-block">
+            <span>DWG NO. SYM-101</span><span>Result sheet</span><span>Scale: None</span><span>Sheet 1 of 1</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ STUDY ============ -->
+      <section id="view-study" class="hidden">
+        <button class="backlink" data-home>← Back to menu</button>
+        <p class="kicker">Study Deck</p>
+        <h1 style="font-size:clamp(30px,6vw,42px);">Know every symbol cold</h1>
+        <p class="lede">Tap a card to flip it. Work category by category — switches and contacts are where exams love to trap you, because so many of them look almost alike.</p>
+        <div class="study-tools">
+          <div id="study-chips" style="display:flex;flex-wrap:wrap;gap:8px;"></div>
+          <input class="search" id="study-search" type="search" placeholder="Search symbols… e.g. capacitor" aria-label="Search symbols" />
+        </div>
+        <div id="study-list"></div>
+      </section>
+
+      <footer>Symbols follow the common ANSI / NEMA conventions used on U.S. electrician licensing exams. European (IEC) drawings differ on a few — the resistor and relay coil are the big ones.</footer>
+    </div>
+
+    <script>
+      /* ================================================================
+         STORE LINK — Brayden: paste your Gumroad product URL between
+         the quotes on the line below. Both "Get the full trainer"
+         buttons (home screen + results screen) point to this one link.
+         ================================================================ */
+      const STORE_URL = "https://braydenwave65.gumroad.com/l/aaywno";
+      document.querySelectorAll(".cta-link").forEach(function (a) { a.href = STORE_URL; });
+      /* ================= SYMBOL BANK =================
+         Each glyph is hand-drawn SVG on a 120x80 grid, stroke-based,
+         following standard American (ANSI/NEMA) schematic conventions. */
+      var T = function (ch) {
+        return '<text x="60" y="50" text-anchor="middle" font-size="27" font-weight="600" fill="currentColor" stroke="none">' + ch + '</text>';
+      };
+      var DOT = function (x, y) {
+        return '<circle cx="' + x + '" cy="' + y + '" r="3.6" fill="currentColor" stroke="none"/>';
+      };
+      var SYMBOLS = [
+        /* ---- Sources & protection ---- */
+        { id: "battery", name: "Battery (DC Source)", cat: "Sources & Protection",
+          svg: '<path d="M8 40h16M82 40h30M24 22v36M34 31v18M48 22v36M58 31v18M72 22v36M82 31v18"/><path d="M11 12h9M15.5 7.5v9"/>',
+          desc: "Pairs of long and short parallel lines. The long line is the positive terminal, the short line is negative. Each pair is one cell.",
+          tip: "Count the pairs to count the cells — more pairs, more voltage." },
+        { id: "ac-source", name: "AC Source", cat: "Sources & Protection",
+          svg: '<circle cx="60" cy="40" r="23"/><path d="M45 40c4-9 10-9 15 0s11 9 15 0"/><path d="M8 40h29M83 40h29"/>',
+          desc: "A circle with a sine wave inside: an alternating-current source, like a generator output or a transformer secondary feeding the circuit.",
+          tip: "The wavy line is the giveaway — wave means alternating current." },
+        { id: "earth-ground", name: "Earth Ground", cat: "Sources & Protection",
+          svg: '<path d="M60 6v28M36 34h48M45 45h30M52 56h16"/>',
+          desc: "Three horizontal lines shrinking in width, like a funnel into the earth. This is a true earth connection — a ground rod or grounding electrode.",
+          tip: "Lines step down like a pyramid. It means the wire physically reaches the earth." },
+        { id: "chassis-ground", name: "Chassis Ground", cat: "Sources & Protection",
+          svg: '<path d="M60 6v16M32 22h56M40 22l-9 16M60 22l-9 16M80 22l-9 16"/>',
+          desc: "A bar with three slanted lines hanging off it. Connects to the metal frame or enclosure of equipment — not necessarily to the earth itself.",
+          tip: "Slanted rake lines = chassis. Straight stacked lines = earth. Exams love this pair." },
+        { id: "fuse", name: "Fuse", cat: "Sources & Protection",
+          svg: '<path d="M8 40h22M90 40h22"/><rect x="30" y="29" width="60" height="22"/>',
+          desc: "A rectangle on the wire. Inside, a metal strip melts and opens the circuit when current runs too high. One-time protection — once it blows, it's done.",
+          tip: "A fuse protects once and dies doing it. A breaker can be reset." },
+        { id: "circuit-breaker", name: "Circuit Breaker", cat: "Sources & Protection",
+          svg: '<path d="M8 40h24M88 40h24"/><rect x="32" y="31" width="16" height="18"/><path d="M48 40L76 24"/>' + DOT(84, 40) + '<path d="M40 63c4-5 8 5 12 0s8 5 12 0"/><path d="M56 50v7" stroke-dasharray="3.5 3.5"/>',
+          desc: "Overcurrent protection that trips open on overload or short circuit — then can be reset and reused, unlike a fuse. The wavy link underneath marks the thermal trip element.",
+          tip: "If the symbol shows a mechanism that can re-close, it's a breaker, not a fuse." },
+
+        /* ---- Switches & contacts ---- */
+        { id: "spst", name: "SPST Switch", cat: "Switches & Contacts",
+          svg: '<path d="M8 40h30M82 40h30"/><path d="M42 40L74 19"/>' + DOT(42, 40) + DOT(82, 40),
+          desc: "Single Pole, Single Throw: the basic on/off switch. One blade, one contact — it makes or breaks one circuit, like a standard light switch.",
+          tip: "Count the poles (blades) and throws (contacts it can land on): one and one." },
+        { id: "spdt", name: "SPDT Switch", cat: "Switches & Contacts",
+          svg: '<path d="M8 40h30M82 22h30M82 58h30"/><path d="M42 40L73 25"/>' + DOT(42, 40) + DOT(82, 22) + DOT(82, 58),
+          desc: "Single Pole, Double Throw: one blade that can land on either of two contacts, routing power one way or the other. This is the switch inside every three-way light setup.",
+          tip: "One blade, two landing spots. A three-way switch IS an SPDT." },
+        { id: "dpst", name: "DPST Switch", cat: "Switches & Contacts",
+          svg: '<path d="M8 27h30M82 27h30M8 53h30M82 53h30"/><path d="M42 27L70 13M42 53L70 39"/><path d="M57 20v26" stroke-dasharray="4 4"/>' + DOT(42, 27) + DOT(82, 27) + DOT(42, 53) + DOT(82, 53),
+          desc: "Double Pole, Single Throw: two switches ganged together so one handle opens or closes two circuits at once. Used to disconnect both legs of a 240V load.",
+          tip: "The dashed line is the mechanical link — the two blades move as one." },
+        { id: "pb-no", name: "Pushbutton — Normally Open", cat: "Switches & Contacts",
+          svg: '<path d="M8 52h26M86 52h26"/><path d="M40 38h40M60 38V26"/><rect x="47" y="16" width="26" height="9"/>' + DOT(40, 52) + DOT(80, 52),
+          desc: "A momentary button whose contacts sit open at rest — note the gap between the bridge bar and the contacts. Press it and the circuit completes; release and a spring opens it again. Classic start button.",
+          tip: "Gap = open = NO. Start buttons are NO; stop buttons are NC." }
+      ];
+      /* pairs too visually similar to be fair as distractors for each other */
+      var AVOID = { "spst": ["contact-no"], "contact-no": ["spst"] };
+
+      /* one-line memory hooks: what the part is like, in plain English */
+      var HOOKS = {
+        "battery": "Two flashlight batteries end to end — each long/short pair is one cell stacking its voltage on top of the last.",
+        "ac-source": "The power plant's spinning generator shrunk into a circle — it pushes current one way, then the other, 60 times a second.",
+        "earth-ground": "A lightning rod's escape route: a direct wire into the dirt, so fault current has somewhere safe to go.",
+        "chassis-ground": "The equipment's own metal body used as the safe landing spot for stray current.",
+        "fuse": "A deliberate weak link — a strip of metal that sacrifices itself to save everything downstream.",
+        "circuit-breaker": "A fuse with a reset button: it trips open on an overload, then clicks back on once things cool down.",
+        "spst": "A plain light switch — one road in, one road out, either open or closed.",
+        "spdt": "A railroad switch for electricity: one incoming track that can swing to either of two outgoing tracks.",
+        "dpst": "Two light switches bolted to the same handle — flip once and two circuits open or close together.",
+        "pb-no": "A doorbell: the circuit only exists while your finger is holding it down."
+      };
+      function hookOf(s) { return HOOKS[s.id] || ""; }
+
+      var byId = {};
+      SYMBOLS.forEach(function (s) { byId[s.id] = s; });
+      var CATS = [];
+      SYMBOLS.forEach(function (s) { if (CATS.indexOf(s.cat) === -1) CATS.push(s.cat); });
+
+      function svgWrap(inner, cls) {
+        return '<svg class="sym ' + (cls || "") + '" viewBox="0 0 120 80" fill="none" stroke="currentColor" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round" role="img" aria-hidden="true">' + inner + "</svg>";
+      }
+      function shuffle(a) {
+        a = a.slice();
+        for (var i = a.length - 1; i > 0; i--) {
+          var j = Math.floor(Math.random() * (i + 1));
+          var t = a[i]; a[i] = a[j]; a[j] = t;
+        }
+        return a;
+      }
+      function show(view) {
+        ["home", "quiz", "results", "study"].forEach(function (v) {
+          document.getElementById("view-" + v).classList.toggle("hidden", v !== view);
+        });
+        window.scrollTo(0, 0);
+      }
+
+      /* ================= HOME ================= */
+      document.getElementById("sym-count").textContent = SYMBOLS.length + " symbols";
+      document.getElementById("cat-strip").innerHTML = CATS.map(function (c) {
+        var n = SYMBOLS.filter(function (s) { return s.cat === c; }).length;
+        return '<span class="cat-chip">' + c + " · <b>" + n + "</b></span>";
+      }).join("");
+
+      (function countdown() {
+        var target = new Date(2027, 0, 1); /* January test window */
+        var now = new Date();
+        var weeks = Math.round((target - now) / (7 * 24 * 3600 * 1000));
+        if (weeks > 0 && weeks < 40) {
+          document.getElementById("countdown").hidden = false;
+          document.getElementById("countdown-text").textContent =
+            "About " + weeks + " weeks to the January test window — a few symbols a day beats cramming.";
+        }
+      })();
+
+      /* ================= QUIZ ENGINE ================= */
+      var quiz = null; /* { mode, queue, i, score, streak, firstTry, firstPick, mastered, attempts, startedAt, timerInt, runId } */
+      var runSeq = 0;
+
+      function pickDistractors(sym, n) {
+        var avoid = AVOID[sym.id] || [];
+        var same = shuffle(SYMBOLS.filter(function (s) { return s.cat === sym.cat && s.id !== sym.id && avoid.indexOf(s.id) === -1; }));
+        var rest = shuffle(SYMBOLS.filter(function (s) { return s.cat !== sym.cat && avoid.indexOf(s.id) === -1; }));
+        return same.concat(rest).slice(0, n);
+      }
+      function makeQuestion(sym, dir) {
+        var d = dir || (Math.random() < 0.55 ? "name" : "symbol");
+        return { sym: sym, dir: d, options: shuffle([sym].concat(pickDistractors(sym, 3))), picked: -1, requeue: false };
+      }
+      function startQuiz(mode, pool) {
+        var usePool = pool && pool.length ? pool.slice() : SYMBOLS.slice();
+        var count = mode === "mock" ? 20 : mode === "drill" ? 10 : usePool.length;
+        var pickedSyms = shuffle(usePool).slice(0, Math.min(count, usePool.length));
+        if (quiz && quiz.timerInt) clearInterval(quiz.timerInt);
+        quiz = {
+          mode: mode,
+          queue: pickedSyms.map(function (s) { return makeQuestion(s); }),
+          i: 0, score: 0, streak: 0,
+          firstTry: {}, firstPick: {}, mastered: {}, attempts: {},
+          startedAt: Date.now(), timerInt: null, runId: ++runSeq
+        };
+        show("quiz");
+        document.getElementById("q-mode").textContent =
+          mode === "mock" ? "MOCK EXAM" : mode === "missed" ? "REVIEW YOUR MISSES" : "QUICK DRILL";
+        var timerEl = document.getElementById("q-timer");
+        if (mode === "mock") {
+          timerEl.hidden = false;
+          quiz.timerInt = setInterval(function () {
+            var s = Math.floor((Date.now() - quiz.startedAt) / 1000);
+            timerEl.querySelector("b").textContent = Math.floor(s / 60) + ":" + ("0" + (s % 60)).slice(-2);
+          }, 500);
+        } else { timerEl.hidden = true; }
+        renderQuestion();
+      }
+      function renderQuestion() {
+        var q = quiz.queue[quiz.i];
+        var total = quiz.queue.length;
+        document.getElementById("q-count").textContent = "QUESTION " + (quiz.i + 1) + " OF " + total;
+        document.getElementById("q-score").textContent = quiz.score;
+        var streakEl = document.getElementById("q-streak");
+        streakEl.hidden = quiz.streak < 2;
+        streakEl.querySelector("b").textContent = quiz.streak;
+        document.getElementById("q-progress").style.width = ((quiz.i) / total * 100) + "%";
+        document.getElementById("tb-cat").textContent = "Category: " + q.sym.cat;
+        document.getElementById("q-explain").className = "explain";
+        document.getElementById("q-explain").innerHTML = "";
+        document.getElementById("q-next").classList.add("hidden");
+
+        var stage = document.getElementById("q-stage");
+        var prompt = document.getElementById("q-prompt");
+        var opts = document.getElementById("q-opts");
+        opts.innerHTML = "";
+
+        if (q.dir === "name") {
+          prompt.textContent = q.requeue ? "Second look — what is this symbol?" : "What is this symbol?";
+          stage.innerHTML = svgWrap(q.sym.svg);
+          opts.classList.remove("symbols");
+          q.options.forEach(function (o, idx) {
+            var b = document.createElement("button");
+            b.className = "opt";
+            b.innerHTML = '<span class="letter">' + "ABCD"[idx] + "</span><span>" + o.name + "</span>";
+            b.addEventListener("click", function () { choose(idx); });
+            opts.appendChild(b);
+          });
+        } else {
+          prompt.textContent = q.requeue ? "Second look — which symbol is this?" : "Which symbol is this?";
+          stage.innerHTML = '<div class="stage-name">' + q.sym.name + "</div>";
+          opts.classList.add("symbols");
+          q.options.forEach(function (o, idx) {
+            var b = document.createElement("button");
+            b.className = "opt sym-opt";
+            b.setAttribute("aria-label", "Option " + "ABCD"[idx]);
+            b.innerHTML = '<span class="letter">' + "ABCD"[idx] + "</span>" + svgWrap(o.svg);
+            b.addEventListener("click", function () { choose(idx); });
+            opts.appendChild(b);
+          });
+        }
+      }
+      function choose(idx) {
+        var q = quiz.queue[quiz.i];
+        if (!q || q.picked !== -1) return;
+        q.picked = idx;
+        var correctIdx = q.options.indexOf(q.sym);
+        var right = idx === correctIdx;
+        var id = q.sym.id;
+        quiz.attempts[id] = (quiz.attempts[id] || 0) + 1;
+        if (!(id in quiz.firstTry)) { quiz.firstTry[id] = right; quiz.firstPick[id] = q.options[idx]; }
+        var comingBack = false;
+        if (right) {
+          quiz.score++; quiz.streak++; quiz.mastered[id] = true;
+        } else {
+          quiz.streak = 0; sessionMissed[id] = true;
+          /* spaced repetition inside the round: a missed symbol comes back a
+             few questions later, asked the other way around, until it's right */
+          if (quiz.mode !== "mock" && quiz.attempts[id] <= 3) {
+            var rq = makeQuestion(q.sym, q.dir === "name" ? "symbol" : "name");
+            rq.requeue = true;
+            quiz.queue.splice(Math.min(quiz.i + 3, quiz.queue.length), 0, rq);
+            comingBack = true;
+          }
+        }
+
+        var btns = document.getElementById("q-opts").children;
+        for (var k = 0; k < btns.length; k++) {
+          btns[k].disabled = true;
+          if (k === correctIdx) btns[k].classList.add("correct");
+          else if (k === idx) btns[k].classList.add("wrong");
+          else btns[k].classList.add("dim");
+        }
+        document.getElementById("q-score").textContent = quiz.score;
+        var streakEl = document.getElementById("q-streak");
+        streakEl.hidden = quiz.streak < 2;
+        streakEl.querySelector("b").textContent = quiz.streak;
+        document.getElementById("q-progress").style.width = ((quiz.i + 1) / quiz.queue.length * 100) + "%";
+        /* for symbol-pick questions, reveal the correct glyph in the stage */
+        if (q.dir === "symbol") document.getElementById("q-stage").innerHTML = svgWrap(q.sym.svg);
+
+        if (quiz.mode === "mock") {
+          var rid = quiz.runId;
+          setTimeout(function () { if (quiz && quiz.runId === rid) nextQuestion(); }, 450);
+          return;
+        }
+        var ex = document.getElementById("q-explain");
+        ex.className = "explain show";
+        ex.innerHTML =
+          '<p class="verdict ' + (right ? "good" : "bad") + '">' + (right ? "Correct." : "Not quite — that's the " + q.options[idx].name + ".") + "</p>" +
+          "<p><strong>" + q.sym.name + ".</strong> " + q.sym.desc + "</p>" +
+          '<p class="hook"><b>Think of it as</b><br>' + hookOf(q.sym) + "</p>" +
+          '<p class="tip"><b>Exam&nbsp;tip</b><br>' + q.sym.tip + "</p>" +
+          (comingBack
+            ? '<p class="again">This one comes back around in a few questions — and keeps coming back until you nail it.</p>'
+            : (!right ? '<p class="again">It stays tagged in your misses — the review round at the end is built from them.</p>' : ""));
+        var next = document.getElementById("q-next");
+        next.textContent = quiz.i === quiz.queue.length - 1 ? "See results →" : "Next question →";
+        next.classList.remove("hidden");
+        next.focus();
+        if (ex.scrollIntoView) {
+          var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+          ex.scrollIntoView({ block: "nearest", behavior: reduce ? "auto" : "smooth" });
+        }
+      }
+      function nextQuestion() {
+        if (!quiz) return;
+        if (quiz.i < quiz.queue.length - 1) { quiz.i++; renderQuestion(); }
+        else showResults();
+      }
+      document.getElementById("q-next").addEventListener("click", nextQuestion);
+      document.addEventListener("keydown", function (e) {
+        if (document.getElementById("view-quiz").classList.contains("hidden")) return;
+        var q = quiz && quiz.queue[quiz.i];
+        if (!q) return;
+        if (q.picked === -1 && ["1", "2", "3", "4"].indexOf(e.key) !== -1) choose(Number(e.key) - 1);
+        else if (q.picked !== -1 && quiz.mode !== "mock" && (e.key === "Enter" || e.key === " ")) {
+          var next = document.getElementById("q-next");
+          /* if the Next button itself has focus, let its native click fire alone */
+          if (document.activeElement === next) return;
+          if (!next.classList.contains("hidden")) { e.preventDefault(); nextQuestion(); }
+        }
+      });
+
+      /* ================= RESULTS ================= */
+      var sessionMissed = {};
+      var lastMissed = [];
+      var lastMode = "drill";
+      function showResults() {
+        if (!quiz) return;
+        if (quiz.timerInt) clearInterval(quiz.timerInt);
+        lastMode = quiz.mode;
+        var ids = Object.keys(quiz.firstTry);
+        var total = ids.length;
+        var rightFirst = ids.filter(function (id) { return quiz.firstTry[id]; }).length;
+        var masteredCount = ids.filter(function (id) { return quiz.mastered[id]; }).length;
+        var pct = total ? Math.round(rightFirst / total * 100) : 0;
+        document.getElementById("r-mode").textContent =
+          (quiz.mode === "mock" ? "Mock Exam" : quiz.mode === "missed" ? "Review Your Misses" : "Quick Drill") + " · Results";
+        document.getElementById("r-score").textContent = pct + "%";
+        var pass = document.getElementById("r-pass");
+        if (quiz.mode === "mock") {
+          pass.className = "pass-tag " + (pct >= 70 ? "pass" : "fail");
+          pass.textContent = pct >= 70 ? "✓ Passing range" : "✗ Below the bar";
+          pass.style.display = "";
+        } else { pass.style.display = "none"; }
+        var mins = Math.max(1, Math.round((Date.now() - quiz.startedAt) / 60000));
+        document.getElementById("r-sub").textContent =
+          "You got " + rightFirst + " of " + total + " right on the first try in about " + mins + (mins === 1 ? " minute" : " minutes") + "." +
+          (masteredCount > rightFirst ? " Counting the second looks, you finished having mastered " + masteredCount + " of " + total + "." : "") +
+          (quiz.mode === "mock"
+            ? (pct >= 70 ? " Most licensing exams set the bar near 70% — you would have cleared it. Keep the reps going and it only gets safer." : " Most licensing exams set the bar near 70%. The misses below are exactly what to drill before January.")
+            : (pct === 100 ? " Flawless run. That's exam-day automatic." : " Every miss below is now tagged in the study deck so you can hammer it."));
+
+        /* category breakdown (first-try performance) */
+        var bd = {};
+        ids.forEach(function (id) {
+          var c = byId[id].cat;
+          bd[c] = bd[c] || { right: 0, total: 0 };
+          bd[c].total++; if (quiz.firstTry[id]) bd[c].right++;
+        });
+        document.getElementById("r-breakdown").innerHTML =
+          "<h3>By category</h3>" + Object.keys(bd).map(function (c) {
+            var p = Math.round(bd[c].right / bd[c].total * 100);
+            return '<div class="bd-row"><span>' + c + '</span><span class="bd-num">' + bd[c].right + "/" + bd[c].total + '</span>' +
+              '<span class="bd-bar"><span class="bd-fill' + (p < 70 ? " low" : "") + '" style="display:block;width:' + p + '%"></span></span></div>';
+          }).join("");
+
+        /* weak spots summary */
+        var missedSyms = ids.filter(function (id) { return !quiz.firstTry[id]; }).map(function (id) { return byId[id]; });
+        lastMissed = missedSyms;
+        var weak = document.getElementById("r-weak");
+        if (missedSyms.length === 0) {
+          weak.innerHTML = "";
+        } else {
+          var weakCats = Object.keys(bd).filter(function (c) { return bd[c].right < bd[c].total; })
+            .sort(function (a, b) { return (bd[a].right / bd[a].total) - (bd[b].right / bd[b].total); });
+          weak.innerHTML = "<h3>Weak spots</h3>" +
+            '<p style="margin:0;color:var(--muted);font-size:15px;">Shakiest category: <strong style="color:var(--ink);">' + weakCats[0] + "</strong>. " +
+            "These are the symbols that tripped you up — the review round is built from exactly this list.</p>" +
+            '<div class="weak-list">' + missedSyms.map(function (s) {
+              var got = quiz.mastered[s.id];
+              return '<span class="weak-chip' + (got ? " mastered" : "") + '">' + s.name + (got ? " · got it on retry" : " · still shaky") + "</span>";
+            }).join("") + "</div>";
+        }
+
+        /* missed review */
+        var review = document.getElementById("r-review");
+        if (missedSyms.length === 0) {
+          review.innerHTML = '<p class="allgood">Nothing to review — you nailed every symbol this run.</p>';
+        } else {
+          review.innerHTML = "<h3>Review your misses (" + missedSyms.length + ")</h3>" + missedSyms.map(function (s) {
+            var picked = quiz.firstPick[s.id];
+            return '<div class="miss"><div class="thumb">' + svgWrap(s.svg) + "</div><div>" +
+              "<h4>" + s.name + "</h4>" +
+              '<p class="yours">You picked: ' + (picked ? picked.name : "—") + "</p>" +
+              "<p>" + s.desc + "</p>" +
+              "<p><strong>Think of it as:</strong> " + hookOf(s) + "</p></div></div>";
+          }).join("");
+        }
+        var retryBtn = document.getElementById("r-retry-missed");
+        retryBtn.hidden = missedSyms.length === 0;
+        retryBtn.textContent = "Review your misses (" + missedSyms.length + ")";
+        document.getElementById("r-again").textContent = quiz.mode === "mock" ? "Retake mock exam" : "Run it again";
+        refreshHomeReview();
+        show("results");
+      }
+
+      /* ================= STUDY ================= */
+      var studyFilter = "All";
+      function renderStudy() {
+        var chips = document.getElementById("study-chips");
+        chips.innerHTML = "";
+        ["All"].concat(CATS).concat(["Missed this session"]).forEach(function (c) {
+          var b = document.createElement("button");
+          b.className = "chip-btn" + (studyFilter === c ? " active" : "");
+          b.textContent = c;
+          b.addEventListener("click", function () { studyFilter = c; renderStudy(); });
+          chips.appendChild(b);
+        });
+        var term = document.getElementById("study-search").value.trim().toLowerCase();
+        var list = document.getElementById("study-list");
+        list.innerHTML = "";
+        CATS.forEach(function (cat) {
+          var items = SYMBOLS.filter(function (s) {
+            if (s.cat !== cat) return false;
+            if (studyFilter === "Missed this session" && !sessionMissed[s.id]) return false;
+            if (studyFilter !== "All" && studyFilter !== "Missed this session" && s.cat !== studyFilter) return false;
+            if (term && (s.name + " " + s.desc).toLowerCase().indexOf(term) === -1) return false;
+            return true;
+          });
+          if (!items.length) return;
+          var h = document.createElement("h3");
+          h.className = "study-cat";
+          h.innerHTML = cat + " <small>" + items.length + " symbols</small>";
+          list.appendChild(h);
+          var grid = document.createElement("div");
+          grid.className = "grid";
+          items.forEach(function (s) {
+            var card = document.createElement("div");
+            card.className = "flip";
+            card.innerHTML =
+              (sessionMissed[s.id] ? '<span class="missed-tag">Missed</span>' : "") +
+              '<button class="flip-inner" aria-label="Flip card for ' + s.name + '">' +
+              '<span class="face front">' + svgWrap(s.svg) + '<span class="tap">Tap to flip</span></span>' +
+              '<span class="face back"><h4>' + s.name + "</h4><p>" + s.desc + "<br><br><strong>Think of it as:</strong> " + hookOf(s) + " <em>" + s.tip + "</em></p></span>" +
+              "</button>";
+            card.querySelector(".flip-inner").addEventListener("click", function () { card.classList.toggle("flipped"); });
+            grid.appendChild(card);
+          });
+          list.appendChild(grid);
+        });
+        if (!list.children.length) {
+          list.innerHTML = '<p style="color:var(--muted)">No symbols match. ' +
+            (studyFilter === "Missed this session" ? "Take a quiz first — anything you miss will land here." : "Try a different search.") + "</p>";
+        }
+      }
+      document.getElementById("study-search").addEventListener("input", renderStudy);
+
+      /* ================= WIRING ================= */
+      function refreshHomeReview() {
+        var n = Object.keys(sessionMissed).length;
+        var b = document.getElementById("btn-review-home");
+        b.classList.toggle("hidden", n === 0);
+        b.textContent = "Review your misses — " + n + " symbol" + (n === 1 ? "" : "s") + " from this session →";
+      }
+      document.getElementById("btn-drill").addEventListener("click", function () { startQuiz("drill"); });
+      document.getElementById("btn-study").addEventListener("click", function () { studyFilter = "All"; renderStudy(); show("study"); });
+      document.getElementById("btn-review-home").addEventListener("click", function () {
+        var pool = Object.keys(sessionMissed).map(function (id) { return byId[id]; });
+        if (pool.length) startQuiz("missed", pool);
+      });
+      document.getElementById("r-again").addEventListener("click", function () {
+        if (lastMode === "missed") startQuiz("missed", lastMissed);
+        else startQuiz(lastMode);
+      });
+      document.getElementById("r-study").addEventListener("click", function () { studyFilter = "All"; renderStudy(); show("study"); });
+      document.getElementById("r-retry-missed").addEventListener("click", function () { startQuiz("missed", lastMissed); });
+      document.querySelectorAll("[data-home]").forEach(function (b) {
+        b.addEventListener("click", function () {
+          if (quiz && quiz.timerInt) clearInterval(quiz.timerInt);
+          quiz = null; /* kills any pending auto-advance from the old run */
+          refreshHomeReview();
+          show("home");
+        });
+      });
+    </script>
+  </body>
+</html>
