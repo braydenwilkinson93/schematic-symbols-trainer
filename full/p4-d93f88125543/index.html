@@ -1,0 +1,1627 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="color-scheme" content="light dark" />
+    <link rel="icon" href="data:," />
+    <title>Grounding &amp; Bonding — Learned Cold, Pack 4</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Barlow:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+    <style>
+      :root {
+        --bg: #edf0f2;
+        --grid: rgba(23, 63, 95, 0.09);
+        --panel: #ffffff;
+        --panel-2: #f4f7f8;
+        --stage: #fbfcfd;
+        --ink: #152a3a;
+        --muted: #57707f;
+        --line: #cfd9de;
+        --line-strong: #a9bcc6;
+        --navy: #173f5f;
+        --accent: #f2b234;
+        --accent-deep: #c07f06;
+        --accent-ink: #241a02;
+        --good: #177a4c;
+        --good-bg: #e2f3ea;
+        --bad: #c0392b;
+        --bad-bg: #fbe9e6;
+        --chip: #e6edf1;
+        --shadow: 0 10px 30px rgba(21, 42, 58, 0.10);
+      }
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --bg: #08141f;
+          --grid: rgba(140, 190, 235, 0.08);
+          --panel: #0e2233;
+          --panel-2: #0b1a28;
+          --stage: #0a1c2c;
+          --ink: #e9f2f8;
+          --muted: #9db4c4;
+          --line: #1f3a4f;
+          --line-strong: #33536e;
+          --navy: #7fb3dd;
+          --accent: #f2b234;
+          --accent-deep: #f2b234;
+          --accent-ink: #241a02;
+          --good: #3ecf8e;
+          --good-bg: #0f2e22;
+          --bad: #ef7d6b;
+          --bad-bg: #3a1d18;
+          --chip: #14304a;
+          --shadow: 0 10px 30px rgba(0, 0, 0, 0.45);
+        }
+      }
+      * { box-sizing: border-box; }
+      html { -webkit-text-size-adjust: 100%; }
+      body {
+        margin: 0;
+        font-family: "Barlow", system-ui, sans-serif;
+        color: var(--ink);
+        background:
+          linear-gradient(var(--grid) 1px, transparent 1px),
+          linear-gradient(90deg, var(--grid) 1px, transparent 1px),
+          var(--bg);
+        background-size: 28px 28px, 28px 28px, auto;
+        line-height: 1.45;
+      }
+      .wrap { max-width: 920px; margin: 0 auto; padding: 22px 16px 56px; }
+
+      .kicker {
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase;
+        color: var(--accent-deep); font-weight: 600; margin: 0 0 6px;
+      }
+      h1 {
+        font-family: "Barlow Condensed", sans-serif;
+        font-weight: 700; font-size: clamp(34px, 7vw, 54px);
+        line-height: 0.98; margin: 0 0 10px; letter-spacing: 0.01em;
+        text-transform: uppercase;
+      }
+      .lede { font-size: 17px; color: var(--muted); max-width: 62ch; margin: 0 0 14px; }
+      .lede strong { color: var(--ink); }
+      .countdown {
+        display: inline-flex; align-items: center; gap: 8px;
+        font-family: "IBM Plex Mono", monospace; font-size: 13px;
+        background: var(--chip); border: 1px solid var(--line);
+        padding: 7px 12px; border-radius: 999px; margin-bottom: 22px;
+      }
+      .countdown .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent); flex: none; }
+
+      /* ---------- mode cards ---------- */
+      .modes { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin: 4px 0 26px; }
+      .mode-card {
+        text-align: left; cursor: pointer; font: inherit; color: var(--ink);
+        background: var(--panel); border: 1px solid var(--line); border-radius: 10px;
+        padding: 16px 16px 14px; box-shadow: var(--shadow);
+        display: flex; flex-direction: column; gap: 6px;
+        transition: transform 0.15s ease, border-color 0.15s ease;
+      }
+      .mode-card:hover { border-color: var(--accent); transform: translateY(-2px); }
+      .mode-card:focus-visible, button:focus-visible, input:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+      .mode-card .mc-tag {
+        font-family: "IBM Plex Mono", monospace; font-size: 11px; letter-spacing: 0.12em;
+        text-transform: uppercase; color: var(--accent-deep); font-weight: 600;
+      }
+      .mode-card .mc-name { font-family: "Barlow Condensed", sans-serif; font-size: 24px; font-weight: 600; line-height: 1.05; }
+      .mode-card .mc-desc { font-size: 14px; color: var(--muted); }
+      .mode-card .mc-go { margin-top: auto; font-weight: 700; font-size: 14px; color: var(--navy); }
+      @media (prefers-color-scheme: dark) { .mode-card .mc-go { color: var(--accent); } }
+
+      .cat-strip { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 8px; }
+      .cat-chip {
+        font-family: "IBM Plex Mono", monospace; font-size: 12px;
+        border: 1px solid var(--line); background: var(--panel);
+        padding: 5px 10px; border-radius: 999px; color: var(--muted);
+      }
+      .cat-chip b { color: var(--ink); font-weight: 600; }
+
+      /* ---------- calc sheet / quiz stage ---------- */
+      .sheet {
+        background: var(--panel); border: 1.5px solid var(--line-strong);
+        border-radius: 6px; box-shadow: var(--shadow);
+      }
+      .sheet-top { position: sticky; top: 0; z-index: 6; background: var(--panel); border-radius: 6px 6px 0 0; }
+      .sheet-head {
+        display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+        padding: 12px 16px; border-bottom: 1px solid var(--line);
+        font-family: "IBM Plex Mono", monospace; font-size: 12.5px;
+      }
+      .sheet-head .q-count { font-weight: 600; letter-spacing: 0.06em; }
+      .sheet-head .spacer { flex: 1; }
+      .pill {
+        border: 1px solid var(--line); background: var(--panel-2); border-radius: 999px;
+        padding: 3px 10px; font-family: "IBM Plex Mono", monospace; font-size: 12px;
+      }
+      .pill b { font-weight: 600; }
+      .pill.streak { border-color: var(--accent); color: var(--accent-deep); font-weight: 600; }
+      .progress { height: 6px; background: var(--panel-2); border-bottom: 1px solid var(--line); }
+      .progress > div { height: 100%; background: var(--accent); width: 0%; transition: width 0.3s ease; }
+      .sheet-body { padding: 20px 16px 8px; }
+      .q-prompt {
+        font-family: "IBM Plex Mono", monospace; font-size: 12px; letter-spacing: 0.12em;
+        text-transform: uppercase; color: var(--muted); text-align: center; margin: 0 0 6px;
+      }
+      .q-question {
+        font-size: clamp(18px, 3.4vw, 21px); font-weight: 600; text-align: center;
+        margin: 0 auto 10px; line-height: 1.3; max-width: 56ch;
+      }
+      .sym-stage {
+        background:
+          linear-gradient(var(--grid) 1px, transparent 1px),
+          linear-gradient(90deg, var(--grid) 1px, transparent 1px),
+          var(--stage);
+        background-size: 22px 22px, 22px 22px, auto;
+        border: 1px solid var(--line); border-radius: 6px;
+        display: flex; align-items: center; justify-content: center;
+        padding: 18px 14px; margin: 6px auto 4px; max-width: 720px; min-height: 120px;
+      }
+      .sym-stage .scenario { font-size: 16.5px; line-height: 1.55; text-align: left; max-width: 58ch; padding: 2px 4px; }
+      .sym-stage .scenario .given {
+        font-family: "IBM Plex Mono", monospace; font-size: 12px; letter-spacing: 0.12em;
+        text-transform: uppercase; color: var(--accent-deep); font-weight: 600; display: block; margin-bottom: 6px;
+      }
+      .sym-stage .scenario b { font-family: "IBM Plex Mono", monospace; font-weight: 600; font-size: 15.5px; }
+      .d-note {
+        font-family: "IBM Plex Mono", monospace; font-size: 12px; color: var(--muted);
+        text-align: center; margin: 8px auto 0; max-width: 640px;
+      }
+
+      .opts { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; max-width: 680px; margin: 16px auto 6px; }
+      .opt {
+        font: inherit; cursor: pointer; text-align: left; color: var(--ink);
+        background: var(--panel); border: 1.5px solid var(--line-strong); border-radius: 8px;
+        padding: 13px 14px; font-size: 16.5px; font-weight: 600;
+        display: flex; align-items: center; gap: 11px; min-height: 60px;
+        -webkit-tap-highlight-color: transparent;
+        transition: border-color 0.12s ease, background 0.12s ease;
+      }
+      .opt:hover:not(:disabled) { border-color: var(--accent); }
+      .opt:disabled { cursor: default; opacity: 1; }
+      .opt .letter {
+        font-family: "IBM Plex Mono", monospace; font-size: 12.5px; font-weight: 600;
+        border: 1.5px solid var(--line-strong); border-radius: 5px;
+        width: 26px; height: 26px; flex: none; display: flex; align-items: center; justify-content: center;
+      }
+      .opt.correct { border-color: var(--good); background: var(--good-bg); }
+      .opt.correct .letter { border-color: var(--good); color: var(--good); }
+      .opt.wrong { border-color: var(--bad); background: var(--bad-bg); }
+      .opt.wrong .letter { border-color: var(--bad); color: var(--bad); }
+      .opt.dim { opacity: 0.55; }
+
+      .explain {
+        max-width: 680px; margin: 14px auto 4px; border-radius: 8px; padding: 14px 16px;
+        border: 1px solid var(--line); background: var(--panel-2); display: none;
+      }
+      .explain.show { display: block; }
+      .explain .verdict { font-family: "Barlow Condensed", sans-serif; font-size: 22px; font-weight: 700; margin: 0 0 2px; }
+      .explain .verdict.good { color: var(--good); }
+      .explain .verdict.bad { color: var(--bad); }
+      .explain p { margin: 4px 0; font-size: 15.5px; }
+      .explain .steps { font-family: "IBM Plex Mono", monospace; font-size: 14px; background: var(--panel); border: 1px solid var(--line); border-radius: 6px; padding: 9px 12px; margin: 8px 0; line-height: 1.6; overflow-x: auto; white-space: nowrap; }
+      .explain .hook b { color: var(--navy); font-family: "IBM Plex Mono", monospace; font-size: 11.5px; letter-spacing: 0.1em; text-transform: uppercase; }
+      @media (prefers-color-scheme: dark) { .explain .hook b { color: var(--accent); } }
+      .explain .again { color: var(--accent-deep); font-weight: 600; font-size: 14.5px; }
+
+      .sheet-actions { display: flex; gap: 10px; justify-content: center; padding: 14px 16px 20px; flex-wrap: wrap; }
+      .btn {
+        font: inherit; font-weight: 700; font-size: 16px; cursor: pointer;
+        border-radius: 8px; padding: 12px 22px; border: 1.5px solid var(--line-strong);
+        background: var(--panel); color: var(--ink);
+      }
+      .btn.primary { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+      .btn.primary:hover { filter: brightness(1.05); }
+      .btn.ghost:hover { border-color: var(--accent); }
+      .btn:disabled { opacity: 0.45; cursor: default; }
+      .title-block {
+        display: flex; flex-wrap: wrap; border-top: 1.5px solid var(--line-strong);
+        border-radius: 0 0 5px 5px;
+        font-family: "IBM Plex Mono", monospace; font-size: 10.5px; letter-spacing: 0.08em;
+        text-transform: uppercase; color: var(--muted);
+      }
+      .title-block span { padding: 7px 12px; border-right: 1px solid var(--line); }
+      .title-block span:last-child { border-right: none; margin-left: auto; }
+
+      /* ---------- results ---------- */
+      .score-big {
+        font-family: "Barlow Condensed", sans-serif; font-weight: 700;
+        font-size: clamp(52px, 12vw, 84px); line-height: 1; text-align: center; margin: 8px 0 2px;
+      }
+      .score-sub { text-align: center; color: var(--muted); font-size: 16.5px; margin: 0 auto 6px; max-width: 52ch; }
+      .pass-tag {
+        display: block; width: fit-content; margin: 10px auto 4px;
+        font-family: "IBM Plex Mono", monospace; font-size: 12.5px; font-weight: 600;
+        letter-spacing: 0.1em; text-transform: uppercase; padding: 6px 14px; border-radius: 999px;
+      }
+      .pass-tag.pass { background: var(--good-bg); color: var(--good); border: 1px solid var(--good); }
+      .pass-tag.fail { background: var(--bad-bg); color: var(--bad); border: 1px solid var(--bad); }
+      .breakdown { max-width: 560px; margin: 20px auto 4px; }
+      .breakdown h3, .review h3 {
+        font-family: "Barlow Condensed", sans-serif; font-size: 21px; font-weight: 600;
+        margin: 0 0 10px; text-transform: uppercase; letter-spacing: 0.03em;
+      }
+      .bd-row { display: grid; grid-template-columns: 1fr auto; gap: 4px 12px; align-items: center; margin-bottom: 10px; font-size: 15px; }
+      .bd-row .bd-bar { grid-column: 1 / -1; height: 7px; background: var(--panel-2); border: 1px solid var(--line); border-radius: 99px; overflow: hidden; }
+      .bd-row .bd-fill { height: 100%; background: var(--navy); }
+      .bd-row .bd-fill.low { background: var(--bad); }
+      .bd-row .bd-num { font-family: "IBM Plex Mono", monospace; font-size: 13px; color: var(--muted); }
+      .weak-list { display: flex; flex-wrap: wrap; gap: 8px; margin: 8px 0 2px; }
+      .weak-chip {
+        font-size: 14px; font-weight: 600; border-radius: 999px; padding: 4px 11px;
+        border: 1px solid var(--bad); color: var(--bad); background: var(--bad-bg);
+      }
+      .weak-chip.mastered { border-color: var(--line-strong); color: var(--muted); background: var(--panel-2); }
+      .review-banner { width: 100%; margin: 0 0 22px; min-height: 52px; }
+      .review { max-width: 680px; margin: 24px auto 4px; }
+      .miss {
+        display: grid; grid-template-columns: 200px 1fr; gap: 14px; align-items: center;
+        border: 1px solid var(--line); border-radius: 8px; padding: 10px 14px; margin-bottom: 10px;
+        background: var(--panel);
+      }
+      .miss .thumb { background: var(--stage); border: 1px solid var(--line); border-radius: 5px; padding: 10px 8px; }
+      .miss .thumb .thumb-name {
+        font-family: "Barlow Condensed", sans-serif; font-weight: 600; font-size: 19px;
+        text-align: center; line-height: 1.1; padding: 4px 4px 2px;
+      }
+      .miss .thumb .thumb-formula {
+        font-family: "IBM Plex Mono", monospace; font-size: 12px; text-align: center;
+        color: var(--accent-deep); padding: 2px 2px 4px; line-height: 1.45;
+      }
+      .miss h4 { margin: 0 0 2px; font-size: 16.5px; }
+      .miss p { margin: 2px 0; font-size: 14.5px; color: var(--muted); }
+      .miss .yours { color: var(--bad); }
+      .allgood { text-align: center; font-size: 17px; padding: 8px 0 2px; }
+
+      /* ---------- study ---------- */
+      .study-tools { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin: 0 0 16px; }
+      .chip-btn {
+        font: inherit; font-size: 14px; font-weight: 600; cursor: pointer;
+        border: 1.5px solid var(--line-strong); background: var(--panel); color: var(--ink);
+        border-radius: 999px; padding: 7px 14px;
+      }
+      .chip-btn.active { background: var(--navy); border-color: var(--navy); color: #fff; }
+      @media (prefers-color-scheme: dark) { .chip-btn.active { color: #0a1c2c; background: var(--accent); border-color: var(--accent); } }
+      .search {
+        font: inherit; font-size: 15px; padding: 9px 13px; border-radius: 999px;
+        border: 1.5px solid var(--line-strong); background: var(--panel); color: var(--ink);
+        flex: 1; min-width: 170px;
+      }
+      .study-cat {
+        font-family: "Barlow Condensed", sans-serif; font-size: 24px; font-weight: 600;
+        text-transform: uppercase; letter-spacing: 0.03em; margin: 26px 0 12px;
+        display: flex; align-items: baseline; gap: 10px;
+      }
+      .study-cat small { font-family: "IBM Plex Mono", monospace; font-size: 12px; color: var(--muted); letter-spacing: 0.08em; }
+      .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 12px; }
+      .flip { perspective: 900px; height: 252px; }
+      .flip-inner {
+        position: relative; width: 100%; height: 100%; transform-style: preserve-3d;
+        transition: transform 0.45s ease; cursor: pointer; background: none; border: none; padding: 0; font: inherit; text-align: left;
+      }
+      .flip.flipped .flip-inner { transform: rotateY(180deg); }
+      .face {
+        position: absolute; inset: 0; backface-visibility: hidden; -webkit-backface-visibility: hidden;
+        border: 1px solid var(--line); border-radius: 10px; background: var(--panel);
+        padding: 14px; display: flex; flex-direction: column; overflow: hidden;
+      }
+      .face.front { align-items: center; justify-content: center; gap: 10px; text-align: center; }
+      .face.front .front-name {
+        font-family: "Barlow Condensed", sans-serif; font-weight: 600;
+        font-size: 24px; text-align: center; line-height: 1.1; padding: 0 6px;
+      }
+      .face.front .front-formula {
+        font-family: "IBM Plex Mono", monospace; font-size: 13.5px; font-weight: 600;
+        color: var(--accent-deep); line-height: 1.5; padding: 0 4px;
+      }
+      .face.front .tap { font-family: "IBM Plex Mono", monospace; font-size: 10.5px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); }
+      .face.back { transform: rotateY(180deg); background: var(--panel-2); }
+      .face.back h4 { margin: 0 0 4px; font-size: 17px; line-height: 1.15; }
+      .face.back p { margin: 0; font-size: 13.5px; color: var(--muted); overflow-y: auto; }
+      .missed-tag {
+        position: absolute; top: 10px; right: 10px; z-index: 2;
+        font-family: "IBM Plex Mono", monospace; font-size: 10px; font-weight: 600;
+        letter-spacing: 0.08em; text-transform: uppercase;
+        background: var(--accent); color: var(--accent-ink); border-radius: 99px; padding: 3px 8px;
+      }
+
+      /* ---------- formula sheet ---------- */
+      .fs-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 6px; }
+      .fs-card { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 16px; box-shadow: var(--shadow); }
+      .fs-card.wide { grid-column: 1 / -1; }
+      .fs-card h3 {
+        font-family: "Barlow Condensed", sans-serif; font-size: 21px; font-weight: 600;
+        text-transform: uppercase; letter-spacing: 0.03em; margin: 0 0 8px;
+      }
+      .fs-card .fs-ref { font-family: "IBM Plex Mono", monospace; font-size: 11px; color: var(--accent-deep); letter-spacing: 0.08em; text-transform: uppercase; font-weight: 600; }
+      .fs-card p { font-size: 14.5px; color: var(--muted); margin: 4px 0; }
+      .fs-card p b, .fs-card li b { color: var(--ink); }
+      .fs-card ul { margin: 4px 0; padding-left: 18px; font-size: 14.5px; color: var(--muted); }
+      .fs-formula {
+        font-family: "IBM Plex Mono", monospace; font-size: 14px; font-weight: 600;
+        background: var(--panel-2); border: 1px solid var(--line); border-radius: 6px;
+        padding: 8px 11px; margin: 8px 0; line-height: 1.65;
+      }
+      .fs-scroll { overflow-x: auto; }
+      table.fs { border-collapse: collapse; width: 100%; font-size: 13.5px; margin: 6px 0 2px; }
+      table.fs th, table.fs td { border: 1px solid var(--line); padding: 5px 8px; text-align: left; white-space: nowrap; }
+      table.fs th { font-family: "IBM Plex Mono", monospace; font-size: 11.5px; letter-spacing: 0.05em; text-transform: uppercase; background: var(--panel-2); color: var(--muted); }
+      table.fs td { font-family: "IBM Plex Mono", monospace; font-size: 13px; }
+
+      .hidden { display: none !important; }
+      footer { margin-top: 40px; color: var(--muted); font-size: 13.5px; text-align: center; }
+      .backlink {
+        background: none; border: none; font: inherit; font-weight: 700; cursor: pointer;
+        color: var(--navy); padding: 6px 0; font-size: 15px;
+      }
+      @media (prefers-color-scheme: dark) { .backlink { color: var(--accent); } }
+
+      @media (max-width: 640px) {
+        .modes { grid-template-columns: 1fr; }
+        .opts { grid-template-columns: 1fr; }
+        .miss { grid-template-columns: 128px 1fr; }
+        .fs-grid { grid-template-columns: 1fr; }
+        .sheet-actions .btn { flex: 1 1 100%; min-height: 52px; }
+        #view-results .sheet-actions .btn { flex: 1 1 auto; }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .flip-inner, .progress > div, .mode-card { transition: none; }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+
+      <!-- ============ HOME ============ -->
+      <section id="view-home">
+        <p class="kicker">Learned Cold — Pack 4 · NEC Article 250</p>
+        <h1>Grounding &amp; Bonding</h1>
+        <p class="lede">Pack 1 taught you to name the symbols. Pack 2 taught you to read the rungs. Pack 3 taught you the math. This pack is Article 250 — the rules that decide whether a fault trips a breaker or hurts somebody: <strong id="item-count">45 concepts</strong> — definitions, electrodes, GEC and jumper sizing, equipment grounding conductors, bonding, and the special cases. Every answer shows the rule and the table row, so the lookup sticks — not just the letter.</p>
+        <div class="countdown" id="countdown" hidden><span class="dot"></span><span id="countdown-text"></span></div>
+
+        <div class="modes">
+          <button class="mode-card" id="btn-drill">
+            <span class="mc-tag">12 questions · Worked answers</span>
+            <span class="mc-name">Quick Drill</span>
+            <span class="mc-desc">Fast reps with the rule and the table shown after every question. Miss one and it comes back — in its other variant — until you nail it.</span>
+            <span class="mc-go">Start drilling →</span>
+          </button>
+          <button class="mode-card" id="btn-mock">
+            <span class="mc-tag">20 questions · No feedback till the end</span>
+            <span class="mc-name">Mock Exam</span>
+            <span class="mc-desc">Runs like the real test: answer everything, then get your score, a pass/fail line, weak spots by category, and a worked review of every miss.</span>
+            <span class="mc-go">Take the mock exam →</span>
+          </button>
+          <button class="mode-card" id="btn-study">
+            <span class="mc-tag">All concepts · Flip cards</span>
+            <span class="mc-name">Study Deck</span>
+            <span class="mc-desc">Every formula and rule, grouped by category. Tap a card to flip it for the rule, the article reference, and how the exam tries to trip you.</span>
+            <span class="mc-go">Open study deck →</span>
+          </button>
+          <button class="mode-card" id="btn-formulas">
+            <span class="mc-tag">Reference · The cheat sheet</span>
+            <span class="mc-name">Reference Sheet</span>
+            <span class="mc-desc">The whole pack on one sheet: Table 250.66, Table 250.122, the bonding-jumper table, the caps, and the electrode field rules used in the drills.</span>
+            <span class="mc-go">Open formula sheet →</span>
+          </button>
+        </div>
+
+        <button class="btn primary review-banner hidden" id="btn-review-home"></button>
+
+        <div class="cat-strip" id="cat-strip"></div>
+      </section>
+
+      <!-- ============ QUIZ ============ -->
+      <section id="view-quiz" class="hidden">
+        <button class="backlink" data-home>← Quit to menu</button>
+        <div class="sheet">
+          <div class="sheet-top">
+          <div class="sheet-head">
+            <span class="q-count" id="q-count">QUESTION 1 OF 12</span>
+            <span class="pill" id="q-mode">QUICK DRILL</span>
+            <span class="spacer"></span>
+            <span class="pill" id="q-timer" hidden>TIME <b>0:00</b></span>
+            <span class="pill">SCORE <b id="q-score">0</b></span>
+            <span class="pill streak" id="q-streak" hidden>STREAK <b>0</b></span>
+          </div>
+          <div class="progress"><div id="q-progress"></div></div>
+          </div>
+          <div class="sheet-body">
+            <p class="q-prompt" id="q-prompt">Know the rule</p>
+            <h2 class="q-question" id="q-question"></h2>
+            <div class="sym-stage" id="q-stage"></div>
+            <p class="d-note hidden" id="q-note"></p>
+            <div class="opts" id="q-opts"></div>
+            <div class="explain" id="q-explain"></div>
+          </div>
+          <div class="sheet-actions">
+            <button class="btn primary hidden" id="q-next">Next question →</button>
+          </div>
+          <div class="title-block">
+            <span>DWG NO. GB-404</span><span id="tb-cat">Category —</span><span>Scale: None</span><span>Sheet 1 of 1</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ RESULTS ============ -->
+      <section id="view-results" class="hidden">
+        <button class="backlink" data-home>← Back to menu</button>
+        <div class="sheet">
+          <div class="sheet-body" style="padding-top:26px;">
+            <p class="q-prompt" id="r-mode">Mock Exam · Results</p>
+            <div class="score-big" id="r-score">0%</div>
+            <span class="pass-tag" id="r-pass"></span>
+            <p class="score-sub" id="r-sub"></p>
+            <div class="breakdown" id="r-weak"></div>
+            <div class="breakdown" id="r-breakdown"></div>
+            <div class="review" id="r-review"></div>
+          </div>
+          <div class="sheet-actions">
+            <button class="btn primary" id="r-retry-missed" hidden>Review your misses</button>
+            <button class="btn ghost" id="r-again">Retake</button>
+            <button class="btn ghost" id="r-study">Study the deck</button>
+          </div>
+          <div class="title-block">
+            <span>DWG NO. GB-404</span><span>Result sheet</span><span>Scale: None</span><span>Sheet 1 of 1</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ STUDY ============ -->
+      <section id="view-study" class="hidden">
+        <button class="backlink" data-home>← Back to menu</button>
+        <p class="kicker">Study Deck</p>
+        <h1 style="font-size:clamp(30px,6vw,42px);">Know every rule cold</h1>
+        <p class="lede">Tap a card to flip it. Work category by category — and remember the exam's favorite trick in Article 250: it tests whether you grab the right table for the conductor in front of you. GEC or EGC? Full table or a cap? Service side or load side? That's where the points are lost.</p>
+        <div class="study-tools">
+          <div id="study-chips" style="display:flex;flex-wrap:wrap;gap:8px;"></div>
+          <input class="search" id="study-search" type="search" placeholder="Search concepts… e.g. ground rod, Table 250.66, bonding jumper" aria-label="Search concepts" />
+        </div>
+        <div id="study-list"></div>
+      </section>
+
+      <!-- ============ FORMULA SHEET ============ -->
+      <section id="view-formulas" class="hidden">
+        <button class="backlink" data-home>← Back to menu</button>
+        <p class="kicker">Reference Sheet</p>
+        <h1 style="font-size:clamp(30px,6vw,42px);">The whole pack on one sheet</h1>
+        <p class="lede">Every table and rule the drills are built from, at the values the NEC prints them. Article references are to the 2023 NEC.</p>
+        <div class="fs-grid">
+
+          <div class="fs-card wide">
+            <span class="fs-ref">Table 250.66 · Copper grounding electrode conductor</span>
+            <h3>GEC Sizing</h3>
+            <div class="fs-scroll"><table class="fs">
+              <tr><th>Largest ungrounded conductor (Cu)</th><th>2 AWG or smaller</th><th>1 or 1/0</th><th>2/0 or 3/0</th><th>Over 3/0 – 350 kcmil</th><th>Over 350 – 600 kcmil</th><th>Over 600 – 1100 kcmil</th><th>Over 1100 kcmil</th></tr>
+              <tr><td>GEC (Cu)</td><td>8 AWG</td><td>6 AWG</td><td>4 AWG</td><td>2 AWG</td><td>1/0</td><td>2/0</td><td>3/0</td></tr>
+            </table></div>
+            <p><b>The caps (250.66):</b> the portion landing <b>only on a rod, pipe, or plate</b> need not exceed <b>6 AWG Cu</b> (A) · <b>only on a concrete-encased electrode</b> → <b>4 AWG Cu</b> (B) · <b>only on a ground ring</b> → the <b>ring conductor's size</b> (C). Caps cover only the segment that is the <b>sole connection</b> to that electrode.</p>
+          </div>
+
+          <div class="fs-card wide">
+            <span class="fs-ref">Table 250.122 · Copper equipment grounding conductor</span>
+            <h3>EGC Sizing by Overcurrent Device</h3>
+            <div class="fs-scroll"><table class="fs">
+              <tr><th>Breaker / fuse</th><th>EGC (Cu)</th><th>Breaker / fuse</th><th>EGC (Cu)</th></tr>
+              <tr><td>15 A</td><td>14 AWG</td><td>300 A</td><td>4 AWG</td></tr>
+              <tr><td>20 A</td><td>12 AWG</td><td>400 A</td><td>3 AWG</td></tr>
+              <tr><td>30 A</td><td>10 AWG</td><td>500 A</td><td>2 AWG</td></tr>
+              <tr><td>40 A</td><td>10 AWG</td><td>600 A</td><td>1 AWG</td></tr>
+              <tr><td>60 A</td><td>10 AWG</td><td>800 A</td><td>1/0</td></tr>
+              <tr><td>100 A</td><td>8 AWG</td><td>1000 A</td><td>2/0</td></tr>
+              <tr><td>200 A</td><td>6 AWG</td><td>1200 A</td><td>3/0</td></tr>
+              <tr><td></td><td></td><td>1600 A</td><td>4/0</td></tr>
+              <tr><td></td><td></td><td>2000 A</td><td>250 kcmil</td></tr>
+            </table></div>
+            <p>Shared EGC for several circuits in one raceway: size for the <b>largest</b> breaker (250.122(C)). Circuit conductors upsized → EGC upsizes by the <b>same circular-mil ratio</b> (250.122(B)). Parallel raceways: <b>full-size EGC in each</b> (250.122(F)).</p>
+          </div>
+
+          <div class="fs-card">
+            <span class="fs-ref">Table 250.102(C)(1) · Copper</span>
+            <h3>Bonding Jumper Sizing</h3>
+            <div class="fs-scroll"><table class="fs">
+              <tr><th>Largest ungrounded conductor</th><th>Jumper (Cu)</th></tr>
+              <tr><td>2/0 or 3/0</td><td>4 AWG</td></tr>
+              <tr><td>Over 3/0 – 350 kcmil</td><td>2 AWG</td></tr>
+              <tr><td>Over 1100 kcmil</td><td>≥ 12.5% of phase area</td></tr>
+            </table></div>
+            <p>Same breakpoints as Table 250.66 at the standard sizes. This table sizes the <b>main bonding jumper</b> (250.28), <b>supply-side bonding jumpers</b> (250.102(C)), and the <b>metal water piping bond</b> (250.104(A)).</p>
+          </div>
+
+          <div class="fs-card">
+            <span class="fs-ref">250.50 – 250.53 · Electrodes</span>
+            <h3>Electrode Field Rules</h3>
+            <ul>
+              <li><b>Every electrode present is used</b> — one bonded system (250.50).</li>
+              <li>Metal water pipe must be <b>supplemented</b> (250.53(D)(2)); GEC lands within <b>5 ft</b> of entry (250.68(C)(1)); jumper around meters (250.53(D)(1)).</li>
+              <li>Single rod: <b>25 Ω or less</b>, or add a second (250.53(A)(2)). Electrodes spaced <b>≥ 6 ft</b>.</li>
+              <li>Rod/pipe: <b>≥ 8 ft</b> in contact with soil; rock → 45° angle or 30-in. trench.</li>
+              <li>Ufer: <b>20 ft</b> of <b>4 AWG</b> bare Cu or ½-in. rebar, in 2 in. of concrete.</li>
+              <li>Ground ring: <b>20 ft</b> of <b>2 AWG</b> bare Cu, buried <b>≥ 30 in.</b></li>
+              <li>Never electrodes: <b>gas piping</b> and <b>aluminum</b> (250.52(B)).</li>
+            </ul>
+          </div>
+
+          <div class="fs-card wide">
+            <span class="fs-ref">250.4 · The ideas under everything</span>
+            <h3>Rules That Run the Pack</h3>
+            <ul>
+              <li><b>Earth is NOT the fault path</b> (250.4(A)(5)): 120 V through a 25 Ω rod = <b>4.8 A</b> — no trip. The low-impedance metal EGC path trips the breaker.</li>
+              <li><b>The neutral bonds to ground once</b> — at the service (250.24(A)(5)) or an SDS source (250.30). Never downstream (250.142(B)).</li>
+              <li>An EGC carries <b>fault current only</b>. Normal current on a ground = <b>objectionable current</b> (250.6) = a bond in the wrong place.</li>
+              <li>Connections: <b>listed means only</b> — exothermic welds, listed clamps, machine screws engaging <b>2+ threads</b>. Never solder-only, never sheet-metal screws (250.8).</li>
+              <li>No EGC in the box → <b>GFCI replacement</b> marked <b>"No Equipment Ground"</b> (406.4(D)(2)). Ungrounded systems get <b>ground detectors</b> (250.21(B)).</li>
+            </ul>
+          </div>
+
+        </div>
+      </section>
+
+      <footer>All values follow the 2023 NEC, Article 250: Table 250.66 grounding electrode conductors, Table 250.102(C)(1) supply-side and main bonding jumpers, and Table 250.122 equipment grounding conductors, with electrode rules from 250.50–250.53. Pack 4 of the Learned Cold series — companion to the Electrical Schematic Symbols Trainer, Motor Controls &amp; Ladder Logic, and NEC Calculation Drills.</footer>
+    </div>
+
+    <script>
+      function shuffle(a) {
+        a = a.slice();
+        for (var i = a.length - 1; i > 0; i--) {
+          var j = Math.floor(Math.random() * (i + 1));
+          var t = a[i]; a[i] = a[j]; a[j] = t;
+        }
+        return a;
+      }
+      function show(view) {
+        ["home", "quiz", "results", "study", "formulas"].forEach(function (v) {
+          document.getElementById("view-" + v).classList.toggle("hidden", v !== view);
+        });
+        window.scrollTo(0, 0);
+      }
+
+      /* ================= ITEM BANK =================
+         Each item: one Article 250 concept, the rule up front, a plain-
+         English hook, a teach text, and two variants — the same rule from
+         a different angle or with different table values. The drill asks
+         one variant; a miss re-queues the item in its OTHER variant.
+         Every sizing answer checked against the 2023 NEC anchor tables
+         (250.66, 250.122, 250.102(C)(1)) named in each tag. */
+      var ITEMS = [
+  /* ================= FOUNDATIONS & DEFINITIONS ================= */
+  { id: "fnd-terms", name: "Four Conductors, Four Jobs", cat: "Foundations & Definitions", formula: "Art. 100 · GEC · EGC · MBJ · Grounded",
+    hook: "Same family, different jobs: the neutral works every day, the ground works one bad day, the jumper works once — at the service.",
+    teach: "Article 100 keeps four look-alike conductors separate. The grounded conductor (usually the neutral) is a circuit conductor intentionally connected to ground — it carries normal current. The grounding electrode conductor (GEC) connects the system to the grounding electrode. The equipment grounding conductor (EGC) connects equipment metal back to the source. The main bonding jumper connects the EGC side to the grounded conductor at the service. Mixing any two of them up is the most common Article 250 exam error.",
+    variants: [
+      { kind: "text", tag: "Article 100", q: "Which conductor is this?",
+        scenario: '<span class="given">Given</span>The conductor that connects the electrical system to the <b>grounding electrode</b> in the earth.',
+        options: ["Grounding electrode conductor (GEC)", "Equipment grounding conductor (EGC)", "Grounded conductor (the neutral)", "Main bonding jumper"], answer: 0,
+        steps: "Art. 100 → the system-to-electrode conductor is the GEC",
+        why: "The EGC runs with circuit conductors to equipment; the grounded conductor is the neutral; the main bonding jumper lives inside the service equipment, tying the two worlds together." },
+      { kind: "text", tag: "Article 100", q: "Which conductor is this?",
+        scenario: '<span class="given">Given</span>The normally <b>current-carrying</b> conductor of the system that is intentionally connected to ground — the neutral of a 120/240 V service.',
+        options: ["Grounded conductor", "Grounding electrode conductor (GEC)", "Equipment grounding conductor (EGC)", "Bonding jumper"], answer: 0,
+        steps: "Art. 100 → the current-carrying conductor connected to ground is the grounded conductor",
+        why: "'Grounded' and 'grounding' differ by two letters and an entire job description: the grounded conductor works every cycle; grounding conductors work only on a fault." }
+    ] },
+  { id: "fnd-purpose", name: "Why Ground a System? (250.4(A)(1))", cat: "Foundations & Definitions", formula: "Limit voltage · Stabilize voltage",
+    hook: "Grounding ties the system to earth so lightning and surges have somewhere to be limited — it is about voltage, not about clearing faults.",
+    teach: "250.4(A)(1): grounded systems are connected to earth for two reasons — to limit the voltage imposed by lightning, line surges, or unintentional contact with higher-voltage lines, and to stabilize the voltage to earth during normal operation. Notice what is missing: tripping breakers. Clearing faults is the job of the effective ground-fault current path in 250.4(A)(5) — metal, not dirt.",
+    variants: [
+      { kind: "text", tag: "250.4(A)(1)", q: "Per 250.4(A)(1), why is a system connected to earth?",
+        scenario: '<span class="given">Given</span>A grounded electrical system at a service.',
+        options: ["To limit voltage from lightning and surges, and stabilize voltage to earth", "To carry fault current back to the source so breakers trip", "To carry the normal unbalanced return current", "To replace the equipment grounding conductor"], answer: 0,
+        steps: "250.4(A)(1) → limit imposed voltage + stabilize voltage to earth",
+        why: "Tripping breakers is the metallic path of 250.4(A)(5); carrying normal return current is the neutral's job. The earth connection is about voltage control." },
+      { kind: "text", tag: "250.4(A)(1)", q: "What does the earth connection do when lightning strikes near a service?",
+        scenario: '<span class="given">Given</span>A lightning strike or line surge drives the system voltage upward.',
+        options: ["It limits the voltage imposed on the system", "It provides the main path for fault current to the source", "It disconnects the service automatically", "It bonds all the metal parts in the building together"], answer: 0,
+        steps: "250.4(A)(1) → limiting imposed voltage is the earth connection's job",
+        why: "Bonding metal parts together is 250.4(A)(3)/(4), and fault clearing is the metallic path of (A)(5). The earth connection's headline job is voltage: limit surges and hold the system steady." }
+    ] },
+  { id: "fnd-fault-path", name: "The Effective Ground-Fault Path (250.4(A)(5))", cat: "Foundations & Definitions", formula: "Low-impedance metal path → breaker trips",
+    hook: "A fault needs a fast metal road home. Dirt is a parking lot, not a highway.",
+    teach: "250.4(A)(5): equipment must be bonded into an effective ground-fault current path — an intentionally constructed, permanent, low-impedance metallic path designed to carry fault current back to the source so the overcurrent device opens fast. The section says it plainly: the earth shall not be considered an effective ground-fault current path.",
+    variants: [
+      { kind: "text", tag: "250.4(A)(5)", q: "A hot conductor faults to a metal enclosure. What actually trips the breaker?",
+        scenario: '<span class="given">Given</span>A 120 V branch-circuit conductor chafes through and contacts the metal box it feeds.',
+        options: ["Fault current returning to the source over the low-impedance metal EGC path", "Fault current flowing through the earth to the ground rod", "The ground rod absorbing the fault until it cools", "The surge protector clamping the fault"], answer: 0,
+        steps: "250.4(A)(5) → the metallic path carries fault current; earth does not",
+        why: "The breaker trips on current through its own circuit — the EGC hands the fault back to the source at very low impedance, so current spikes and the device opens in a cycle or two." },
+      { kind: "text", tag: "250.4(A)(5)", q: "Is this statement Code-true? 'A ground rod gives fault current a path to clear a fault.'",
+        scenario: '<span class="given">Given</span>An apprentice tells you the 25-ohm ground rod is what clears ground faults at a house.',
+        options: ["False — earth is not an effective ground-fault current path (250.4(A)(5))", "True — that is the rod's main purpose", "True, but only for faults over 100 A", "False — ground rods are for lightning only, nothing else"], answer: 0,
+        steps: "250.4(A)(5) → earth shall NOT be considered an effective fault path",
+        why: "Rods do real work — voltage stabilization and a surge reference — but a fault through earth is a trickle, not a trip. The next concept does that arithmetic." }
+    ] },
+  { id: "fnd-rod-math", name: "Why Dirt Doesn't Trip Breakers", cat: "Foundations & Definitions", formula: "I = E ÷ R → 120 ÷ 25 = 4.8 A",
+    hook: "Do the division once and you will never trust a ground rod with a fault again.",
+    teach: "Earth resistance is high and unpredictable. Even a code-good 25 Ω electrode on a 120 V fault passes only I = E ÷ R = 120 ÷ 25 = 4.8 A — and a 20 A breaker happily carries 4.8 A forever, with the enclosure energized the whole time. That is why 250.4(A)(5) demands a metallic path whose impedance is low enough to drive fault current into the hundreds of amps.",
+    variants: [
+      { kind: "text", tag: "Ohm's law vs. earth", q: "How much fault current flows, and will the 20 A breaker trip?",
+        scenario: '<span class="given">Given</span>A <b>120 V</b> circuit faults to an enclosure whose only return path to the source is through a <b>25 Ω</b> ground rod.',
+        options: ["About 4.8 A — the breaker will NOT trip", "About 120 A — it trips instantly", "About 20 A — it trips after a few seconds", "Zero — earth blocks fault current completely"], answer: 0,
+        steps: "I = E ÷ R = 120 ÷ 25 = 4.8 A — far below the 20 A breaker rating",
+        why: "4.8 A through a 20 A breaker is a normal load as far as the breaker is concerned. The enclosure stays live — this is the exact accident the effective fault path exists to prevent." },
+      { kind: "text", tag: "250.4(A)(5)", q: "What makes the metallic EGC path able to trip a breaker when the earth path cannot?",
+        scenario: '<span class="given">Given</span>The same fault, two possible return paths: through earth at <b>25 Ω</b>, or through a copper EGC at a fraction of an ohm.',
+        options: ["Its impedance is so low that fault current rises high enough to open the device fast", "Copper attracts fault current away from the earth", "Breakers only respond to current on copper conductors", "The EGC carries the fault to the ground rod faster"], answer: 0,
+        steps: "Low impedance → high fault current → fast trip (250.4(A)(5))",
+        why: "It is Ohm's law, not magic: same voltage, tiny resistance, huge current. The breaker cannot tell copper from dirt — it can only tell 4.8 A from 200 A." }
+    ] },
+  { id: "fnd-mbj", name: "The Main Bonding Jumper", cat: "Foundations & Definitions", formula: "One bridge: grounds to neutral, at the service",
+    hook: "Every ground in the building hands its fault to the neutral exactly once — across this jumper.",
+    teach: "The main bonding jumper (Article 100 definition; sizing in 250.28 and Table 250.102(C)(1)) connects the equipment grounding conductors and the GEC to the grounded conductor inside the service equipment. It is the single bridge between the grounding world and the neutral world — which is why fault current arriving on an EGC crosses it to get back to the source, and why no second bridge is allowed downstream.",
+    variants: [
+      { kind: "text", tag: "Art. 100 · 250.28", q: "Which conductor connects the equipment grounding bus to the grounded (neutral) conductor at the service?",
+        scenario: '<span class="given">Given</span>Inside the service disconnect, the EGCs, the GEC, and the neutral all have to become one fault-clearing team.',
+        options: ["The main bonding jumper", "The grounding electrode conductor", "A supply-side bonding jumper", "The largest branch-circuit EGC"], answer: 0,
+        steps: "Art. 100 / 250.28 → that connection is the main bonding jumper's job",
+        why: "The GEC runs to the electrode; supply-side bonding jumpers bond raceways and enclosures ahead of the service disconnect. Only the MBJ makes the neutral-to-ground connection itself." },
+      { kind: "text", tag: "Fault path", q: "Where does fault current on an EGC go when it reaches the service?",
+        scenario: '<span class="given">Given</span>A fault in a branch circuit sends current back on the EGC toward the panel.',
+        options: ["Across the main bonding jumper to the neutral, then back to the source", "Down the GEC into the earth", "Into the ground rod, where it dissipates", "Back out on another branch circuit's neutral"], answer: 0,
+        steps: "Fault path: EGC → main bonding jumper → service neutral → source",
+        why: "That is the complete effective ground-fault path. The GEC and earth are a side branch for voltage control — the fault itself rides metal the whole way home." }
+    ] },
+  { id: "fnd-objectionable", name: "Objectionable Current (250.6)", cat: "Foundations & Definitions", formula: "Load current on grounds = a wiring error",
+    hook: "If your ground wire is working a day job carrying load current, somebody bonded something they should not have.",
+    teach: "250.6(A): the grounding of systems, equipment, and other elements must be arranged to prevent objectionable current. Objectionable current is normal load current flowing over grounding conductors and paths — most often caused by a second neutral-to-ground connection downstream of the service, which splits the neutral's return current onto every EGC, raceway, and water pipe in parallel. It creates shock hazards and noise, and it is diagnostic gold: current on a ground means a bond is in the wrong place.",
+    variants: [
+      { kind: "text", tag: "250.6", q: "What does the NEC call normal current flowing on equipment grounding conductors?",
+        scenario: '<span class="given">Given</span>A clamp meter shows <b>3 A</b> on an EGC with everything running normally, because the neutral is bonded at the service and again in a subpanel.',
+        options: ["Objectionable current — the installation must be arranged to prevent it (250.6)", "Harmonic current — permitted without limit", "Stray voltage — a utility problem, not a Code issue", "Leakage current — normal for any installation"], answer: 0,
+        steps: "250.6 → objectionable current on grounding paths must be prevented",
+        why: "The cause is the second neutral bond giving return current a parallel metal path. Remove the downstream bond and the grounds go back to carrying nothing — which is exactly what they are supposed to carry." },
+      { kind: "text", tag: "250.6", q: "What does measurable current on an EGC during normal operation usually tell you?",
+        scenario: '<span class="given">Given</span>No fault is present, but the equipment grounding conductor of a feeder is carrying steady current.',
+        options: ["There is an improper neutral-to-ground connection (or a failed neutral) giving load current a parallel path", "The EGC is oversized", "The breaker is about to fail", "Nothing — EGCs share the neutral's load by design"], answer: 0,
+        steps: "EGCs carry fault current only → normal current on one = objectionable (250.6)",
+        why: "By design, every amp of normal return current belongs on the neutral. Current on the ground is the installation confessing to a wiring error." }
+    ] },
+  { id: "fnd-egc-vs-neutral", name: "Neutral Works Daily, Ground Works Once", cat: "Foundations & Definitions", formula: "Grounded = normal current · EGC = fault only",
+    hook: "One conductor has a full-time job. The other is a firefighter — if it is busy every day, something is wrong.",
+    teach: "The grounded conductor (neutral) is a working circuit conductor: it carries unbalanced return current every cycle and is insulated and treated like any live conductor. The equipment grounding conductor is not a circuit conductor at all — it sits idle for years and works for the few cycles it takes to clear a fault. Keeping those two résumés separate is the organizing idea of Article 250.",
+    variants: [
+      { kind: "text", tag: "Art. 100", q: "In normal operation, which conductor carries the unbalanced return current of a 120/240 V circuit?",
+        scenario: '<span class="given">Given</span>A multiwire branch circuit is running a mix of 120 V loads.',
+        options: ["The grounded conductor (neutral)", "The equipment grounding conductor", "The grounding electrode conductor", "The main bonding jumper"], answer: 0,
+        steps: "Return current rides the grounded conductor — EGCs are fault-only",
+        why: "The MBJ and GEC see return current only if a wiring error creates objectionable current. Normally the neutral does 100% of the return work." },
+      { kind: "text", tag: "Art. 100", q: "Which of these conductors is NOT a current-carrying circuit conductor in normal operation?",
+        scenario: '<span class="given">Given</span>Four conductors leave a service: two hots, a neutral, and a bare equipment grounding conductor.',
+        options: ["The equipment grounding conductor", "The neutral", "Either hot conductor", "All four carry normal current"], answer: 0,
+        steps: "EGC = non-current-carrying under normal conditions (fault path only)",
+        why: "That is also why the EGC does not count as a current-carrying conductor for raceway adjustment factors — it only works during faults." }
+    ] },
+  { id: "fnd-which-systems", name: "Which Systems Must Be Grounded? (250.20)", cat: "Foundations & Definitions", formula: "Neutral used as a circuit conductor → ground it",
+    hook: "If the system has a working neutral, that neutral is the grounded point. No neutral, maybe no ground — that is the fork in the road.",
+    teach: "250.20(B) requires grounding for AC systems where the neutral is used as a circuit conductor — including 3-phase, 4-wire wye systems and 120/240 V single-phase systems — and for systems that can be grounded so the voltage to ground on the ungrounded conductors does not exceed 150 V. The grounded point is the neutral (star) point, so every conductor's voltage to earth is known and limited.",
+    variants: [
+      { kind: "text", tag: "250.20", q: "Must this system be grounded, and where?",
+        scenario: '<span class="given">Given</span>A <b>480Y/277 V</b>, three-phase, four-wire system whose neutral is used as a circuit conductor for 277 V lighting.',
+        options: ["Yes — the neutral (star) point is grounded (250.20(B))", "No — 480 V systems always run ungrounded", "Yes — one phase conductor is grounded instead of the neutral", "Grounding is optional at this voltage"], answer: 0,
+        steps: "250.20(B) → a wye system using its neutral as a circuit conductor is grounded at the neutral",
+        why: "Grounding the star point pins every phase at 277 V to ground. Corner-grounding a phase is a different system (a delta), not this one." },
+      { kind: "text", tag: "250.20", q: "Must this system be grounded?",
+        scenario: '<span class="given">Given</span>A <b>120/240 V</b> single-phase residential service with a neutral conductor used by every 120 V load.',
+        options: ["Yes — the neutral is the grounded conductor (250.20)", "No — residential systems are exempt", "Only if the service exceeds 200 A", "Only the water pipe is grounded, not the system"], answer: 0,
+        steps: "250.20 → this is the textbook grounded system",
+        why: "The neutral is connected to earth at the service, which is what makes it the 'grounded conductor' in every other question in this category." }
+    ] },
+
+  /* ================= GROUNDING ELECTRODES ================= */
+  { id: "ele-all-used", name: "All Electrodes Present Get Used (250.50)", cat: "Grounding Electrodes", formula: "Every electrode on site = one system",
+    hook: "You do not pick a favorite electrode. If it is there, it joins the team.",
+    teach: "250.50: all grounding electrodes present at a building or structure that qualify under 250.52(A) must be bonded together to form the one grounding electrode system. A water pipe, building steel, a Ufer, and rods do not compete — they are combined, and the combined system is better than any of them alone.",
+    variants: [
+      { kind: "text", tag: "250.50", q: "Is using only the Ufer permitted?",
+        scenario: '<span class="given">Given</span>A new building has a qualifying metal water pipe, bonded structural steel, and a concrete-encased electrode. The installer wants to connect the GEC to the Ufer alone.',
+        options: ["No — all electrodes present must be bonded into the system (250.50)", "Yes — one electrode is all the Code ever requires", "Yes — the Ufer outranks the others", "Only the water pipe must be used"], answer: 0,
+        steps: "250.50 → every qualifying electrode present joins the system",
+        why: "250.50 does not let you pick. Each additional electrode lowers the system's resistance to earth and gives surges more paths to spread into." },
+      { kind: "text", tag: "250.50", q: "How many of these electrodes belong to the grounding electrode system?",
+        scenario: '<span class="given">Given</span>A building has two driven rods and a ground ring installed around it.',
+        options: ["All of them — every electrode present is bonded together", "Just one — the extras are spares", "Only the rods — rings are for lightning systems only", "Only the one with the lowest resistance"], answer: 0,
+        steps: "250.50 → electrodes present = electrodes used, as one system",
+        why: "The Code treats it as a single system with multiple members, not a starter and its backups." }
+    ] },
+  { id: "ele-qualifying", name: "What Counts as an Electrode (250.52)", cat: "Grounding Electrodes", formula: "Water pipe · steel · Ufer · ring · rod · plate",
+    hook: "The guest list is short and specific — and gas pipe and aluminum are explicitly not on it.",
+    teach: "250.52(A) recognizes: metal underground water pipe with at least 10 ft in contact with the earth, metal in-ground support structures and building steel, concrete-encased electrodes, ground rings, and rod, pipe, and plate electrodes. 250.52(B) names the impostors: metal underground gas piping and aluminum electrodes are NOT permitted to serve as grounding electrodes.",
+    variants: [
+      { kind: "text", tag: "250.52(A)", q: "Which of these qualifies as a grounding electrode?",
+        scenario: '<span class="given">Given</span>Four candidates found at a job site.',
+        options: ["A metal underground water pipe in direct contact with the earth for 10 ft or more", "A metal underground gas pipe of the same length", "An aluminum ground rod driven 8 ft", "A length of rebar lying on the surface next to the footing"], answer: 0,
+        steps: "250.52(A)(1) → the water pipe qualifies; 250.52(B) bars gas pipe and aluminum",
+        why: "Gas piping is excluded for safety — a fault or lightning event does not belong on a fuel line — and aluminum corrodes in earth contact. The rebar only becomes a Ufer once it is encased in the concrete footing." },
+      { kind: "text", tag: "250.52(B)", q: "Which of these is NOT permitted as a grounding electrode?",
+        scenario: '<span class="given">Given</span>An installer proposes four options for a small commercial service.',
+        options: ["An aluminum electrode", "A ground ring of 2 AWG bare copper", "A concrete-encased electrode", "A copper-clad steel ground rod"], answer: 0,
+        steps: "250.52(B) → aluminum electrodes are not permitted",
+        why: "Aluminum deteriorates in direct earth contact, so the Code bars it as an electrode material — the other three are textbook 250.52(A) electrodes." }
+    ] },
+  { id: "ele-water-pipe", name: "Water Pipe: Supplement Required", cat: "Grounding Electrodes", formula: "Water pipe + one more electrode (250.53(D)(2))",
+    hook: "A water pipe can be replaced by the utility with plastic tomorrow — so the Code never lets it stand alone.",
+    teach: "A qualifying metal underground water pipe is a fine electrode, but 250.53(D)(2) requires it to be supplemented by at least one additional electrode from 250.52(A). Plastic repairs, meter swaps, and utility work can silently delete a water-pipe electrode, so the system always needs a second leg. The GEC connection to interior piping lands within the first 5 ft of piping inside the building (250.68(C)(1)).",
+    variants: [
+      { kind: "text", tag: "250.53(D)(2)", q: "What else is required?",
+        scenario: '<span class="given">Given</span>The only grounding electrode at an existing building is a qualifying metal underground water pipe.',
+        options: ["At least one additional electrode to supplement it (250.53(D)(2))", "Nothing — a water pipe alone is a complete system", "A second water-pipe bond at the far end of the building", "A larger GEC"], answer: 0,
+        steps: "250.53(D)(2) → a metal water pipe shall be supplemented by an additional electrode",
+        why: "A bigger GEC does not fix the failure mode: the pipe itself can be cut, replaced with plastic, or isolated by a meter. Redundancy, not size, is the answer." },
+      { kind: "text", tag: "250.68(C)(1)", q: "Where must the grounding connection to the interior metal water pipe be made?",
+        scenario: '<span class="given">Given</span>The GEC is being connected to the interior metal water piping of a building.',
+        options: ["Within the first 5 ft of water piping inside the building", "Anywhere along the piping run", "Within 10 ft of the farthest fixture", "Only at the water heater"], answer: 0,
+        steps: "250.68(C)(1) → within 5 ft of the point of entrance",
+        why: "Close to where the pipe enters keeps the bonded length short and ahead of meters, valves, and repairs that could interrupt the path." }
+    ] },
+  { id: "ele-meter-jumper", name: "Don't Trust the Water Meter", cat: "Grounding Electrodes", formula: "Bond around anything removable (250.53(D)(1))",
+    hook: "Anything a plumber can unbolt, a bonding jumper must bridge.",
+    teach: "250.53(D)(1): the continuity of the grounding path must not rely on water meters, filtering devices, or similar equipment that may be removed. A bonding jumper is installed around such equipment so that pulling the meter for service does not quietly amputate the building's grounding path.",
+    variants: [
+      { kind: "text", tag: "250.53(D)(1)", q: "What is required here?",
+        scenario: '<span class="given">Given</span>The grounding path uses the metal water pipe, and the pipe passes through a removable water meter just inside the building.',
+        options: ["A bonding jumper around the meter, so removing it cannot break the grounding path", "Nothing — meters are never removed", "A warning label on the meter", "The meter must be welded into the piping"], answer: 0,
+        steps: "250.53(D)(1) → continuity shall not rely on the meter; jumper around it",
+        why: "The day a utility worker swaps that meter, an unjumpered system floats with no visible sign of failure — until a fault or a lightning strike finds it." },
+      { kind: "text", tag: "250.53(D)(1)", q: "Why does 250.53(D)(1) demand the jumper?",
+        scenario: '<span class="given">Given</span>A filter unit is installed in the metal water line that carries the grounding connection.',
+        options: ["Equipment likely to be disconnected must not be able to interrupt the grounding path", "Filters raise the water pipe's resistance too high", "The jumper improves water flow past the filter", "It is required only for plastic filter housings"], answer: 0,
+        steps: "250.53(D)(1) → removable equipment gets a bonding jumper around it",
+        why: "Same rule as the meter: continuity is a design property, not a hope about future maintenance." }
+    ] },
+  { id: "ele-rod-25", name: "The 25-Ohm Rule (250.53(A)(2))", cat: "Grounding Electrodes", formula: "One rod ≤ 25 Ω — or add a second",
+    hook: "One rod has to prove it is a real ground. Fail the test, get a partner — no third test needed.",
+    teach: "250.53(A)(2): a single rod, pipe, or plate electrode must have a resistance to earth of 25 Ω or less, or it must be supplemented by one additional electrode. Once the second electrode is installed, no further proof is demanded — the Code stops asking after two. Most installers drive two rods by default, because measuring earth resistance takes longer than driving.",
+    variants: [
+      { kind: "text", tag: "250.53(A)(2)", q: "What must happen next?",
+        scenario: '<span class="given">Given</span>A single driven ground rod is tested and measures <b>40 Ω</b> resistance to earth.',
+        options: ["Drive one additional electrode — a single rod must prove 25 Ω or less, or be supplemented", "Nothing — rods pass at any resistance", "Upsize the GEC until the reading drops", "Connect the rod to the water pipe and stop testing"], answer: 0,
+        steps: "250.53(A)(2) → over 25 Ω on a single rod → add one additional electrode",
+        why: "GEC size does not change the rod's resistance to earth. The rule offers exactly two exits: prove 25 Ω, or drive a second electrode and stop proving." },
+      { kind: "text", tag: "250.53(A)(2)", q: "Is a second electrode required by the 25-ohm rule?",
+        scenario: '<span class="given">Given</span>A single ground rod is properly tested and measures <b>18 Ω</b> to earth.',
+        options: ["No — 18 Ω satisfies the 25 Ω limit for a single rod", "Yes — two rods are always required everywhere", "Only if the GEC is smaller than 6 AWG", "Yes — unless a water pipe is also present"], answer: 0,
+        steps: "250.53(A)(2) → a single rod at 25 Ω or less needs no supplement",
+        why: "25 Ω or less is a pass. Two rods are common practice, but the Code's demand is performance-based: one rod that proves out stands alone." }
+    ] },
+  { id: "ele-spacing", name: "Electrode Spacing: 6 Feet Minimum", cat: "Grounding Electrodes", formula: "Electrodes ≥ 6 ft apart",
+    hook: "Two rods shoulder-to-shoulder share the same dirt and act like one. Spread them out and each gets its own earth.",
+    teach: "Each electrode influences a cylinder of soil around itself. Drive two rods too close together and their soil cylinders overlap — the pair performs barely better than one rod. The Code sets the floor: electrodes installed for the same system, including the supplemental electrode added under 250.53(A)(2), are spaced not less than 6 ft apart.",
+    variants: [
+      { kind: "text", tag: "250.53(A)(3)", q: "What is the minimum spacing between these two rods?",
+        scenario: '<span class="given">Given</span>Two ground rods are being driven for the same service, the second one supplementing the first.',
+        options: ["6 ft", "2 ft", "10 ft", "16 ft"], answer: 0,
+        steps: "250.53(A)(3) → supplemental/system electrodes spaced at least 6 ft apart",
+        why: "Six feet is the minimum; more is better where the site allows. The point is keeping each rod's resistance area from swallowing the other's." },
+      { kind: "text", tag: "250.53(A)(3)", q: "What is wrong with this installation?",
+        scenario: '<span class="given">Given</span>To save trenching, an installer drives the second ground rod <b>3 ft</b> from the first, bonded with a short jumper.',
+        options: ["The electrodes are too close — a minimum of 6 ft apart is required", "The rods must be at least 25 ft apart", "Nothing — spacing is not regulated", "The jumper between them is prohibited"], answer: 0,
+        steps: "3 ft is less than the 6 ft minimum spacing → violation (250.53(A)(3))",
+        why: "At 3 ft the two rods share most of their earth contact and deliver little more than a single rod. The bonding jumper between electrodes is not the problem — it is required." }
+    ] },
+  { id: "ele-rod-8ft", name: "Rods: 8 Feet in the Earth", cat: "Grounding Electrodes", formula: "Rod length in soil ≥ 8 ft",
+    hook: "A rod earns its keep by depth — the full 8 feet has to be down in the dirt, not in the air or the gravel.",
+    teach: "Rod and pipe electrodes are at least 8 ft long, and the installation rule requires at least 8 ft of the electrode in contact with the soil. Where solid rock prevents a full vertical drive, the Code offers two outs: drive the rod at an angle not exceeding 45 degrees from vertical, or bury it horizontally in a trench at least 30 in. deep.",
+    variants: [
+      { kind: "text", tag: "250.52(A)(5)", q: "How much of this rod electrode must be in contact with the soil?",
+        scenario: '<span class="given">Given</span>A copper-clad ground rod is being driven beside a new service.',
+        options: ["At least 8 ft", "At least 6 ft", "At least 4 ft if the soil is moist", "The rod's full length minus 1 ft"], answer: 0,
+        steps: "Rod/pipe electrodes → minimum 8 ft in contact with soil (250.52(A)(5) / 250.53(A))",
+        why: "Six feet is the electrode spacing number — the exam loves swapping the two. Depth for rods: 8 ft." },
+      { kind: "text", tag: "250.53(A)", q: "What are the installer's Code options?",
+        scenario: '<span class="given">Given</span>Rock is struck 4 ft down and the rod cannot be driven deeper vertically.',
+        options: ["Drive it at an angle of not more than 45° from vertical, or bury it in a trench at least 30 in. deep", "Cut the rod off at 4 ft and clamp the GEC there", "Lay the rod on the surface and cover it with soil brought from off-site", "Give up on the rod electrode entirely"], answer: 0,
+        steps: "Rock bottom → angle of 45° or less, or 30-in. trench burial (250.53(A))",
+        why: "Cutting the rod leaves only 4 ft of soil contact — half an electrode. The angled and trench methods keep the full 8 ft of rod working against the earth." }
+    ] },
+  { id: "ele-ufer-ring", name: "Ufer & Ground Ring Numbers", cat: "Grounding Electrodes", formula: "Ufer: 20 ft · 4 AWG — Ring: 20 ft · 2 AWG at 30 in.",
+    hook: "Both are 20-foot recipes: the Ufer hides in concrete with 4 AWG, the ring circles the building with 2 AWG, buried a shovel deep and then some.",
+    teach: "Concrete-encased electrode (250.52(A)(3)): at least 20 ft of bare copper not smaller than 4 AWG — or 20 ft of 1/2-in. or larger steel rebar — encased in at least 2 in. of concrete near the bottom of a footing in contact with the earth. Ground ring (250.52(A)(4)): at least 20 ft of bare copper not smaller than 2 AWG encircling the building, buried not less than 30 in. below the surface.",
+    variants: [
+      { kind: "text", tag: "250.52(A)(3)", q: "What are the minimum length and copper size for a concrete-encased electrode?",
+        scenario: '<span class="given">Given</span>A Ufer is being built with bare copper conductor in a new footing.',
+        options: ["20 ft of 4 AWG bare copper", "10 ft of 6 AWG bare copper", "20 ft of 8 AWG bare copper", "40 ft of 2 AWG bare copper"], answer: 0,
+        steps: "250.52(A)(3) → concrete-encased = 20 ft or more, 4 AWG or larger bare copper (or 1/2-in. rebar)",
+        why: "The 2 AWG figure belongs to the ground ring — the two 20-foot electrodes are the exam's favorite pair to cross-wire." },
+      { kind: "text", tag: "250.52(A)(4)", q: "What does a compliant ground ring look like?",
+        scenario: '<span class="given">Given</span>A ground ring is being installed around a small commercial building.',
+        options: ["At least 20 ft of 2 AWG bare copper, buried at least 30 in. deep, encircling the building", "At least 10 ft of 4 AWG copper buried 12 in. deep", "A 2 AWG loop inside the building at floor level", "Any length of 2 AWG, as long as both ends land on the GEC"], answer: 0,
+        steps: "250.52(A)(4) → 20 ft or more · 2 AWG or larger · buried 30 in. or deeper",
+        why: "Depth matters: at 30 in. the ring sits in permanently moister, more stable soil. A shallow or indoor loop is just wire, not an electrode." }
+    ] },
+
+  /* ================= GEC & JUMPER SIZING ================= */
+  { id: "size-66-a", name: "Table 250.66 — Small Services", cat: "GEC & Jumper Sizing", formula: "2 AWG svc → 8 AWG GEC · 1/0 svc → 6 AWG GEC",
+    hook: "The GEC is sized off the big feeders it serves — find the service-conductor row, read across.",
+    teach: "Table 250.66 sizes the grounding electrode conductor from the largest ungrounded service (or feeder) conductor. Copper rows: 2 AWG or smaller → 8 AWG GEC; 1 or 1/0 AWG → 6 AWG GEC. These are the residential and light-commercial rows — memorize them cold, because they anchor the whole table.",
+    variants: [
+      { kind: "text", tag: "Table 250.66", q: "What is the minimum copper GEC for this service?",
+        scenario: '<span class="given">Given</span>The largest ungrounded service conductor is <b>2 AWG copper</b>, and the GEC runs to the electrode system.',
+        options: ["8 AWG copper", "6 AWG copper", "4 AWG copper", "10 AWG copper"], answer: 0,
+        steps: "Table 250.66 → 2 AWG or smaller service conductor → 8 AWG Cu GEC",
+        why: "8 AWG feels small next to a 100 A service, but the GEC never carries load current — it serves the electrode system, and the table is written for that job." },
+      { kind: "text", tag: "Table 250.66", q: "What is the minimum copper GEC for this service?",
+        scenario: '<span class="given">Given</span>The largest ungrounded service conductor is <b>1/0 AWG copper</b>.',
+        options: ["6 AWG copper", "8 AWG copper", "4 AWG copper", "2 AWG copper"], answer: 0,
+        steps: "Table 250.66 → 1 or 1/0 AWG service conductor → 6 AWG Cu GEC",
+        why: "One row down from the smallest services. The table steps are the test: 2 → 8, 1/0 → 6, 3/0 → 4 — keep the ladder straight." }
+    ] },
+  { id: "size-66-b", name: "Table 250.66 — Mid-Size Services", cat: "GEC & Jumper Sizing", formula: "2/0–3/0 svc → 4 AWG GEC",
+    hook: "The 200-amp row: 3/0 service conductors land on a 4 AWG ground — the most common lookup in the field.",
+    teach: "Table 250.66, copper: where the largest ungrounded conductor is 2/0 or 3/0 AWG, the copper GEC is 4 AWG. This is the standard 200 A residential and light-commercial answer, and the row the exam asks about most.",
+    variants: [
+      { kind: "text", tag: "Table 250.66", q: "What is the minimum copper GEC?",
+        scenario: '<span class="given">Given</span>A <b>200 A</b> service with <b>3/0 AWG copper</b> ungrounded conductors.',
+        options: ["4 AWG copper", "2 AWG copper", "6 AWG copper", "1/0 AWG copper"], answer: 0,
+        steps: "Table 250.66 → 2/0 or 3/0 → 4 AWG Cu GEC",
+        why: "2 AWG is the next row up (over 3/0 through 350 kcmil) — grabbing it means you read the service size one row off." },
+      { kind: "text", tag: "Table 250.66", q: "What is the minimum copper GEC?",
+        scenario: '<span class="given">Given</span>A service whose largest ungrounded conductor is <b>2/0 AWG copper</b>.',
+        options: ["4 AWG copper", "6 AWG copper", "2 AWG copper", "8 AWG copper"], answer: 0,
+        steps: "Table 250.66 → 2/0 groups with 3/0 → 4 AWG Cu GEC",
+        why: "2/0 and 3/0 share a row. Students who memorize '3/0 → 4' and then guess '2/0 → 6' fall for the spacing — the table pairs them." }
+    ] },
+  { id: "size-66-c", name: "Table 250.66 — Large Services", cat: "GEC & Jumper Sizing", formula: "350 kcmil → 2 AWG · 500 kcmil → 1/0 GEC",
+    hook: "Big services cross into kcmil — and the GEC answers cross into the aughts. Read the units before the row.",
+    teach: "Table 250.66, copper, upper rows: over 3/0 through 350 kcmil → 2 AWG GEC; over 350 through 600 kcmil → 1/0; over 600 through 1100 kcmil → 2/0; over 1100 kcmil → 3/0. Once service conductors are in kcmil, every GEC answer is 2 AWG or larger — if your answer is 4 or 6 AWG for a 500 kcmil service, you are reading the wrong neighborhood of the table.",
+    variants: [
+      { kind: "text", tag: "Table 250.66", q: "What is the minimum copper GEC?",
+        scenario: '<span class="given">Given</span>The largest ungrounded service conductor is <b>350 kcmil copper</b>.',
+        options: ["2 AWG copper", "1/0 AWG copper", "4 AWG copper", "2/0 AWG copper"], answer: 0,
+        steps: "Table 250.66 → over 3/0 through 350 kcmil → 2 AWG Cu GEC",
+        why: "350 kcmil is the top of this row — the 1/0 answer belongs to services over 350 kcmil." },
+      { kind: "text", tag: "Table 250.66", q: "What is the minimum copper GEC?",
+        scenario: '<span class="given">Given</span>A commercial service with <b>500 kcmil copper</b> ungrounded conductors and a full electrode system.',
+        options: ["1/0 AWG copper", "2 AWG copper", "2/0 AWG copper", "3 AWG copper"], answer: 0,
+        steps: "Table 250.66 → over 350 through 600 kcmil → 1/0 Cu GEC",
+        why: "Full system, full table — no cap applies to this one. Caps only shrink the portion landing on a single rod, Ufer, or ring — those are the next concepts." }
+    ] },
+  { id: "size-rod-cap", name: "The Rod Cap: 6 AWG Is Enough (250.66(A))", cat: "GEC & Jumper Sizing", formula: "GEC to rods only → never larger than 6 AWG Cu",
+    hook: "A rod can only drink so much. Past 6 AWG, you are pouring water on a full glass.",
+    teach: "250.66(A): the portion of the GEC that is the sole connection to a rod, pipe, or plate electrode is not required to be larger than 6 AWG copper (4 AWG aluminum). A rod's contact with the earth is the bottleneck — a fatter conductor cannot push more into the soil. The cap applies only to the rod portion; if the same GEC continues to other electrodes, the rest is sized from the full table.",
+    variants: [
+      { kind: "text", tag: "250.66(A)", q: "What is the minimum GEC for this installation?",
+        scenario: '<span class="given">Given</span>A <b>500 kcmil copper</b> service, and the GEC runs ONLY to two driven ground rods.',
+        options: ["6 AWG copper — the rod connection need not exceed 6 AWG (250.66(A))", "1/0 AWG copper — the full Table 250.66 answer", "4 AWG copper", "2/0 AWG copper"], answer: 0,
+        steps: "Table 250.66 says 1/0 — but 250.66(A) caps the rod-only portion at 6 AWG Cu",
+        why: "This is the exam's favorite Article 250 trap: the honest table answer is wrong because a subsection relaxes it. 'Sole connection to a rod' is the trigger phrase." },
+      { kind: "text", tag: "250.66(A)", q: "What is the minimum GEC to the rods?",
+        scenario: '<span class="given">Given</span>A <b>200 A</b> service (3/0 conductors) where the grounding electrode system consists only of driven rods.',
+        options: ["6 AWG copper", "4 AWG copper — Table 250.66 with no exceptions", "8 AWG copper", "3 AWG copper"], answer: 0,
+        steps: "250.66(A) → a GEC to rod electrodes need not be larger than 6 AWG Cu",
+        why: "You may install the 4 AWG the table lists — it is just not required. Where rods are the only electrode, 6 AWG copper is the Code-minimum answer." }
+    ] },
+  { id: "size-ufer-cap", name: "The Ufer Cap: 4 AWG Is Enough (250.66(B))", cat: "GEC & Jumper Sizing", formula: "GEC to CEE only → never larger than 4 AWG Cu",
+    hook: "The Ufer's connection wire stops growing at 4 AWG — the concrete does the heavy lifting.",
+    teach: "250.66(B): the portion of the GEC that is the sole connection to a concrete-encased electrode is not required to be larger than 4 AWG copper. Read the scope carefully — the cap covers only the segment landing on the Ufer. If one GEC runs from the service to a water pipe and on to the Ufer, the water-pipe portion is sized from Table 250.66 in full; only the Ufer-only tail gets the cap.",
+    variants: [
+      { kind: "text", tag: "250.66(B)", q: "What is the minimum GEC for this installation?",
+        scenario: '<span class="given">Given</span>A <b>600 kcmil copper</b> service, and the GEC runs ONLY to the concrete-encased electrode in the footing.',
+        options: ["4 AWG copper (250.66(B) cap)", "1/0 AWG copper — the full Table 250.66 answer", "2/0 AWG copper", "6 AWG copper"], answer: 0,
+        steps: "Table 250.66 says 1/0 for 600 kcmil — 250.66(B) caps the CEE-only portion at 4 AWG Cu",
+        why: "Same trap shape as the rod cap, different number: rods cap at 6, the Ufer caps at 4. The exam sets them side by side to see if you swap them." },
+      { kind: "text", tag: "250.66(B)", q: "Which portion of this GEC gets the 4 AWG cap?",
+        scenario: '<span class="given">Given</span>One GEC runs from the service to a metal water pipe electrode, then continues on as the sole connection to a concrete-encased electrode.',
+        options: ["Only the segment that lands on the concrete-encased electrode", "The entire GEC, start to finish", "Only the water-pipe segment", "Neither — caps never apply to combined runs"], answer: 0,
+        steps: "250.66(B) → the cap covers the portion that is the sole connection to the CEE",
+        why: "'Sole connection' is doing all the work in that sentence. Shared portions are sized by the full table; the dedicated tail gets the relief." }
+    ] },
+  { id: "size-ring-cap", name: "The Ring Cap (250.66(C))", cat: "GEC & Jumper Sizing", formula: "GEC to ring → never larger than the ring wire",
+    hook: "The jumper to the ring never has to out-muscle the ring itself.",
+    teach: "250.66(C): the portion of the GEC that is the sole connection to a ground ring is not required to be larger than the conductor used for the ground ring. Since a standard ring is 2 AWG copper, the GEC landing on it tops out at 2 AWG — no matter how large the service is.",
+    variants: [
+      { kind: "text", tag: "250.66(C)", q: "What is the minimum GEC to the ring?",
+        scenario: '<span class="given">Given</span>A <b>500 kcmil copper</b> service, and the GEC runs ONLY to the ground ring, which is 2 AWG bare copper.',
+        options: ["2 AWG copper — it need not exceed the ring conductor (250.66(C))", "1/0 AWG copper — the full Table 250.66 answer", "3/0 AWG copper", "6 AWG copper, by the rod cap"], answer: 0,
+        steps: "250.66(C) → the cap is the ring conductor's own size = 2 AWG",
+        why: "Three caps, three triggers: rod → 6 AWG, Ufer → 4 AWG, ring → the ring's size. Name the electrode before you size the wire." },
+      { kind: "text", tag: "250.66(C)", q: "May a 2 AWG GEC land on this ring and comply?",
+        scenario: '<span class="given">Given</span>Table 250.66 calls for 1/0 for the service size, but the GEC segment in question connects only to a <b>2 AWG ground ring</b>.',
+        options: ["Yes — 250.66(C) caps the required size at the ring conductor's size", "No — Table 250.66 has no exceptions", "Only if the ring is supplemented by two rods", "Only on services under 200 A"], answer: 0,
+        steps: "250.66(C) → 'need not be larger than the ring conductor' → 2 AWG complies",
+        why: "The caps are permissions written into the Code, not field shortcuts. Using them is compliance, not corner-cutting." }
+    ] },
+  { id: "size-mbj", name: "Sizing the Main Bonding Jumper", cat: "GEC & Jumper Sizing", formula: "MBJ → Table 250.102(C)(1)",
+    hook: "The main bonding jumper is sized like a supply-side bonding jumper — same table, same rows as the GEC table at these sizes.",
+    teach: "A wire-type main bonding jumper is sized from Table 250.102(C)(1) based on the largest ungrounded service conductor (250.28). The copper rows match Table 250.66 at the common sizes: 2/0 or 3/0 service → 4 AWG; over 3/0 through 350 kcmil → 2 AWG. Above 1100 kcmil, the table stops and the jumper must be at least 12.5% of the phase conductors' circular-mil area.",
+    variants: [
+      { kind: "text", tag: "Table 250.102(C)(1)", q: "What is the minimum size of this wire-type main bonding jumper?",
+        scenario: '<span class="given">Given</span>A service with <b>3/0 AWG copper</b> ungrounded conductors; the MBJ is a copper wire jumper, not a busbar.',
+        options: ["4 AWG copper", "2 AWG copper", "6 AWG copper", "3/0 AWG copper — same as the service conductors"], answer: 0,
+        steps: "Table 250.102(C)(1) → 2/0 or 3/0 → 4 AWG Cu MBJ",
+        why: "The MBJ never has to match the service conductor size — it is sized by its own table, and at 200 A-class services that answer is 4 AWG." },
+      { kind: "text", tag: "Table 250.102(C)(1)", q: "What is the minimum size of this main bonding jumper?",
+        scenario: '<span class="given">Given</span>A larger service with <b>350 kcmil copper</b> ungrounded conductors and a wire-type MBJ.',
+        options: ["2 AWG copper", "1/0 AWG copper", "4 AWG copper", "2/0 AWG copper"], answer: 0,
+        steps: "Table 250.102(C)(1) → over 3/0 through 350 kcmil → 2 AWG Cu",
+        why: "Same row the GEC table gives for 350 kcmil — the two tables march together until the very top, where the 12.5% rule takes over for bonding jumpers." }
+    ] },
+  { id: "size-ssbj", name: "Supply-Side Bonding Jumpers (250.102(C))", cat: "GEC & Jumper Sizing", formula: "SSBJ → Table 250.102(C)(1)",
+    hook: "Ahead of the service disconnect, bonding jumpers do the EGC's job — and they are sized by the service-conductor table, not the breaker table.",
+    teach: "Supply-side bonding jumpers bond service raceways and enclosures on the line side of the service disconnect, where no overcurrent device protects the conductors yet. 250.102(C) sizes them from Table 250.102(C)(1) using the largest ungrounded conductor in the raceway or enclosure — not from Table 250.122, because on the supply side there may be no breaker rating to key on.",
+    variants: [
+      { kind: "text", tag: "250.102(C)", q: "What is the minimum size of this supply-side bonding jumper?",
+        scenario: '<span class="given">Given</span>A bonding jumper bonds a service raceway nipple between the meter and the service panel. The largest ungrounded conductor in the nipple is <b>2/0 AWG copper</b>.',
+        options: ["4 AWG copper", "6 AWG copper — Table 250.122 for a 200 A circuit", "8 AWG copper", "2 AWG copper"], answer: 0,
+        steps: "250.102(C) → Table 250.102(C)(1) → 2/0 → 4 AWG Cu",
+        why: "Table 250.122 is the load-side EGC table, keyed to breaker ratings. Supply-side jumpers have no breaker to key on, so they use the conductor-based table." },
+      { kind: "text", tag: "250.102(C)", q: "Which table sizes a supply-side bonding jumper?",
+        scenario: '<span class="given">Given</span>You are sizing bonding for equipment ahead of the service disconnecting means.',
+        options: ["Table 250.102(C)(1)", "Table 250.122", "Table 310.16 ampacity", "Supply-side jumpers are always 6 AWG"], answer: 0,
+        steps: "250.102(C)(1) — the supply-side bonding jumper table (also used for the MBJ)",
+        why: "Three tables live in Article 250 sizing questions: 250.66 for GECs and electrode jumpers, 250.102(C)(1) for supply-side and main bonding jumpers, 250.122 for load-side EGCs. Naming the territory picks the table." }
+    ] },
+  { id: "size-interconnect", name: "Jumpers Between Electrodes", cat: "GEC & Jumper Sizing", formula: "Electrode-to-electrode → Table 250.66",
+    hook: "The wires that stitch the electrode system together are sized like the GEC — because together, they are the GEC system.",
+    teach: "250.53(C): bonding jumpers used to connect grounding electrodes together to form the grounding electrode system are sized in accordance with Table 250.66. If the service takes a 4 AWG GEC, the jumper tying the ground ring to the water pipe is a 4 AWG jumper.",
+    variants: [
+      { kind: "text", tag: "250.53(C)", q: "What size is this electrode bonding jumper?",
+        scenario: '<span class="given">Given</span>A bonding jumper connects the ground ring to the water-pipe electrode in a system served by <b>3/0 AWG copper</b> service conductors.',
+        options: ["4 AWG copper — sized per Table 250.66", "6 AWG copper — all electrode jumpers are 6 AWG", "10 AWG copper", "It must match the larger electrode's conductor"], answer: 0,
+        steps: "250.53(C) → electrode interconnect jumpers sized per Table 250.66 → 3/0 → 4 AWG",
+        why: "The 6 AWG answer is the rod cap leaking into the wrong question — the cap shrinks the service-to-rod segment, not the electrode-to-electrode stitch." },
+      { kind: "text", tag: "250.53(C)", q: "Which sizing rule applies to a jumper bonding two electrodes of the same system together?",
+        scenario: '<span class="given">Given</span>A water pipe electrode and a concrete-encased electrode are being bonded into one electrode system.',
+        options: ["Table 250.66 — the same table as the GEC", "Table 250.122 — the EGC table", "The size of the smaller electrode's connection", "A flat minimum of 8 AWG for all such jumpers"], answer: 0,
+        steps: "250.53(C) → size per Table 250.66",
+        why: "Table 250.122 never sizes anything on the electrode side of the service. Electrode-system conductors live in the 250.66 world." }
+    ] },
+
+  /* ================= EQUIPMENT GROUNDING CONDUCTORS ================= */
+  { id: "egc-purpose", name: "The EGC's One Job", cat: "Equipment Grounding Conductors", formula: "Fault highway back to the source",
+    hook: "The EGC is a trip wire for current: it gives a fault so much current, so fast, that the breaker has no choice.",
+    teach: "The equipment grounding conductor connects normally non-current-carrying metal parts of equipment to the system grounded conductor and the grounding electrode conductor at the service (Article 100). In a fault, it is the low-impedance road home: current races back to the source, spikes far above the breaker rating, and the device opens in a cycle or two. It carries no current in normal operation — if it does, that is objectionable current (250.6) confessing a wiring error.",
+    variants: [
+      { kind: "text", tag: "Art. 100 · 250.4(A)(5)", q: "What is the equipment grounding conductor's job?",
+        scenario: '<span class="given">Given</span>A green conductor runs with a branch circuit to a metal motor frame.',
+        options: ["Provide an effective ground-fault current path so the overcurrent device trips on a fault", "Connect the motor frame to the earth through a ground rod", "Carry the circuit's unbalanced return current", "Bond the neutral to the frame at the motor"], answer: 0,
+        steps: "Art. 100 / 250.4(A)(5) → the EGC is the metallic fault path to the source",
+        why: "Its destination is the source (via the service bond), not the dirt. Return current belongs to the neutral; the frame bond belongs at the service only." },
+      { kind: "text", tag: "Fault path", q: "Which conductor made this breaker trip?",
+        scenario: '<span class="given">Given</span>A hot conductor faults to a motor frame and the breaker opens instantly, before anyone is shocked.',
+        options: ["The EGC — it carried the fault current back to the source through the service bond", "The GEC — it carried the fault into the earth", "The ground rod under the motor", "The neutral — it absorbed the fault into the soil"], answer: 0,
+        steps: "Fault path: frame → EGC → main bonding jumper → neutral → source",
+        why: "The earth leg of that circuit would pass a few amps at best (Category 1's 4.8 A lesson). The metal leg passes hundreds — that is a trip." }
+    ] },
+  { id: "egc-types", name: "What Counts as an EGC (250.118)", cat: "Equipment Grounding Conductors", formula: "Wire — or the raceway itself: RMC · IMC · EMT",
+    hook: "Sometimes the pipe IS the ground. Steel raceways are conductors wearing work clothes.",
+    teach: "250.118 lists the recognized equipment grounding conductors: wire-type conductors (bare, covered, or insulated) and several metal raceways — rigid metal conduit, intermediate metal conduit, and EMT installed per their articles are themselves EGCs, so a separate wire is not always required. Flexible raceways carry extra conditions, but the big three steel raceways are the exam's focus. One thing never on the list: the circuit's neutral.",
+    variants: [
+      { kind: "text", tag: "250.118", q: "Is an equipment ground provided for this circuit?",
+        scenario: '<span class="given">Given</span>A branch circuit is run in <b>EMT</b> with listed fittings, and no wire-type EGC is pulled in.',
+        options: ["Yes — EMT is recognized as an equipment grounding conductor by 250.118", "No — a green wire is required in every raceway", "Only if the EMT is also bonded to a ground rod", "Only for receptacle circuits, not lighting"], answer: 0,
+        steps: "250.118 → EMT qualifies as an EGC when properly installed",
+        why: "Steel raceway continuity is the ground path. That is why fitting tightness is a safety issue, not just neatness — a loose coupling is a gap in the fault highway." },
+      { kind: "text", tag: "250.118", q: "Which of these is NOT an equipment grounding conductor?",
+        scenario: '<span class="given">Given</span>Four candidates are proposed as the grounding means for a circuit.',
+        options: ["The circuit's grounded (neutral) conductor", "Rigid metal conduit", "A bare copper conductor in the raceway", "EMT with listed fittings"], answer: 0,
+        steps: "250.118 → the neutral is a grounded conductor, never an EGC (the service bond excepted)",
+        why: "Using the neutral to ground equipment on the load side is exactly what 250.142(B) prohibits — lose the neutral, and every 'grounded' frame can go live at line voltage." }
+    ] },
+  { id: "egc-122-small", name: "Table 250.122 — Small Circuits", cat: "Equipment Grounding Conductors", formula: "20 A → 12 AWG · 30 A → 10 AWG",
+    hook: "On small circuits the ground matches the circuit conductors — the table and the wire size march together.",
+    teach: "Table 250.122 sizes the copper EGC from the rating of the overcurrent device ahead of the circuit: 15 A → 14 AWG, 20 A → 12 AWG, 30 A → 10 AWG, 40 A → 10 AWG, 60 A → 10 AWG. At branch-circuit sizes the EGC usually equals the circuit conductor size — a fact worth using as a sanity check, not as a substitute for the table.",
+    variants: [
+      { kind: "text", tag: "Table 250.122", q: "What is the minimum copper EGC for this circuit?",
+        scenario: '<span class="given">Given</span>A branch circuit protected by a <b>20 A</b> circuit breaker.',
+        options: ["12 AWG copper", "14 AWG copper", "10 AWG copper", "No EGC is required under 30 A"], answer: 0,
+        steps: "Table 250.122 → 20 A → 12 AWG Cu EGC",
+        why: "14 AWG is the 15 A row. The exam pairs 15 A and 20 A circuits precisely because their grounds differ by one size." },
+      { kind: "text", tag: "Table 250.122", q: "What is the minimum copper EGC for this circuit?",
+        scenario: '<span class="given">Given</span>A circuit protected by a <b>30 A</b> breaker.',
+        options: ["10 AWG copper", "12 AWG copper", "8 AWG copper", "14 AWG copper"], answer: 0,
+        steps: "Table 250.122 → 30 A → 10 AWG Cu EGC",
+        why: "And note the plateau ahead: 30 A, 40 A, and 60 A all take a 10 AWG ground. The table does not grow at every step — read the row, do not extrapolate." }
+    ] },
+  { id: "egc-122-mid", name: "Table 250.122 — Feeders", cat: "Equipment Grounding Conductors", formula: "100 A → 8 AWG · 200 A → 6 AWG",
+    hook: "Feeder grounds lag the phase conductors by design — the table trusts the breaker, not the load.",
+    teach: "Table 250.122 at feeder sizes, copper: 100 A → 8 AWG EGC; 200 A → 6 AWG. A 200 A feeder with 3/0 phase conductors carries only a 6 AWG ground — legal and intentional, because the EGC's job is a milliseconds-long fault sprint, not continuous duty.",
+    variants: [
+      { kind: "text", tag: "Table 250.122", q: "What is the minimum copper EGC for this feeder?",
+        scenario: '<span class="given">Given</span>A feeder protected at <b>100 A</b>.',
+        options: ["8 AWG copper", "6 AWG copper", "10 AWG copper", "3 AWG copper"], answer: 0,
+        steps: "Table 250.122 → 100 A → 8 AWG Cu",
+        why: "Students oversize this one from habit, matching it to the big phase conductors. The table keys on the overcurrent device — 100 A means 8 AWG." },
+      { kind: "text", tag: "Table 250.122", q: "What is the minimum copper EGC for this feeder?",
+        scenario: '<span class="given">Given</span>A <b>200 A</b> feeder to a distribution panel.',
+        options: ["6 AWG copper", "4 AWG copper", "8 AWG copper", "3 AWG copper"], answer: 0,
+        steps: "Table 250.122 → 200 A → 6 AWG Cu",
+        why: "The same 6 AWG that caps a GEC-to-rod connection — a coincidence of numbers from a different table. Keep the table names attached to the numbers or the exam will swap them on you." }
+    ] },
+  { id: "egc-122-large", name: "Table 250.122 — Large Feeders", cat: "Equipment Grounding Conductors", formula: "400 A → 3 AWG · 600 A → 1 AWG",
+    hook: "At the top of the table the ground sizes stop sounding like branch-circuit wire — 3 AWG and 1 AWG live here.",
+    teach: "Table 250.122, upper copper rows: 300 A → 4 AWG; 400 A → 3 AWG; 500 A → 2 AWG; 600 A → 1 AWG; 800 A → 1/0; 1000 A → 2/0; 1200 A → 3/0; 1600 A → 4/0; 2000 A → 250 kcmil. The odd sizes (3 AWG, 1 AWG) exist almost only in this table — which makes them exam favorites.",
+    variants: [
+      { kind: "text", tag: "Table 250.122", q: "What is the minimum copper EGC for this circuit?",
+        scenario: '<span class="given">Given</span>A feeder protected by a <b>400 A</b> overcurrent device.',
+        options: ["3 AWG copper", "2 AWG copper", "1/0 AWG copper", "6 AWG copper"], answer: 0,
+        steps: "Table 250.122 → 400 A → 3 AWG Cu",
+        why: "3 AWG is a size you will meet almost nowhere else in the Code — exactly why the exam asks it. 500 A takes 2 AWG; do not promote the 400 A answer." },
+      { kind: "text", tag: "Table 250.122", q: "What is the minimum copper EGC for this circuit?",
+        scenario: '<span class="given">Given</span>A large feeder protected at <b>600 A</b>.',
+        options: ["1 AWG copper", "1/0 AWG copper", "2 AWG copper", "3/0 AWG copper"], answer: 0,
+        steps: "Table 250.122 → 600 A → 1 AWG Cu",
+        why: "1/0 is the 800 A row, one step up. The top of this table is a staircase of odd sizes — climb it one row at a time." }
+    ] },
+  { id: "egc-multiple", name: "One Raceway, Many Circuits (250.122(C))", cat: "Equipment Grounding Conductors", formula: "Shared EGC → size for the LARGEST breaker",
+    hook: "One ground wire serving a whole conduit sizes itself for the biggest bully in the pipe.",
+    teach: "250.122(C): where multiple circuits run in a single raceway or cable, a single EGC is permitted to serve them all — sized from Table 250.122 based on the largest overcurrent device protecting any conductors in that raceway. The biggest fault the shared ground could ever be asked to clear sets its size.",
+    variants: [
+      { kind: "text", tag: "250.122(C)", q: "How is the single EGC in this raceway sized?",
+        scenario: '<span class="given">Given</span>One conduit carries a <b>20 A</b> circuit and a <b>60 A</b> circuit, sharing one wire-type equipment grounding conductor.',
+        options: ["For the 60 A circuit — 10 AWG copper", "For the 20 A circuit — the smaller circuit governs", "Both circuits added together — 80 A worth of ground", "Each circuit must have its own EGC; sharing is prohibited"], answer: 0,
+        steps: "250.122(C) → largest OCPD in the raceway = 60 A → 10 AWG Cu",
+        why: "Sharing is allowed; undersizing is not. The ground must clear the worst fault available in that pipe, and that is the 60 A circuit's fault." },
+      { kind: "text", tag: "250.122(C)", q: "What size is the shared EGC?",
+        scenario: '<span class="given">Given</span>Three circuits — <b>15 A, 20 A, and 30 A</b> — share one equipment grounding conductor in a single raceway.',
+        options: ["10 AWG copper — sized by the 30 A breaker", "12 AWG copper — sized by the middle circuit", "14 AWG copper — sized by the smallest", "4 AWG copper — all three breakers added"], answer: 0,
+        steps: "250.122(C) → largest = 30 A → Table 250.122 → 10 AWG Cu",
+        why: "No adding, no averaging. Largest device in the raceway, one lookup, done." }
+    ] },
+  { id: "egc-upsize", name: "Upsized Wires, Upsized Ground (250.122(B))", cat: "Equipment Grounding Conductors", formula: "EGC grows by the same CM ratio",
+    hook: "Grow the circuit wires for voltage drop and the ground grows in the same proportion — same percentage, no exceptions.",
+    teach: "250.122(B): where ungrounded conductors are increased in size for any reason (voltage drop is the classic), wire-type EGCs must be increased in size proportionately, by circular-mil area. The method: ratio = new CM ÷ old CM of the circuit conductors; new EGC CM = old EGC CM × ratio; then pick the standard size that meets it.",
+    variants: [
+      { kind: "text", tag: "250.122(B)", q: "What size EGC is required after this upsize?",
+        scenario: '<span class="given">Given</span>A <b>20 A</b> circuit has its conductors upsized from <b>12 AWG (6,530 CM)</b> to <b>8 AWG (16,510 CM)</b> for voltage drop. The EGC starts at 12 AWG (6,530 CM).',
+        options: ["8 AWG copper", "12 AWG copper — grounds never change size", "10 AWG copper — split the difference", "6 AWG copper"], answer: 0,
+        steps: "Ratio = 16,510 ÷ 6,530 ≈ 2.53 → 6,530 × 2.53 ≈ 16,510 CM → 8 AWG EGC",
+        why: "The ground grew by the same 2.53× as the circuit conductors, landing exactly on 8 AWG. Skipping the upsize is the violation this rule exists to catch — a long run's fault loop includes that skinny ground." },
+      { kind: "text", tag: "250.122(B)", q: "What size EGC is required after this upsize?",
+        scenario: '<span class="given">Given</span>Conductors for a <b>30 A</b> circuit are upsized from <b>10 AWG (10,380 CM)</b> to <b>6 AWG (26,240 CM)</b>. The EGC starts at 10 AWG (10,380 CM).',
+        options: ["6 AWG copper", "10 AWG copper — Table 250.122 never changes", "8 AWG copper", "4 AWG copper"], answer: 0,
+        steps: "Ratio = 26,240 ÷ 10,380 ≈ 2.53 → 10,380 × 2.53 ≈ 26,240 CM → 6 AWG EGC",
+        why: "Same 2.53 ratio (both jumps are four AWG sizes), same destination logic. Voltage-drop upsizing without ground upsizing leaves the fault path as the weakest link in a very long loop." }
+    ] },
+  { id: "egc-parallel", name: "An EGC in EVERY Parallel Raceway (250.122(F))", cat: "Equipment Grounding Conductors", formula: "Full-size ground in each raceway — never split",
+    hook: "Each pipe gets the whole ground, not a share of it — because a fault does not promise to split itself politely.",
+    teach: "Where circuit conductors are run in parallel in multiple raceways, each raceway gets its own wire-type EGC, sized at the full Table 250.122 value for the circuit's overcurrent device (250.122(F)). You cannot divide the required size among the raceways: a fault inside one raceway must find a full-capacity path inside that same raceway.",
+    variants: [
+      { kind: "text", tag: "250.122(F)", q: "What EGC goes in EACH raceway?",
+        scenario: '<span class="given">Given</span>A <b>400 A</b> feeder is run as two parallel raceways, each carrying half the circuit conductors.',
+        options: ["3 AWG copper in each raceway — the full Table 250.122 size", "6 AWG copper in each — half the requirement per pipe", "One 3 AWG EGC total, in either raceway", "No wire EGC — parallel feeders use the raceways alone"], answer: 0,
+        steps: "250.122(F) → full 400 A size (3 AWG) in every raceway",
+        why: "A fault in raceway #2 cannot use a ground that lives in raceway #1. Full size, every pipe, no sharing." },
+      { kind: "text", tag: "250.122(F)", q: "What is wrong with this installation?",
+        scenario: '<span class="given">Given</span>For a <b>400 A</b> parallel feeder, an installer splits the ground: <b>6 AWG copper</b> in each of the two raceways, reasoning that together they equal a 3 AWG.',
+        options: ["Each raceway needs the full 3 AWG EGC — the size may not be divided (250.122(F))", "Nothing — circular mils are circular mils", "The split is fine if both raceways are the same length", "Only the raceway with the neutral needs a ground"], answer: 0,
+        steps: "250.122(F) → EGC sized per Table 250.122 in EACH raceway",
+        why: "Fault current does not split by your arithmetic — it takes the path in its own raceway. Two half-grounds are two violations, not one whole ground." }
+    ] },
+  { id: "egc-boxes", name: "Grounds in Boxes & Devices (250.148)", cat: "Equipment Grounding Conductors", formula: "Splice the grounds — device removal can't break the path",
+    hook: "The receptacle is a guest in the box, not a link in the chain. Grounds shake hands with each other, then offer the device a pigtail.",
+    teach: "250.148: equipment grounding conductors in a box must be connected to each other (and to the metal box) so that removing a receptacle or switch does not interrupt grounding continuity to anything downstream. In practice: splice all EGCs together with a bonding jumper to the device and a bond to the box. 250.146 covers how devices and surface-mounted boxes make their own grounding contact.",
+    variants: [
+      { kind: "text", tag: "250.148", q: "What is required in this box?",
+        scenario: '<span class="given">Given</span>A receptacle is wired with the EGC landed only on the device, so pulling the receptacle out for replacement would break the ground path to the boxes downstream.',
+        options: ["Splice the EGCs together in the box with a jumper to the device, so continuity survives device removal (250.148)", "Nothing — downstream boxes can float while a device is out", "Land both EGCs on the two device ground screws", "Bond the downstream ground to the neutral in that box"], answer: 0,
+        steps: "250.148 → grounding continuity shall not depend on a device",
+        why: "Devices get replaced by homeowners at midnight. The grounding path must be a property of the box wiring, not of one replaceable part." },
+      { kind: "text", tag: "250.148", q: "How must a metal box be tied into the equipment grounding path?",
+        scenario: '<span class="given">Given</span>A steel device box is installed on a circuit with a wire-type EGC.',
+        options: ["Bonded to the EGC — by a grounding screw, listed clip, or other listed means (250.148)", "Painted green inside", "Connected to the neutral bar", "Only boxes over 277 V to ground need bonding"], answer: 0,
+        steps: "250.148 → metal boxes are connected to the equipment grounding conductor(s)",
+        why: "An unbonded metal box is the thing a fault energizes first. A qualifying raceway can do this job where it serves as the EGC (250.118) — a floating box never can." }
+    ] },
+
+  /* ================= BONDING RULES & METHODS ================= */
+  { id: "bnd-service", name: "Bonding at the Service (250.92)", cat: "Bonding Rules & Methods", formula: "Threaded tight · listed fittings · jumpers at KOs",
+    hook: "Ahead of the main breaker there is no fuse to save you — the metal itself has to be one solid fault path.",
+    teach: "250.92(B) lists how service raceways and enclosures are bonded: threaded couplings or threaded entries made up wrench-tight, threadless couplings and connectors listed for the purpose, bonding jumpers, or connection to the grounded conductor/GEC. Where service raceways enter through concentric or eccentric knockouts, bonding jumpers are required around them — an ordinary locknut's bite on the thin ring of remaining knockout metal is not a reliable fault path at service energy levels.",
+    variants: [
+      { kind: "text", tag: "250.92", q: "What is required at this service raceway entry?",
+        scenario: '<span class="given">Given</span>A service raceway enters the meter enclosure through a <b>concentric knockout</b>, secured with a standard locknut.',
+        options: ["A bonding jumper around the knockout (or listed bonding means) — a standard locknut alone does not bond service raceways at KOs (250.92)", "Nothing — locknuts bond all raceways everywhere", "Green bonding paint on the locknut threads", "A second locknut on the same hub"], answer: 0,
+        steps: "250.92 → service bonding at concentric/eccentric KOs requires a bonding jumper",
+        why: "A partly-removed knockout leaves a thin ring of metal to carry the fault — it can burn open like a fuse link. The jumper gives the fault a real conductor." },
+      { kind: "text", tag: "250.92(B)", q: "Which of these is a Code-recognized method of bonding a service raceway?",
+        scenario: '<span class="given">Given</span>Four methods are proposed for bonding service equipment under 250.92(B).',
+        options: ["Threaded couplings made up wrench-tight", "One standard locknut on a concentric knockout, nothing more", "Caulking the joint with conductive sealant", "Relying on the mounting screws of the enclosure"], answer: 0,
+        steps: "250.92(B) → threaded entries made up tight are a recognized bonding method",
+        why: "The recognized list is short and mechanical: threads, listed fittings, jumpers, or the grounded-conductor connection. Improvisation is not on it." }
+    ] },
+  { id: "bnd-250v", name: "Knockout Bonding Over 250 V to Ground (250.97)", cat: "Bonding Rules & Methods", formula: "Over 250 V to ground → bond the KOs",
+    hook: "The knockout rule follows the voltage, not the building: pass 250 to ground and every eccentric KO gets a jumper.",
+    teach: "250.97 extends the knockout-bonding rule to any circuit over 250 volts to ground — classically 480Y/277 V systems at 277 V to ground. Where such circuits enter enclosures through concentric or eccentric knockouts, bonding jumpers or fittings listed for bonding are required around them, because a fault there has the energy to burn through a partial knockout ring.",
+    variants: [
+      { kind: "text", tag: "250.97", q: "What is required at this knockout?",
+        scenario: '<span class="given">Given</span>A <b>480Y/277 V</b> feeder raceway — <b>277 V to ground</b> — enters a panel through an eccentric knockout. It is not a service.',
+        options: ["A bonding jumper or listed bonding fitting around the knockout (250.97)", "Nothing — knockout bonding is a service-only rule", "Two standard locknuts, one inside and one out", "The raceway must be changed to a threaded entry"], answer: 0,
+        steps: "277 V to ground is over 250 V → 250.97 applies beyond services",
+        why: "Voltage to ground is the trigger, not the equipment's job title. 277 trips the rule; 120 does not." },
+      { kind: "text", tag: "250.97", q: "Does 250.97 require a bonding jumper here?",
+        scenario: '<span class="given">Given</span>A <b>208Y/120 V</b> raceway — <b>120 V to ground</b> — enters a subpanel (not service equipment) through an eccentric knockout, with standard fittings.',
+        options: ["No — 120 V to ground is under the 250 V threshold of 250.97", "Yes — all eccentric knockouts everywhere need jumpers", "Only if the raceway is longer than 50 ft", "Only if the panel is outdoors"], answer: 0,
+        steps: "250.97 threshold = circuits over 250 V to ground → not triggered at 120 V",
+        why: "General bonding rules still apply to the installation — but the special jumper-around-the-knockout demand of 250.97 keys strictly on voltage to ground." }
+    ] },
+  { id: "bnd-intersystem", name: "Intersystem Bonding Termination (250.94)", cat: "Bonding Rules & Methods", formula: "One landing spot · room for 3 or more systems",
+    hook: "Phone, cable, and satellite all need to ground to the same system — the IBT is the meeting point with at least three chairs.",
+    teach: "250.94 requires an intersystem bonding termination at the service equipment (or at the grounding electrode conductor termination point): an accessible termination, typically a busbar with terminals, providing capacity for at least three intersystem bonding conductors. It gives communications installers a legal, obvious place to bond their systems to the building's grounding electrode system instead of clamping onto random pipes.",
+    variants: [
+      { kind: "text", tag: "250.94", q: "An intersystem bonding termination must provide connections for at least how many intersystem bonding conductors?",
+        scenario: '<span class="given">Given</span>An IBT is being installed at a new residential service for phone, cable, and antenna bonding.',
+        options: ["Three", "One", "Two", "Six"], answer: 0,
+        steps: "250.94 → capacity for a minimum of three intersystem bonding conductors",
+        why: "Three is the floor — the termination is sized for the parade of low-voltage systems every modern building collects." },
+      { kind: "text", tag: "250.94", q: "What are these installers supposed to use?",
+        scenario: '<span class="given">Given</span>The cable TV and telephone installers arrive and need a place to land their bonding conductors at the new service.',
+        options: ["The intersystem bonding termination at the service (250.94)", "The nearest cold-water faucet", "A separate ground rod of their own, left unbonded", "The neutral terminal inside the meter base"], answer: 0,
+        steps: "250.94 → the IBT is the provided landing point for communications bonding",
+        why: "Separate unbonded rods are the classic lightning side-flash setup: every system bonds to the one electrode system, and the IBT is where that happens." }
+    ] },
+  { id: "bnd-water", name: "Bonding the Water Piping (250.104(A))", cat: "Bonding Rules & Methods", formula: "Metal water piping bonded · Table 250.102(C)(1)",
+    hook: "Interior metal water piping is a building-wide metal web — bond it like it matters, with a service-sized jumper.",
+    teach: "250.104(A): the metal water piping system in a building must be bonded to the service equipment enclosure, the grounded conductor at the service, the GEC, or the electrode system. For a service-supplied building, the bonding jumper is sized per Table 250.102(C)(1) from the largest ungrounded service conductor — the same table as the main bonding jumper. Bonding the piping is separate from using an underground pipe as an electrode: even where the electrode is something else, interior piping still gets bonded.",
+    variants: [
+      { kind: "text", tag: "250.104(A)", q: "What size bonding jumper bonds this water piping system?",
+        scenario: '<span class="given">Given</span>Interior metal water piping in a building served by <b>3/0 AWG copper</b> service conductors.',
+        options: ["4 AWG copper — Table 250.102(C)(1)", "12 AWG copper — piping bonds are always small", "3/0 AWG copper — it must match the service", "No jumper — piping only matters if it is the electrode"], answer: 0,
+        steps: "250.104(A) → size per Table 250.102(C)(1) → 3/0 → 4 AWG Cu",
+        why: "Even with rods or a Ufer as the electrode, the interior piping still needs its bond — and it is sized like a bonding jumper, not like a branch-circuit ground." },
+      { kind: "text", tag: "250.104(A)", q: "Which piping must be bonded under 250.104(A)?",
+        scenario: '<span class="given">Given</span>A building has driven rods for its electrode system and an interior network of copper water piping.',
+        options: ["The interior metal water piping system", "Only the first 5 ft of piping at the entry", "Only the hot-water lines", "None — the piping bond applies only to pipe electrodes"], answer: 0,
+        steps: "250.104(A) → interior metal water piping is bonded regardless of the electrode type",
+        why: "The 5-ft rule from Category 2 is about where a GEC lands on piping used as an electrode. Bonding interior piping is its own requirement, with its own reason: a fault anywhere should not find the plumbing sitting at a different potential than the panel." }
+    ] },
+  { id: "bnd-other-piping", name: "Bonding Other Metal Piping (250.104(B))", cat: "Bonding Rules & Methods", formula: "Piping that may energize gets bonded",
+    hook: "Gas piping gets bonded for the same reason water piping does — but it can never BE the electrode. Bonded and electrode are different jobs.",
+    teach: "250.104(B): metal piping systems other than water piping that are likely to become energized — gas piping feeding a furnace is the standard example — must be bonded. The equipment grounding conductor of the circuit likely to energize the piping is permitted to serve as the bonding means, which is how most appliance gas lines get bonded in practice. Do not confuse this with 250.52(B): metal underground gas piping may be bonded, but it may never serve as a grounding electrode.",
+    variants: [
+      { kind: "text", tag: "250.104(B)", q: "How is the metal gas piping in this building bonded?",
+        scenario: '<span class="given">Given</span>Metal gas piping feeds a furnace in a building with a modern electrical service.',
+        options: ["Bonded to the grounding system — the EGC of the circuit likely to energize it (the furnace circuit) may serve as the bonding means (250.104(B))", "It must never be bonded to anything", "Bonded only to its own separate, unbonded ground rod", "Bonded with a jumper sized like a service GEC in all cases"], answer: 0,
+        steps: "250.104(B) → piping likely to become energized is bonded; the likely-energizing circuit's EGC may serve",
+        why: "Bonding the piping equalizes potential so a fault trips a device instead of electrifying the gas line. Using the piping AS an electrode is the prohibited move (250.52(B)) — the exam keeps the two ideas separated on purpose." },
+      { kind: "text", tag: "250.104(B)", q: "Which piping systems does 250.104 address beyond water piping?",
+        scenario: '<span class="given">Given</span>An inspector asks about the metal gas and process piping in a commercial building.',
+        options: ["Metal piping systems that are likely to become energized must be bonded (250.104(B))", "No piping besides water piping is ever addressed", "Only plastic piping needs bonding", "Only piping within 5 ft of the service"], answer: 0,
+        steps: "250.104(B) → bond piping that is likely to become energized",
+        why: "The logic is identical to water piping: any building-wide metal web that a fault could energize gets tied to the grounding system, so a fault trips a breaker instead of electrifying plumbing." }
+    ] },
+  { id: "bnd-methods", name: "Legal Connections (250.8)", cat: "Bonding Rules & Methods", formula: "Welds · listed clamps · machine screws with 2+ threads",
+    hook: "Ground connections are forever-connections: made by welds, listed hardware, or screws with real thread engagement — never by solder or sheet-metal screws.",
+    teach: "250.8(A) permits grounding and bonding connections by exothermic welding, listed pressure connectors, terminal bars, pressure connectors listed as grounding and bonding equipment, machine screw-type fasteners that engage not less than two threads or are secured with a nut, and thread-forming machine screws engaging not less than two threads. 250.8(B) prohibits the shortcuts: connections that depend solely on solder, and sheet metal screws, are not permitted.",
+    variants: [
+      { kind: "text", tag: "250.8", q: "Which fastener is NOT permitted for connecting grounding and bonding conductors?",
+        scenario: '<span class="given">Given</span>Four connection methods are on the truck for a grounding job.',
+        options: ["Sheet metal screws", "Machine screws engaging at least two threads", "Listed pressure connectors", "Exothermic welds"], answer: 0,
+        steps: "250.8(B) → sheet metal screws are prohibited for grounding connections",
+        why: "A sheet metal screw's thread engagement is shallow and loosens with vibration and corrosion — exactly the failure a permanent fault path cannot afford." },
+      { kind: "text", tag: "250.8", q: "May a grounding connection depend solely on solder?",
+        scenario: '<span class="given">Given</span>An installer proposes soldering a bonding conductor to a busbar as the only means of connection.',
+        options: ["No — 250.8 prohibits connections depending solely on solder", "Yes — solder is a complete metallic bond", "Only for conductors 10 AWG and smaller", "Only indoors"], answer: 0,
+        steps: "250.8(B) → solder-only connections are not permitted",
+        why: "Solder melts at fault temperatures and creeps under clamping pressure. Grounding connections must be mechanical or welded — they have to survive the fault they are built for." }
+    ] },
+  { id: "bnd-ig", name: "Isolated Ground Receptacles (250.146(D))", cat: "Bonding Rules & Methods", formula: "Insulated EGC straight home to the source",
+    hook: "The isolated ground skips the local chatter and runs straight home — but it still has to GO home.",
+    teach: "250.146(D) permits isolated ground receptacles where a quieter ground is wanted for sensitive electronics: the receptacle's grounding terminal connects to an insulated EGC that may pass through intermediate panelboards without landing on their grounding bus, running back to an applicable grounding point at the service (or a separately derived system source). 'Isolated' means isolated from raceways and intermediate panels — never isolated from the fault path. The receptacles are identified by an orange triangle marking on the face.",
+    variants: [
+      { kind: "text", tag: "250.146(D)", q: "Is this installation permitted?",
+        scenario: '<span class="given">Given</span>An isolated-ground receptacle has an insulated EGC that runs through two panelboards without connecting to their ground buses, and terminates at the service grounding point.',
+        options: ["Yes — 250.146(D) permits the isolated EGC to pass through panels and terminate at the source", "No — every EGC must land in the first panel it reaches", "Only if the conductor is orange for its whole length", "No — isolated grounds are prohibited by the NEC"], answer: 0,
+        steps: "250.146(D) → pass-through without connection is the defining feature of an IG circuit",
+        why: "What makes it legal is the destination, not the route: the wire still ends at an effective grounding point, so a fault on that receptacle still clears." },
+      { kind: "text", tag: "250.146(D)", q: "How is an isolated-ground receptacle identified?",
+        scenario: '<span class="given">Given</span>You are checking a device for the required isolated-ground identification.',
+        options: ["An orange triangle marking on the receptacle face", "The receptacle must be orange from top to bottom", "A green dot on the face", "The word GROUND stamped on the strap"], answer: 0,
+        steps: "Isolated-ground receptacles are identified by an orange triangle on the face (installation per 250.146(D))",
+        why: "The triangle is the specified identifier — plenty of IG receptacles are also molded orange, but the marking, not the color scheme, is what identifies the device." }
+    ] },
+
+  /* ================= SPECIAL CASES ================= */
+  { id: "sp-sds", name: "Grounding a Separately Derived System (250.30)", cat: "Special Cases", formula: "New source = new ground: SBJ + GEC per 250.66",
+    hook: "A transformer starts a brand-new electrical world — and every new world needs its own neutral bond and its own road to earth.",
+    teach: "250.30: a separately derived system (most commonly a transformer with no direct electrical connection between its primary and secondary circuits) must be grounded like a service: a system bonding jumper connects the derived neutral to the equipment grounding system at the source or the first disconnect — one location — and a grounding electrode conductor, sized from Table 250.66 using the derived ungrounded conductors, connects it to the building's grounding electrode system.",
+    variants: [
+      { kind: "text", tag: "250.30", q: "What size copper GEC does this transformer system require?",
+        scenario: '<span class="given">Given</span>A transformer creates a separately derived system whose largest derived ungrounded conductor is <b>3/0 AWG copper</b>.',
+        options: ["4 AWG copper — Table 250.66 on the derived conductors", "6 AWG copper — Table 250.122 on the secondary breaker", "2 AWG copper", "No GEC — the primary's grounding carries over"], answer: 0,
+        steps: "250.30 → the SDS GEC is sized per Table 250.66 → 3/0 derived → 4 AWG Cu",
+        why: "The derived system is a new source with its own grounding rules. Size its GEC off the conductors it actually produces — 3/0 lands on the 4 AWG row." },
+      { kind: "text", tag: "250.30", q: "Where is the system bonding jumper for a separately derived system installed?",
+        scenario: '<span class="given">Given</span>A new transformer secondary needs its neutral bonded to the equipment grounding system.',
+        options: ["At the source or at the first disconnecting means — one location, not both", "At every panel the SDS feeds", "Only at the last panel on the run", "Nowhere — SDS neutrals are never bonded"], answer: 0,
+        steps: "250.30 → system bonding jumper at the source or first disconnect, single point",
+        why: "Two bonds recreate the parallel-neutral problem behind Category 1's objectionable current. One source, one bond — the same discipline as a service." }
+    ] },
+  { id: "sp-neutral-once", name: "The Neutral Bonds ONCE (250.24(A)(5))", cat: "Special Cases", formula: "Service (or SDS source) — never downstream",
+    hook: "Neutral and ground shake hands at the service and never touch again. Every extra handshake puts load current on the grounds.",
+    teach: "250.24(A)(5): the grounded conductor shall not be connected to normally non-current-carrying metal parts, equipment grounding conductors, or the earth on the load side of the service disconnect — and 250.142(B) bars using the neutral to ground equipment downstream. Past the service, the neutral floats on insulators and the EGC system stays clean: that is what keeps return current on the neutral and metal housings at earth potential.",
+    variants: [
+      { kind: "text", tag: "250.24(A)(5)", q: "What is wrong with this subpanel?",
+        scenario: '<span class="given">Given</span>A subpanel is installed with its neutral bar bonded to the enclosure and the feeder EGC landed on the neutral bar.',
+        options: ["Violation — neutral and ground connect only at the service (or SDS source); downstream the neutral must be isolated (250.24(A)(5) / 250.142(B))", "Nothing — every panel should be bonded the same way", "The only problem is that the bonding screw is the wrong color", "It is fine as long as a ground rod is driven at the subpanel"], answer: 0,
+        steps: "Load-side neutral-to-ground connections are prohibited → remove the bond, float the neutral",
+        why: "That bond splits neutral return current onto the EGC, the raceways, and the piping — objectionable current with a shock hazard riding on it. A ground rod at the subpanel does not fix it; it adds another parallel path." },
+      { kind: "text", tag: "250.142(B)", q: "Where may the neutral be connected to ground?",
+        scenario: '<span class="given">Given</span>Four locations are proposed for a neutral-to-ground bond in a building distribution system.',
+        options: ["At the service disconnect (main bonding jumper) or at a separately derived system's source", "At every panelboard, for redundancy", "At the panel farthest from the service", "At any panel where a ground rod is present"], answer: 0,
+        steps: "One bond point per system: the service (250.24(A)(5)) or the SDS source (250.30)",
+        why: "Redundancy is the enemy here — each additional bond is another parallel return path. The system is designed around exactly one handshake." }
+    ] },
+  { id: "sp-gfci", name: "No Ground? GFCI Is the Patch (406.4(D)(2))", cat: "Special Cases", formula: "GFCI + 'No Equipment Ground' label",
+    hook: "Old two-wire house, three-prong need: the GFCI watches the current balance and does the protecting the missing ground cannot.",
+    teach: "406.4(D)(2): where no equipment grounding conductor exists in an existing outlet box, a 2-wire receptacle may be replaced with a GFCI-type grounding receptacle — protection comes from the GFCI's current-balance sensing, not from a ground wire. The receptacle must be marked 'No Equipment Ground.' Grounding-type receptacles fed from its load side must be marked 'GFCI Protected' and 'No Equipment Ground,' and no EGC may be run from the GFCI to them — a fake ground is worse than an honest label.",
+    variants: [
+      { kind: "text", tag: "406.4(D)(2)", q: "What is the Code-legal way to get a 3-prong receptacle here?",
+        scenario: '<span class="given">Given</span>An old house has 2-wire receptacles and no equipment ground in the boxes; the owner wants to plug in modern equipment.',
+        options: ["Replace with a GFCI receptacle and mark it 'No Equipment Ground' (406.4(D)(2))", "Install a regular 3-prong receptacle and say nothing", "Run a green wire from the receptacle to the nearest water pipe", "Bond the ground terminal to the neutral in the box"], answer: 0,
+        steps: "406.4(D)(2) → GFCI replacement + 'No Equipment Ground' marking",
+        why: "Bonding ground to neutral in the box (the 'bootleg ground') puts load voltage on equipment frames if the neutral opens — the worst option on the list. The GFCI actually protects people; the label keeps the next person honest." },
+      { kind: "text", tag: "406.4(D)(2)", q: "May an EGC be run from the GFCI to a downstream receptacle?",
+        scenario: '<span class="given">Given</span>A grounding-type receptacle is fed from the load side of that GFCI in the ungrounded house.',
+        options: ["No — mark it 'GFCI Protected' and 'No Equipment Ground'; no EGC may be connected between them (406.4(D)(2))", "Yes — daisy-chaining the ground is the point", "Only with green 12 AWG", "Only if the run is under 6 ft"], answer: 0,
+        steps: "406.4(D)(2) → downstream outlets get GFCI protection + both markings, no EGC",
+        why: "A ground wire to nowhere is decoration that fools testers and users into trusting a ground that does not exist. The Code's answer is protection plus honest labeling." }
+    ] },
+  { id: "sp-ungrounded", name: "Ungrounded Systems Need Detectors (250.21(B))", cat: "Special Cases", formula: "No ground = ground detectors stand watch",
+    hook: "An ungrounded system shrugs off its first fault — so something has to announce it before the second fault becomes a fireball.",
+    teach: "Some systems are permitted or required to operate ungrounded (250.21(A)) — industrial deltas are the classic case, chosen because a single ground fault will not shut production down. The trade: with one phase accidentally grounded, the system keeps running, and a second fault on another phase is a phase-to-phase short circuit. 250.21(B) therefore requires ground detectors on ungrounded systems, and 250.21(C) requires the equipment to be marked as an ungrounded system.",
+    variants: [
+      { kind: "text", tag: "250.21(B)", q: "What must be provided for this system?",
+        scenario: '<span class="given">Given</span>A <b>480 V delta</b> system in an industrial plant operates ungrounded by design, so one ground fault will not stop the line.',
+        options: ["Ground detectors (250.21(B))", "A 25-ohm ground rod at every motor", "GFCI protection on all feeders", "Nothing — ungrounded systems need no monitoring"], answer: 0,
+        steps: "250.21(B) → ungrounded systems shall be equipped with ground detectors",
+        why: "Continuity of service is the benefit; the detector is the price. It turns a silent first fault into a scheduled repair instead of a surprise second fault." },
+      { kind: "text", tag: "250.21(B)", q: "Why do ground detectors matter on an ungrounded system?",
+        scenario: '<span class="given">Given</span>One phase of an ungrounded delta faults to a conduit run; production continues and nobody notices.',
+        options: ["The first fault raises no alarm by itself — the detector warns crews before a second fault creates a phase-to-phase short", "Detectors trip the main breaker on the first fault", "They measure how much current the earth is carrying", "They convert the system to a grounded one automatically"], answer: 0,
+        steps: "Undetected fault #1 + fault #2 = short circuit → detectors find #1 first (250.21(B))",
+        why: "By design, fault #1 changes almost nothing operationally — voltages to ground shift, but load current does not spike. Only the detector knows. That is precisely why the Code mandates it." }
+    ] }
+];
+
+      var byId = {};
+      ITEMS.forEach(function (it) { byId[it.id] = it; });
+      var CATS = [];
+      ITEMS.forEach(function (it) { if (CATS.indexOf(it.cat) === -1) CATS.push(it.cat); });
+      function frontOf(it) {
+        return '<div class="thumb-name">' + it.name + '</div><div class="thumb-formula">' + it.formula + "</div>";
+      }
+      function cardFront(it) {
+        return '<span class="front-name">' + it.name + '</span><span class="front-formula">' + it.formula + "</span>";
+      }
+
+      /* ================= HOME ================= */
+      document.getElementById("item-count").textContent = ITEMS.length + " concepts";
+      document.getElementById("cat-strip").innerHTML = CATS.map(function (c) {
+        var n = ITEMS.filter(function (it) { return it.cat === c; }).length;
+        return '<span class="cat-chip">' + c + " · <b>" + n + "</b></span>";
+      }).join("");
+
+      (function countdown() {
+        var target = new Date(2027, 0, 1); /* January test window */
+        var now = new Date();
+        var weeks = Math.round((target - now) / (7 * 24 * 3600 * 1000));
+        if (weeks > 0 && weeks < 40) {
+          document.getElementById("countdown").hidden = false;
+          document.getElementById("countdown-text").textContent =
+            "About " + weeks + " weeks to the January test window — a few grounding reps a day beats cramming.";
+        }
+      })();
+
+      /* ================= QUIZ ENGINE ================= */
+      var quiz = null;
+      var runSeq = 0;
+      var sessionMissed = {};
+      var lastMissed = [];
+      var lastMode = "drill";
+
+      function optLabel(o) { return typeof o === "string" ? o : o.cap; }
+      function makeQuestion(item, vIdx) {
+        var vi = (typeof vIdx === "number") ? vIdx : Math.floor(Math.random() * item.variants.length);
+        var v = item.variants[vi];
+        return { item: item, vIdx: vi, variant: v, order: shuffle(v.options.map(function (_, i) { return i; })), picked: -1, requeue: false };
+      }
+      function otherVariant(item, cur) {
+        if (item.variants.length < 2) return cur;
+        var opts = item.variants.map(function (_, i) { return i; }).filter(function (i) { return i !== cur; });
+        return opts[Math.floor(Math.random() * opts.length)];
+      }
+      function startQuiz(mode, pool) {
+        var usePool = pool && pool.length ? pool.slice() : ITEMS.slice();
+        var count = mode === "mock" ? 20 : mode === "drill" ? 12 : usePool.length;
+        var pickedItems = shuffle(usePool).slice(0, Math.min(count, usePool.length));
+        if (quiz && quiz.timerInt) clearInterval(quiz.timerInt);
+        quiz = {
+          mode: mode,
+          queue: pickedItems.map(function (it) { return makeQuestion(it); }),
+          i: 0, score: 0, streak: 0,
+          firstTry: {}, firstPick: {}, firstVariant: {}, mastered: {}, attempts: {},
+          startedAt: Date.now(), timerInt: null, runId: ++runSeq
+        };
+        show("quiz");
+        document.getElementById("q-mode").textContent =
+          mode === "mock" ? "MOCK EXAM" : mode === "missed" ? "REVIEW YOUR MISSES" : "QUICK DRILL";
+        var timerEl = document.getElementById("q-timer");
+        if (mode === "mock") {
+          timerEl.hidden = false;
+          quiz.timerInt = setInterval(function () {
+            var s = Math.floor((Date.now() - quiz.startedAt) / 1000);
+            timerEl.querySelector("b").textContent = Math.floor(s / 60) + ":" + ("0" + (s % 60)).slice(-2);
+          }, 500);
+        } else { timerEl.hidden = true; }
+        renderQuestion();
+      }
+      function renderQuestion() {
+        var q = quiz.queue[quiz.i];
+        var v = q.variant;
+        var total = quiz.queue.length;
+        document.getElementById("q-count").textContent = "QUESTION " + (quiz.i + 1) + " OF " + total;
+        document.getElementById("q-score").textContent = quiz.score;
+        var streakEl = document.getElementById("q-streak");
+        streakEl.hidden = quiz.streak < 2;
+        streakEl.querySelector("b").textContent = quiz.streak;
+        document.getElementById("q-progress").style.width = ((quiz.i) / total * 100) + "%";
+        document.getElementById("tb-cat").textContent = "Category: " + q.item.cat;
+        document.getElementById("q-explain").className = "explain";
+        document.getElementById("q-explain").innerHTML = "";
+        document.getElementById("q-next").classList.add("hidden");
+
+        document.getElementById("q-prompt").textContent = (q.requeue ? "Second look · " : "") + (v.tag || q.item.cat);
+        document.getElementById("q-question").textContent = v.q;
+
+        var stage = document.getElementById("q-stage");
+        if (v.scenario) stage.innerHTML = '<div class="scenario">' + v.scenario + "</div>";
+        else stage.innerHTML = '<div class="scenario"><span class="given">' + q.item.cat + "</span>" + q.item.formula + "</div>";
+        var note = document.getElementById("q-note");
+        if (v.note) { note.textContent = v.note; note.classList.remove("hidden"); }
+        else { note.textContent = ""; note.classList.add("hidden"); }
+
+        var opts = document.getElementById("q-opts");
+        opts.innerHTML = "";
+        q.order.forEach(function (optIdx, pos) {
+          var o = v.options[optIdx];
+          var b = document.createElement("button");
+          b.className = "opt";
+          b.innerHTML = '<span class="letter">' + "ABCD"[pos] + "</span><span>" + o + "</span>";
+          b.addEventListener("click", function () { choose(pos); });
+          opts.appendChild(b);
+        });
+      }
+      function choose(pos) {
+        var q = quiz.queue[quiz.i];
+        if (!q || q.picked !== -1) return;
+        q.picked = pos;
+        var v = q.variant;
+        var correctPos = q.order.indexOf(v.answer);
+        var right = pos === correctPos;
+        var id = q.item.id;
+        quiz.attempts[id] = (quiz.attempts[id] || 0) + 1;
+        if (!(id in quiz.firstTry)) { quiz.firstTry[id] = right; quiz.firstPick[id] = v.options[q.order[pos]]; quiz.firstVariant[id] = q.vIdx; }
+        var comingBack = false;
+        if (right) {
+          quiz.score++; quiz.streak++; quiz.mastered[id] = true;
+        } else {
+          quiz.streak = 0; sessionMissed[id] = true;
+          if (quiz.mode !== "mock" && quiz.attempts[id] <= 3) {
+            var rq = makeQuestion(q.item, otherVariant(q.item, q.vIdx));
+            rq.requeue = true;
+            quiz.queue.splice(Math.min(quiz.i + 3, quiz.queue.length), 0, rq);
+            comingBack = true;
+          }
+        }
+
+        var btns = document.getElementById("q-opts").children;
+        for (var k = 0; k < btns.length; k++) {
+          btns[k].disabled = true;
+          if (k === correctPos) btns[k].classList.add("correct");
+          else if (k === pos) btns[k].classList.add("wrong");
+          else btns[k].classList.add("dim");
+        }
+        document.getElementById("q-score").textContent = quiz.score;
+        var streakEl = document.getElementById("q-streak");
+        streakEl.hidden = quiz.streak < 2;
+        streakEl.querySelector("b").textContent = quiz.streak;
+        document.getElementById("q-progress").style.width = ((quiz.i + 1) / quiz.queue.length * 100) + "%";
+
+        if (quiz.mode === "mock") {
+          var rid = quiz.runId;
+          setTimeout(function () { if (quiz && quiz.runId === rid) nextQuestion(); }, 450);
+          return;
+        }
+        var ex = document.getElementById("q-explain");
+        ex.className = "explain show";
+        var pickedOpt = v.options[q.order[pos]];
+        var verdict = right ? "Correct." : "Not quite — you picked: " + optLabel(pickedOpt);
+        ex.innerHTML =
+          '<p class="verdict ' + (right ? "good" : "bad") + '">' + verdict + "</p>" +
+          (v.steps ? '<div class="steps">' + v.steps + "</div>" : "") +
+          "<p>" + v.why + "</p>" +
+          '<p class="hook"><b>Think of it as</b><br>' + q.item.hook + "</p>" +
+          (comingBack
+            ? '<p class="again">This one comes back around in a few questions — with different numbers — and keeps coming back until you nail it.</p>'
+            : (!right ? '<p class="again">It stays tagged in your misses — the review round at the end is built from them.</p>' : ""));
+        var next = document.getElementById("q-next");
+        next.textContent = quiz.i === quiz.queue.length - 1 ? "See results →" : "Next question →";
+        next.classList.remove("hidden");
+        next.focus();
+        if (ex.scrollIntoView) {
+          var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+          ex.scrollIntoView({ block: "nearest", behavior: reduce ? "auto" : "smooth" });
+        }
+      }
+      function nextQuestion() {
+        if (!quiz) return;
+        if (quiz.i < quiz.queue.length - 1) { quiz.i++; renderQuestion(); }
+        else showResults();
+      }
+      document.getElementById("q-next").addEventListener("click", nextQuestion);
+      document.addEventListener("keydown", function (e) {
+        if (document.getElementById("view-quiz").classList.contains("hidden")) return;
+        var q = quiz && quiz.queue[quiz.i];
+        if (!q) return;
+        if (q.picked === -1 && ["1", "2", "3", "4"].indexOf(e.key) !== -1) choose(Number(e.key) - 1);
+        else if (q.picked !== -1 && quiz.mode !== "mock" && (e.key === "Enter" || e.key === " ")) {
+          var next = document.getElementById("q-next");
+          if (document.activeElement === next) return;
+          if (!next.classList.contains("hidden")) { e.preventDefault(); nextQuestion(); }
+        }
+      });
+
+      /* ================= RESULTS ================= */
+      function showResults() {
+        if (!quiz) return;
+        if (quiz.timerInt) clearInterval(quiz.timerInt);
+        lastMode = quiz.mode;
+        var ids = Object.keys(quiz.firstTry);
+        var total = ids.length;
+        var rightFirst = ids.filter(function (id) { return quiz.firstTry[id]; }).length;
+        var masteredCount = ids.filter(function (id) { return quiz.mastered[id]; }).length;
+        var pct = total ? Math.round(rightFirst / total * 100) : 0;
+        document.getElementById("r-mode").textContent =
+          (quiz.mode === "mock" ? "Mock Exam" : quiz.mode === "missed" ? "Review Your Misses" : "Quick Drill") + " · Results";
+        document.getElementById("r-score").textContent = pct + "%";
+        var pass = document.getElementById("r-pass");
+        if (quiz.mode === "mock") {
+          pass.className = "pass-tag " + (pct >= 70 ? "pass" : "fail");
+          pass.textContent = pct >= 70 ? "✓ Passing range" : "✗ Below the bar";
+          pass.style.display = "";
+        } else { pass.style.display = "none"; }
+        var mins = Math.max(1, Math.round((Date.now() - quiz.startedAt) / 60000));
+        document.getElementById("r-sub").textContent =
+          "You got " + rightFirst + " of " + total + " right on the first try in about " + mins + (mins === 1 ? " minute" : " minutes") + "." +
+          (masteredCount > rightFirst ? " Counting the second looks, you finished having mastered " + masteredCount + " of " + total + "." : "") +
+          (quiz.mode === "mock"
+            ? (pct >= 70 ? " Most licensing exams set the bar near 70% — you would have cleared it. Keep the reps going and it only gets safer." : " Most licensing exams set the bar near 70%. The misses below are exactly what to drill before the test.")
+            : (pct === 100 ? " Flawless run. That's exam-day automatic." : " Every miss below is now tagged in the study deck so you can hammer it."));
+
+        var bd = {};
+        ids.forEach(function (id) {
+          var c = byId[id].cat;
+          bd[c] = bd[c] || { right: 0, total: 0 };
+          bd[c].total++; if (quiz.firstTry[id]) bd[c].right++;
+        });
+        document.getElementById("r-breakdown").innerHTML =
+          "<h3>By category</h3>" + Object.keys(bd).map(function (c) {
+            var p = Math.round(bd[c].right / bd[c].total * 100);
+            return '<div class="bd-row"><span>' + c + '</span><span class="bd-num">' + bd[c].right + "/" + bd[c].total + '</span>' +
+              '<span class="bd-bar"><span class="bd-fill' + (p < 70 ? " low" : "") + '" style="display:block;width:' + p + '%"></span></span></div>';
+          }).join("");
+
+        var missedItems = ids.filter(function (id) { return !quiz.firstTry[id]; }).map(function (id) { return byId[id]; });
+        lastMissed = missedItems;
+        var weak = document.getElementById("r-weak");
+        if (missedItems.length === 0) {
+          weak.innerHTML = "";
+        } else {
+          var weakCats = Object.keys(bd).filter(function (c) { return bd[c].right < bd[c].total; })
+            .sort(function (a, b) { return (bd[a].right / bd[a].total) - (bd[b].right / bd[b].total); });
+          weak.innerHTML = "<h3>Weak spots</h3>" +
+            '<p style="margin:0;color:var(--muted);font-size:15px;">Shakiest category: <strong style="color:var(--ink);">' + weakCats[0] + "</strong>. " +
+            "These are the concepts that tripped you up — the review round is built from exactly this list.</p>" +
+            '<div class="weak-list">' + missedItems.map(function (it) {
+              var got = quiz.mastered[it.id];
+              return '<span class="weak-chip' + (got ? " mastered" : "") + '">' + it.name + (got ? " · got it on retry" : " · still shaky") + "</span>";
+            }).join("") + "</div>";
+        }
+
+        var review = document.getElementById("r-review");
+        if (missedItems.length === 0) {
+          review.innerHTML = '<p class="allgood">Nothing to review — you nailed every concept this run.</p>';
+        } else {
+          review.innerHTML = "<h3>Review your misses (" + missedItems.length + ")</h3>" + missedItems.map(function (it) {
+            var fv = it.variants[quiz.firstVariant[it.id] || 0];
+            var picked = quiz.firstPick[it.id];
+            return '<div class="miss"><div class="thumb">' + frontOf(it) + "</div><div>" +
+              "<h4>" + it.name + "</h4>" +
+              '<p class="yours">You picked: ' + (picked !== undefined ? optLabel(picked) : "—") + "</p>" +
+              "<p><strong>Right answer:</strong> " + optLabel(fv.options[fv.answer]) + "</p>" +
+              (fv.steps ? "<p><strong>The lookup:</strong> " + fv.steps + "</p>" : "") +
+              "<p>" + it.teach + "</p>" +
+              "<p><strong>Think of it as:</strong> " + it.hook + "</p></div></div>";
+          }).join("");
+        }
+        var retryBtn = document.getElementById("r-retry-missed");
+        retryBtn.hidden = missedItems.length === 0;
+        retryBtn.textContent = "Review your misses (" + missedItems.length + ")";
+        document.getElementById("r-again").textContent = quiz.mode === "mock" ? "Retake mock exam" : "Run it again";
+        refreshHomeReview();
+        show("results");
+      }
+
+      /* ================= STUDY ================= */
+      var studyFilter = "All";
+      function renderStudy() {
+        var chips = document.getElementById("study-chips");
+        chips.innerHTML = "";
+        ["All"].concat(CATS).concat(["Missed this session"]).forEach(function (c) {
+          var b = document.createElement("button");
+          b.className = "chip-btn" + (studyFilter === c ? " active" : "");
+          b.textContent = c;
+          b.addEventListener("click", function () { studyFilter = c; renderStudy(); });
+          chips.appendChild(b);
+        });
+        var term = document.getElementById("study-search").value.trim().toLowerCase();
+        var list = document.getElementById("study-list");
+        list.innerHTML = "";
+        CATS.forEach(function (cat) {
+          var items = ITEMS.filter(function (it) {
+            if (it.cat !== cat) return false;
+            if (studyFilter === "Missed this session" && !sessionMissed[it.id]) return false;
+            if (studyFilter !== "All" && studyFilter !== "Missed this session" && it.cat !== studyFilter) return false;
+            if (term && (it.name + " " + it.teach + " " + it.hook + " " + it.formula).toLowerCase().indexOf(term) === -1) return false;
+            return true;
+          });
+          if (!items.length) return;
+          var h = document.createElement("h3");
+          h.className = "study-cat";
+          h.innerHTML = cat + " <small>" + items.length + " concepts</small>";
+          list.appendChild(h);
+          var grid = document.createElement("div");
+          grid.className = "grid";
+          items.forEach(function (it) {
+            var card = document.createElement("div");
+            card.className = "flip";
+            card.innerHTML =
+              (sessionMissed[it.id] ? '<span class="missed-tag">Missed</span>' : "") +
+              '<button class="flip-inner" aria-label="Flip card for ' + it.name + '">' +
+              '<span class="face front">' + cardFront(it) + '<span class="tap">Tap to flip</span></span>' +
+              '<span class="face back"><h4>' + it.name + "</h4><p>" + it.teach + "<br><br><strong>Think of it as:</strong> " + it.hook + "</p></span>" +
+              "</button>";
+            card.querySelector(".flip-inner").addEventListener("click", function () { card.classList.toggle("flipped"); });
+            grid.appendChild(card);
+          });
+          list.appendChild(grid);
+        });
+        if (!list.children.length) {
+          list.innerHTML = '<p style="color:var(--muted)">No concepts match. ' +
+            (studyFilter === "Missed this session" ? "Take a quiz first — anything you miss will land here." : "Try a different search.") + "</p>";
+        }
+      }
+      document.getElementById("study-search").addEventListener("input", renderStudy);
+
+      /* ================= WIRING ================= */
+      function refreshHomeReview() {
+        var n = Object.keys(sessionMissed).length;
+        var b = document.getElementById("btn-review-home");
+        b.classList.toggle("hidden", n === 0);
+        b.textContent = "Review your misses — " + n + " concept" + (n === 1 ? "" : "s") + " from this session →";
+      }
+      document.getElementById("btn-drill").addEventListener("click", function () { startQuiz("drill"); });
+      document.getElementById("btn-mock").addEventListener("click", function () { startQuiz("mock"); });
+      document.getElementById("btn-study").addEventListener("click", function () { studyFilter = "All"; renderStudy(); show("study"); });
+      document.getElementById("btn-formulas").addEventListener("click", function () { show("formulas"); });
+      document.getElementById("btn-review-home").addEventListener("click", function () {
+        var pool = Object.keys(sessionMissed).map(function (id) { return byId[id]; });
+        if (pool.length) startQuiz("missed", pool);
+      });
+      document.getElementById("r-again").addEventListener("click", function () {
+        if (lastMode === "missed") startQuiz("missed", lastMissed);
+        else startQuiz(lastMode);
+      });
+      document.getElementById("r-study").addEventListener("click", function () { studyFilter = "All"; renderStudy(); show("study"); });
+      document.getElementById("r-retry-missed").addEventListener("click", function () { startQuiz("missed", lastMissed); });
+      document.querySelectorAll("[data-home]").forEach(function (b) {
+        b.addEventListener("click", function () {
+          if (quiz && quiz.timerInt) clearInterval(quiz.timerInt);
+          quiz = null;
+          refreshHomeReview();
+          show("home");
+        });
+      });
+    </script>
+  </body>
+</html>

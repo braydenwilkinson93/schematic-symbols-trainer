@@ -1,0 +1,1805 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="color-scheme" content="light dark" />
+    <link rel="icon" href="data:," />
+    <title>Motor Controls &amp; Ladder Logic — Learned Cold, Pack 2</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Barlow:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+    <style>
+      :root {
+        --bg: #edf0f2;
+        --grid: rgba(23, 63, 95, 0.09);
+        --panel: #ffffff;
+        --panel-2: #f4f7f8;
+        --stage: #fbfcfd;
+        --ink: #152a3a;
+        --muted: #57707f;
+        --line: #cfd9de;
+        --line-strong: #a9bcc6;
+        --navy: #173f5f;
+        --accent: #f2b234;
+        --accent-deep: #c07f06;
+        --accent-ink: #241a02;
+        --good: #177a4c;
+        --good-bg: #e2f3ea;
+        --bad: #c0392b;
+        --bad-bg: #fbe9e6;
+        --chip: #e6edf1;
+        --shadow: 0 10px 30px rgba(21, 42, 58, 0.10);
+      }
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --bg: #08141f;
+          --grid: rgba(140, 190, 235, 0.08);
+          --panel: #0e2233;
+          --panel-2: #0b1a28;
+          --stage: #0a1c2c;
+          --ink: #e9f2f8;
+          --muted: #9db4c4;
+          --line: #1f3a4f;
+          --line-strong: #33536e;
+          --navy: #7fb3dd;
+          --accent: #f2b234;
+          --accent-deep: #f2b234;
+          --accent-ink: #241a02;
+          --good: #3ecf8e;
+          --good-bg: #0f2e22;
+          --bad: #ef7d6b;
+          --bad-bg: #3a1d18;
+          --chip: #14304a;
+          --shadow: 0 10px 30px rgba(0, 0, 0, 0.45);
+        }
+      }
+      * { box-sizing: border-box; }
+      html { -webkit-text-size-adjust: 100%; }
+      body {
+        margin: 0;
+        font-family: "Barlow", system-ui, sans-serif;
+        color: var(--ink);
+        background:
+          linear-gradient(var(--grid) 1px, transparent 1px),
+          linear-gradient(90deg, var(--grid) 1px, transparent 1px),
+          var(--bg);
+        background-size: 28px 28px, 28px 28px, auto;
+        line-height: 1.45;
+      }
+      .wrap { max-width: 920px; margin: 0 auto; padding: 22px 16px 56px; }
+
+      /* ---------- header ---------- */
+      .kicker {
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase;
+        color: var(--accent-deep); font-weight: 600; margin: 0 0 6px;
+      }
+      h1 {
+        font-family: "Barlow Condensed", sans-serif;
+        font-weight: 700; font-size: clamp(34px, 7vw, 54px);
+        line-height: 0.98; margin: 0 0 10px; letter-spacing: 0.01em;
+        text-transform: uppercase;
+      }
+      .lede { font-size: 17px; color: var(--muted); max-width: 62ch; margin: 0 0 14px; }
+      .lede strong { color: var(--ink); }
+      .countdown {
+        display: inline-flex; align-items: center; gap: 8px;
+        font-family: "IBM Plex Mono", monospace; font-size: 13px;
+        background: var(--chip); border: 1px solid var(--line);
+        padding: 7px 12px; border-radius: 999px; margin-bottom: 22px;
+      }
+      .countdown .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent); flex: none; }
+
+      /* ---------- mode cards ---------- */
+      .modes { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin: 4px 0 26px; }
+      .mode-card {
+        text-align: left; cursor: pointer; font: inherit; color: var(--ink);
+        background: var(--panel); border: 1px solid var(--line); border-radius: 10px;
+        padding: 16px 16px 14px; box-shadow: var(--shadow);
+        display: flex; flex-direction: column; gap: 6px;
+        transition: transform 0.15s ease, border-color 0.15s ease;
+      }
+      .mode-card:hover { border-color: var(--accent); transform: translateY(-2px); }
+      .mode-card:focus-visible, button:focus-visible, input:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+      .mode-card .mc-tag {
+        font-family: "IBM Plex Mono", monospace; font-size: 11px; letter-spacing: 0.12em;
+        text-transform: uppercase; color: var(--accent-deep); font-weight: 600;
+      }
+      .mode-card .mc-name { font-family: "Barlow Condensed", sans-serif; font-size: 24px; font-weight: 600; line-height: 1.05; }
+      .mode-card .mc-desc { font-size: 14px; color: var(--muted); }
+      .mode-card .mc-go { margin-top: auto; font-weight: 700; font-size: 14px; color: var(--navy); }
+      @media (prefers-color-scheme: dark) { .mode-card .mc-go { color: var(--accent); } }
+
+      .cat-strip { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 8px; }
+      .cat-chip {
+        font-family: "IBM Plex Mono", monospace; font-size: 12px;
+        border: 1px solid var(--line); background: var(--panel);
+        padding: 5px 10px; border-radius: 999px; color: var(--muted);
+      }
+      .cat-chip b { color: var(--ink); font-weight: 600; }
+
+      /* ---------- schematic sheet / quiz stage ---------- */
+      .sheet {
+        background: var(--panel); border: 1.5px solid var(--line-strong);
+        border-radius: 6px; box-shadow: var(--shadow);
+      }
+      .sheet-top {
+        position: sticky; top: 0; z-index: 6;
+        background: var(--panel); border-radius: 6px 6px 0 0;
+      }
+      .sheet-head {
+        display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+        padding: 12px 16px; border-bottom: 1px solid var(--line);
+        font-family: "IBM Plex Mono", monospace; font-size: 12.5px;
+      }
+      .sheet-head .q-count { font-weight: 600; letter-spacing: 0.06em; }
+      .sheet-head .spacer { flex: 1; }
+      .pill {
+        border: 1px solid var(--line); background: var(--panel-2); border-radius: 999px;
+        padding: 3px 10px; font-family: "IBM Plex Mono", monospace; font-size: 12px;
+      }
+      .pill b { font-weight: 600; }
+      .pill.streak { border-color: var(--accent); color: var(--accent-deep); font-weight: 600; }
+      .progress { height: 6px; background: var(--panel-2); border-bottom: 1px solid var(--line); }
+      .progress > div { height: 100%; background: var(--accent); width: 0%; transition: width 0.3s ease; }
+      .sheet-body { padding: 20px 16px 8px; }
+      .q-prompt {
+        font-family: "IBM Plex Mono", monospace; font-size: 12px; letter-spacing: 0.12em;
+        text-transform: uppercase; color: var(--muted); text-align: center; margin: 0 0 6px;
+      }
+      .q-question {
+        font-size: clamp(18px, 3.4vw, 21px); font-weight: 600; text-align: center;
+        margin: 0 auto 10px; line-height: 1.3; max-width: 56ch;
+      }
+      .sym-stage {
+        background:
+          linear-gradient(var(--grid) 1px, transparent 1px),
+          linear-gradient(90deg, var(--grid) 1px, transparent 1px),
+          var(--stage);
+        background-size: 22px 22px, 22px 22px, auto;
+        border: 1px solid var(--line); border-radius: 6px;
+        display: flex; align-items: center; justify-content: center;
+        padding: 18px 12px; margin: 6px auto 4px; max-width: 720px; min-height: 148px;
+      }
+      .sym-stage svg { width: min(620px, 94vw); height: auto; display: block; }
+      .sym-stage svg.glyph { width: min(320px, 82vw); }
+      .sym-stage .stage-name {
+        font-family: "Barlow Condensed", sans-serif; font-weight: 600;
+        font-size: clamp(27px, 6vw, 38px); text-align: center; line-height: 1.08; padding: 0 6px;
+      }
+      .sym-stage .scenario {
+        font-size: 17.5px; line-height: 1.55; text-align: left; max-width: 58ch; padding: 2px 4px;
+      }
+      .sym { color: var(--ink); }
+      .sym text { font-family: "IBM Plex Mono", monospace; }
+      .d-note {
+        font-family: "IBM Plex Mono", monospace; font-size: 12px; color: var(--muted);
+        text-align: center; margin: 8px auto 0; max-width: 640px;
+      }
+
+      .opts { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; max-width: 680px; margin: 16px auto 6px; }
+      .opt {
+        font: inherit; cursor: pointer; text-align: left; color: var(--ink);
+        background: var(--panel); border: 1.5px solid var(--line-strong); border-radius: 8px;
+        padding: 13px 14px; font-size: 16.5px; font-weight: 600;
+        display: flex; align-items: center; gap: 11px; min-height: 60px;
+        -webkit-tap-highlight-color: transparent;
+        transition: border-color 0.12s ease, background 0.12s ease;
+      }
+      .opt:hover:not(:disabled) { border-color: var(--accent); }
+      .opt:disabled { cursor: default; opacity: 1; }
+      .opt .letter {
+        font-family: "IBM Plex Mono", monospace; font-size: 12.5px; font-weight: 600;
+        border: 1.5px solid var(--line-strong); border-radius: 5px;
+        width: 26px; height: 26px; flex: none; display: flex; align-items: center; justify-content: center;
+      }
+      .opt.diagram-opt { flex-direction: column; align-items: stretch; gap: 4px; padding: 10px 12px; }
+      .opt.diagram-opt .letter { align-self: flex-start; }
+      .opt.diagram-opt svg { width: 100%; height: auto; }
+      .opt.correct { border-color: var(--good); background: var(--good-bg); }
+      .opt.correct .letter { border-color: var(--good); color: var(--good); }
+      .opt.wrong { border-color: var(--bad); background: var(--bad-bg); }
+      .opt.wrong .letter { border-color: var(--bad); color: var(--bad); }
+      .opt.dim { opacity: 0.55; }
+
+      .explain {
+        max-width: 680px; margin: 14px auto 4px; border-radius: 8px; padding: 14px 16px;
+        border: 1px solid var(--line); background: var(--panel-2); display: none;
+      }
+      .explain.show { display: block; }
+      .explain .verdict { font-family: "Barlow Condensed", sans-serif; font-size: 22px; font-weight: 700; margin: 0 0 2px; }
+      .explain .verdict.good { color: var(--good); }
+      .explain .verdict.bad { color: var(--bad); }
+      .explain p { margin: 4px 0; font-size: 15.5px; }
+      .explain .hook b { color: var(--navy); font-family: "IBM Plex Mono", monospace; font-size: 11.5px; letter-spacing: 0.1em; text-transform: uppercase; }
+      @media (prefers-color-scheme: dark) { .explain .hook b { color: var(--accent); } }
+      .explain .again { color: var(--accent-deep); font-weight: 600; font-size: 14.5px; }
+
+      .sheet-actions { display: flex; gap: 10px; justify-content: center; padding: 14px 16px 20px; flex-wrap: wrap; }
+      .btn {
+        font: inherit; font-weight: 700; font-size: 16px; cursor: pointer;
+        border-radius: 8px; padding: 12px 22px; border: 1.5px solid var(--line-strong);
+        background: var(--panel); color: var(--ink);
+      }
+      .btn.primary { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+      .btn.primary:hover { filter: brightness(1.05); }
+      .btn.ghost:hover { border-color: var(--accent); }
+      .btn:disabled { opacity: 0.45; cursor: default; }
+      .title-block {
+        display: flex; flex-wrap: wrap; border-top: 1.5px solid var(--line-strong);
+        border-radius: 0 0 5px 5px;
+        font-family: "IBM Plex Mono", monospace; font-size: 10.5px; letter-spacing: 0.08em;
+        text-transform: uppercase; color: var(--muted);
+      }
+      .title-block span { padding: 7px 12px; border-right: 1px solid var(--line); }
+      .title-block span:last-child { border-right: none; margin-left: auto; }
+
+      /* ---------- results ---------- */
+      .score-big {
+        font-family: "Barlow Condensed", sans-serif; font-weight: 700;
+        font-size: clamp(52px, 12vw, 84px); line-height: 1; text-align: center; margin: 8px 0 2px;
+      }
+      .score-sub { text-align: center; color: var(--muted); font-size: 16.5px; margin: 0 auto 6px; max-width: 52ch; }
+      .pass-tag {
+        display: block; width: fit-content; margin: 10px auto 4px;
+        font-family: "IBM Plex Mono", monospace; font-size: 12.5px; font-weight: 600;
+        letter-spacing: 0.1em; text-transform: uppercase; padding: 6px 14px; border-radius: 999px;
+      }
+      .pass-tag.pass { background: var(--good-bg); color: var(--good); border: 1px solid var(--good); }
+      .pass-tag.fail { background: var(--bad-bg); color: var(--bad); border: 1px solid var(--bad); }
+      .breakdown { max-width: 560px; margin: 20px auto 4px; }
+      .breakdown h3, .review h3 {
+        font-family: "Barlow Condensed", sans-serif; font-size: 21px; font-weight: 600;
+        margin: 0 0 10px; text-transform: uppercase; letter-spacing: 0.03em;
+      }
+      .bd-row { display: grid; grid-template-columns: 1fr auto; gap: 4px 12px; align-items: center; margin-bottom: 10px; font-size: 15px; }
+      .bd-row .bd-bar { grid-column: 1 / -1; height: 7px; background: var(--panel-2); border: 1px solid var(--line); border-radius: 99px; overflow: hidden; }
+      .bd-row .bd-fill { height: 100%; background: var(--navy); }
+      .bd-row .bd-fill.low { background: var(--bad); }
+      .bd-row .bd-num { font-family: "IBM Plex Mono", monospace; font-size: 13px; color: var(--muted); }
+      .weak-list { display: flex; flex-wrap: wrap; gap: 8px; margin: 8px 0 2px; }
+      .weak-chip {
+        font-size: 14px; font-weight: 600; border-radius: 999px; padding: 4px 11px;
+        border: 1px solid var(--bad); color: var(--bad); background: var(--bad-bg);
+      }
+      .weak-chip.mastered { border-color: var(--line-strong); color: var(--muted); background: var(--panel-2); }
+      .review-banner { width: 100%; margin: 0 0 22px; min-height: 52px; }
+      .review { max-width: 680px; margin: 24px auto 4px; }
+      .miss {
+        display: grid; grid-template-columns: 200px 1fr; gap: 14px; align-items: center;
+        border: 1px solid var(--line); border-radius: 8px; padding: 10px 14px; margin-bottom: 10px;
+        background: var(--panel);
+      }
+      .miss .thumb { background: var(--stage); border: 1px solid var(--line); border-radius: 5px; padding: 6px; }
+      .miss .thumb svg { width: 100%; height: auto; display: block; }
+      .miss .thumb .thumb-name {
+        font-family: "Barlow Condensed", sans-serif; font-weight: 600; font-size: 19px;
+        text-align: center; line-height: 1.1; padding: 10px 4px;
+      }
+      .miss h4 { margin: 0 0 2px; font-size: 16.5px; }
+      .miss p { margin: 2px 0; font-size: 14.5px; color: var(--muted); }
+      .miss .yours { color: var(--bad); }
+      .allgood { text-align: center; font-size: 17px; padding: 8px 0 2px; }
+
+      /* ---------- study ---------- */
+      .study-tools { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin: 0 0 16px; }
+      .chip-btn {
+        font: inherit; font-size: 14px; font-weight: 600; cursor: pointer;
+        border: 1.5px solid var(--line-strong); background: var(--panel); color: var(--ink);
+        border-radius: 999px; padding: 7px 14px;
+      }
+      .chip-btn.active { background: var(--navy); border-color: var(--navy); color: #fff; }
+      @media (prefers-color-scheme: dark) { .chip-btn.active { color: #0a1c2c; background: var(--accent); border-color: var(--accent); } }
+      .search {
+        font: inherit; font-size: 15px; padding: 9px 13px; border-radius: 999px;
+        border: 1.5px solid var(--line-strong); background: var(--panel); color: var(--ink);
+        flex: 1; min-width: 170px;
+      }
+      .study-cat {
+        font-family: "Barlow Condensed", sans-serif; font-size: 24px; font-weight: 600;
+        text-transform: uppercase; letter-spacing: 0.03em; margin: 26px 0 12px;
+        display: flex; align-items: baseline; gap: 10px;
+      }
+      .study-cat small { font-family: "IBM Plex Mono", monospace; font-size: 12px; color: var(--muted); letter-spacing: 0.08em; }
+      .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 12px; }
+      .flip { perspective: 900px; height: 252px; }
+      .flip-inner {
+        position: relative; width: 100%; height: 100%; transform-style: preserve-3d;
+        transition: transform 0.45s ease; cursor: pointer; background: none; border: none; padding: 0; font: inherit; text-align: left;
+      }
+      .flip.flipped .flip-inner { transform: rotateY(180deg); }
+      .face {
+        position: absolute; inset: 0; backface-visibility: hidden; -webkit-backface-visibility: hidden;
+        border: 1px solid var(--line); border-radius: 10px; background: var(--panel);
+        padding: 14px; display: flex; flex-direction: column; overflow: hidden;
+      }
+      .face.front { align-items: center; justify-content: center; gap: 10px; }
+      .face.front svg { width: min(248px, 88%); height: auto; }
+      .face.front .front-name {
+        font-family: "Barlow Condensed", sans-serif; font-weight: 600;
+        font-size: 24px; text-align: center; line-height: 1.1; padding: 0 6px;
+      }
+      .face.front .tap { font-family: "IBM Plex Mono", monospace; font-size: 10.5px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); }
+      .face.back { transform: rotateY(180deg); background: var(--panel-2); }
+      .face.back h4 { margin: 0 0 4px; font-size: 17px; line-height: 1.15; }
+      .face.back p { margin: 0; font-size: 13.5px; color: var(--muted); overflow-y: auto; }
+      .missed-tag {
+        position: absolute; top: 10px; right: 10px; z-index: 2;
+        font-family: "IBM Plex Mono", monospace; font-size: 10px; font-weight: 600;
+        letter-spacing: 0.08em; text-transform: uppercase;
+        background: var(--accent); color: var(--accent-ink); border-radius: 99px; padding: 3px 8px;
+      }
+      .hidden { display: none !important; }
+      footer { margin-top: 40px; color: var(--muted); font-size: 13.5px; text-align: center; }
+      .backlink {
+        background: none; border: none; font: inherit; font-weight: 700; cursor: pointer;
+        color: var(--navy); padding: 6px 0; font-size: 15px;
+      }
+      @media (prefers-color-scheme: dark) { .backlink { color: var(--accent); } }
+
+      @media (max-width: 640px) {
+        .modes { grid-template-columns: 1fr; }
+        .opts { grid-template-columns: 1fr; }
+        .opts.diagrams { grid-template-columns: 1fr 1fr; }
+        .miss { grid-template-columns: 128px 1fr; }
+        .sheet-actions .btn { flex: 1 1 100%; min-height: 52px; }
+        #view-results .sheet-actions .btn { flex: 1 1 auto; }
+      }
+      @media (max-width: 460px) {
+        .opts.diagrams { grid-template-columns: 1fr; }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .flip-inner, .progress > div, .mode-card { transition: none; }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+
+      <!-- ============ HOME ============ -->
+      <section id="view-home">
+        <p class="kicker">Learned Cold — Pack 2 · Motor Controls</p>
+        <h1>Motor Controls &amp; Ladder Logic</h1>
+        <p class="lede">Pack 1 taught you to <em>name</em> the symbols. This pack teaches you to <strong>read what the circuit does</strong> — seal-in logic, reversing starters, timers, field devices, and the troubleshooting calls the exam loves. <strong id="item-count">45 concepts</strong>, drawn as real ladder rungs, drilled until reading them is automatic.</p>
+        <div class="countdown" id="countdown" hidden><span class="dot"></span><span id="countdown-text"></span></div>
+
+        <div class="modes">
+          <button class="mode-card" id="btn-drill">
+            <span class="mc-tag">12 questions · Instant feedback</span>
+            <span class="mc-name">Quick Drill</span>
+            <span class="mc-desc">Fast reps on real rungs with the answer explained after every question. Miss one and it comes back — asked a different way — until you nail it.</span>
+            <span class="mc-go">Start drilling →</span>
+          </button>
+          <button class="mode-card" id="btn-mock">
+            <span class="mc-tag">20 questions · No feedback till the end</span>
+            <span class="mc-name">Mock Exam</span>
+            <span class="mc-desc">Runs like the real test: answer everything, then get your score, a pass/fail line, weak spots, and a full review of every miss.</span>
+            <span class="mc-go">Take the mock exam →</span>
+          </button>
+          <button class="mode-card" id="btn-study">
+            <span class="mc-tag">All concepts · Flip cards</span>
+            <span class="mc-name">Study Deck</span>
+            <span class="mc-desc">Browse every rung and concept grouped by category. Tap a card to flip it for the plain-English version of what the circuit is doing.</span>
+            <span class="mc-go">Open study deck →</span>
+          </button>
+        </div>
+
+        <button class="btn primary review-banner hidden" id="btn-review-home"></button>
+
+        <div class="cat-strip" id="cat-strip"></div>
+      </section>
+
+      <!-- ============ QUIZ ============ -->
+      <section id="view-quiz" class="hidden">
+        <button class="backlink" data-home>← Quit to menu</button>
+        <div class="sheet">
+          <div class="sheet-top">
+          <div class="sheet-head">
+            <span class="q-count" id="q-count">QUESTION 1 OF 12</span>
+            <span class="pill" id="q-mode">QUICK DRILL</span>
+            <span class="spacer"></span>
+            <span class="pill" id="q-timer" hidden>TIME <b>0:00</b></span>
+            <span class="pill">SCORE <b id="q-score">0</b></span>
+            <span class="pill streak" id="q-streak" hidden>STREAK <b>0</b></span>
+          </div>
+          <div class="progress"><div id="q-progress"></div></div>
+          </div>
+          <div class="sheet-body">
+            <p class="q-prompt" id="q-prompt">Read the ladder</p>
+            <h2 class="q-question" id="q-question"></h2>
+            <div class="sym-stage" id="q-stage"></div>
+            <p class="d-note hidden" id="q-note"></p>
+            <div class="opts" id="q-opts"></div>
+            <div class="explain" id="q-explain"></div>
+          </div>
+          <div class="sheet-actions">
+            <button class="btn primary hidden" id="q-next">Next question →</button>
+          </div>
+          <div class="title-block">
+            <span>DWG NO. MC-202</span><span id="tb-cat">Category —</span><span>Scale: None</span><span>Sheet 1 of 1</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ RESULTS ============ -->
+      <section id="view-results" class="hidden">
+        <button class="backlink" data-home>← Back to menu</button>
+        <div class="sheet">
+          <div class="sheet-body" style="padding-top:26px;">
+            <p class="q-prompt" id="r-mode">Mock Exam · Results</p>
+            <div class="score-big" id="r-score">0%</div>
+            <span class="pass-tag" id="r-pass"></span>
+            <p class="score-sub" id="r-sub"></p>
+            <div class="breakdown" id="r-weak"></div>
+            <div class="breakdown" id="r-breakdown"></div>
+            <div class="review" id="r-review"></div>
+          </div>
+          <div class="sheet-actions">
+            <button class="btn primary" id="r-retry-missed" hidden>Review your misses</button>
+            <button class="btn ghost" id="r-again">Retake</button>
+            <button class="btn ghost" id="r-study">Study the deck</button>
+          </div>
+          <div class="title-block">
+            <span>DWG NO. MC-202</span><span>Result sheet</span><span>Scale: None</span><span>Sheet 1 of 1</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ STUDY ============ -->
+      <section id="view-study" class="hidden">
+        <button class="backlink" data-home>← Back to menu</button>
+        <p class="kicker">Study Deck</p>
+        <h1 style="font-size:clamp(30px,6vw,42px);">Know every rung cold</h1>
+        <p class="lede">Tap a card to flip it. Work category by category — and remember the one rule every drawing follows: contacts are always drawn in their resting state, coil dead, nothing pressed.</p>
+        <div class="study-tools">
+          <div id="study-chips" style="display:flex;flex-wrap:wrap;gap:8px;"></div>
+          <input class="search" id="study-search" type="search" placeholder="Search concepts… e.g. seal-in, timer, float" aria-label="Search concepts" />
+        </div>
+        <div id="study-list"></div>
+      </section>
+
+      <footer>Diagrams follow the common ANSI / NEMA ladder conventions used on U.S. electrician licensing exams: L1 on the left, L2 on the right, loads on the right of each rung, and every contact drawn at rest. Pack 2 of the Learned Cold series — the companion to the Electrical Schematic Symbols Trainer.</footer>
+    </div>
+
+    <script>
+      /* ================= LADDER BUILDER =================
+         Rungs are described as data and rendered to clean SVG in the same
+         stroke style as Pack 1. A rung is a list of slots; a slot is one
+         component, or { par: [row, row, ...] } — parallel branches stacked
+         in one slot, each row holding one or more series components.
+         Component: { t: "pbNO", l: "START" } — t = glyph type, l = label. */
+      function DOT(x, y) {
+        return '<circle cx="' + x + '" cy="' + y + '" r="3.4" fill="currentColor" stroke="none"/>';
+      }
+      function LBL(x, y, txt, size) {
+        if (!txt) return "";
+        return '<text x="' + x + '" y="' + y + '" text-anchor="middle" font-size="' + (size || 10.5) + '" font-weight="600" fill="currentColor" stroke="none">' + txt + "</text>";
+      }
+      function glyph(c, cx, y) {
+        var s = "";
+        switch (c.t) {
+          case "pbNO": /* pushbutton, normally open: bridge bar floats above the contacts */
+            s = '<path d="M' + (cx - 15) + " " + (y - 15) + "h30" + "M" + cx + " " + (y - 15) + "V" + (y - 27) + '"/>' +
+                '<rect x="' + (cx - 10) + '" y="' + (y - 37) + '" width="20" height="9"/>' +
+                DOT(cx - 15, y) + DOT(cx + 15, y);
+            break;
+          case "pbNC": /* pushbutton, normally closed: bridge rests on the contacts */
+            s = '<path d="M' + (cx - 15) + " " + (y - 9) + "h30" +
+                "M" + (cx - 15) + " " + (y - 9) + "v5" + "M" + (cx + 15) + " " + (y - 9) + "v5" +
+                "M" + cx + " " + (y - 9) + "V" + (y - 27) + '"/>' +
+                '<rect x="' + (cx - 10) + '" y="' + (y - 37) + '" width="20" height="9"/>' +
+                DOT(cx - 15, y) + DOT(cx + 15, y);
+            break;
+          case "ctNO": /* relay/contactor contact, normally open */
+            s = '<path d="M' + (cx + 15) + " " + y + "L" + (cx - 11) + " " + (y - 18) + '"/>' +
+                DOT(cx - 15, y) + DOT(cx + 15, y);
+            break;
+          case "ctNC": /* relay/contactor contact, normally closed */
+            s = '<path d="M' + (cx - 15) + " " + y + "V" + (y - 13) + "M" + (cx + 15) + " " + y + "L" + (cx - 15) + " " + (y - 15) + '"/>' +
+                DOT(cx - 15, y - 15) + DOT(cx + 15, y);
+            break;
+          case "ol": /* overload contact: NC contact worked by the OL relay */
+            s = glyph({ t: "ctNC" }, cx, y);
+            break;
+          case "coil":
+            s = '<circle cx="' + cx + '" cy="' + y + '" r="15"/>' +
+                (c.l && c.l.length <= 3 ? LBL(cx, y + 4.5, c.l, 12) : "");
+            break;
+          case "lamp":
+            s = '<circle cx="' + cx + '" cy="' + y + '" r="13"/>' +
+                '<path d="M' + (cx - 9) + " " + (y - 9) + "l18 18M" + (cx + 9) + " " + (y - 9) + "l-18 18" + '"/>';
+            break;
+          case "swNO": /* maintained selector / toggle contact, NO */
+            s = '<path d="M' + (cx + 15) + " " + y + "L" + (cx - 11) + " " + (y - 18) + "M" + cx + " " + (y - 30) + "v7" + '"/>' +
+                '<path d="M' + (cx - 4) + " " + (y - 30) + 'h8l-4 6z" fill="currentColor" stroke="none"/>' +
+                DOT(cx - 15, y) + DOT(cx + 15, y);
+            break;
+          case "lsNO": /* limit switch, NO: contact + lever arm with roller */
+            s = glyph({ t: "ctNO" }, cx, y) +
+                '<path d="M' + (cx - 20) + " " + (y + 14) + "L" + (cx + 14) + " " + (y - 26) + '"/>' +
+                '<circle cx="' + (cx + 19) + '" cy="' + (y - 30) + '" r="5.5"/>';
+            break;
+          case "lsNC": /* limit switch, NC */
+            s = glyph({ t: "ctNC" }, cx, y) +
+                '<path d="M' + (cx - 20) + " " + (y + 14) + "L" + (cx + 14) + " " + (y - 26) + '"/>' +
+                '<circle cx="' + (cx + 19) + '" cy="' + (y - 30) + '" r="5.5"/>';
+            break;
+          case "psNO": /* pressure switch, NO: contact + bellows below, dashed link */
+            s = glyph({ t: "ctNO" }, cx, y) +
+                '<path d="M' + cx + " " + (y + 10) + "v8" + '" stroke-dasharray="3.5 3.5"/>' +
+                '<path d="M' + (cx - 14) + " " + (y + 26) + "a7 6 0 0 1 14 0a7 6 0 0 1 14 0" + '"/>';
+            break;
+          case "tsNO": /* temperature switch, NO: contact + bimetal wave below */
+            s = glyph({ t: "ctNO" }, cx, y) +
+                '<path d="M' + cx + " " + (y + 10) + "v6" + '" stroke-dasharray="3.5 3.5"/>' +
+                '<path d="M' + (cx - 16) + " " + (y + 24) + "c4-6 8 6 12 0s8 6 12 0s8 6 8 0" + '"/>';
+            break;
+          case "fsNO": /* float switch, NO: contact + dashed link to a float on the waterline */
+            s = glyph({ t: "ctNO" }, cx, y) +
+                '<path d="M' + cx + " " + (y + 10) + "v10" + '" stroke-dasharray="3.5 3.5"/>' +
+                '<circle cx="' + cx + '" cy="' + (y + 27) + '" r="6"/>' +
+                '<path d="M' + (cx - 18) + " " + (y + 27) + "c4-4 8 4 12 0s8 4 12 0s8 4 6 0" + '"/>';
+            break;
+          case "tdNOon": /* timed contact: NO, on-delay (arc above the blade) */
+            s = glyph({ t: "ctNO" }, cx, y) +
+                '<path d="M' + (cx - 17) + " " + (y - 24) + "Q" + cx + " " + (y - 38) + " " + (cx + 17) + " " + (y - 24) + '"/>' +
+                '<path d="M' + (cx + 17) + " " + (y - 24) + "l-8 1M" + (cx + 17) + " " + (y - 24) + "l-2-7" + '"/>';
+            break;
+          case "tdNOoff": /* timed contact: NO, off-delay (arc below the blade) */
+            s = glyph({ t: "ctNO" }, cx, y) +
+                '<path d="M' + (cx - 17) + " " + (y + 22) + "Q" + cx + " " + (y + 36) + " " + (cx + 17) + " " + (y + 22) + '"/>' +
+                '<path d="M' + (cx + 17) + " " + (y + 22) + "l-8 -1M" + (cx + 17) + " " + (y + 22) + "l-2 7" + '"/>';
+            break;
+          case "tdNCon": /* timed contact: NC, on-delay */
+            s = glyph({ t: "ctNC" }, cx, y) +
+                '<path d="M' + (cx - 17) + " " + (y - 26) + "Q" + cx + " " + (y - 40) + " " + (cx + 17) + " " + (y - 26) + '"/>' +
+                '<path d="M' + (cx + 17) + " " + (y - 26) + "l-8 1M" + (cx + 17) + " " + (y - 26) + "l-2-7" + '"/>';
+            break;
+          case "tdNCoff": /* timed contact: NC, off-delay */
+            s = glyph({ t: "ctNC" }, cx, y) +
+                '<path d="M' + (cx - 17) + " " + (y + 22) + "Q" + cx + " " + (y + 36) + " " + (cx + 17) + " " + (y + 22) + '"/>' +
+                '<path d="M' + (cx + 17) + " " + (y + 22) + "l-8 -1M" + (cx + 17) + " " + (y + 22) + "l-2 7" + '"/>';
+            break;
+          case "xic": /* PLC: examine-if-closed — two vertical bars */
+            s = '<path d="M' + (cx - 6) + " " + (y - 13) + "v26M" + (cx + 6) + " " + (y - 13) + "v26" + '"/>';
+            break;
+          case "xio": /* PLC: examine-if-open — bars with a slash */
+            s = '<path d="M' + (cx - 6) + " " + (y - 13) + "v26M" + (cx + 6) + " " + (y - 13) + "v26" + "M" + (cx - 11) + " " + (y + 14) + "L" + (cx + 11) + " " + (y - 14) + '"/>';
+            break;
+          case "ote": /* PLC: output energize — parentheses */
+            s = '<path d="M' + (cx - 3) + " " + (y - 14) + "a15 15 0 0 0 0 28" + "M" + (cx + 3) + " " + (y - 14) + "a15 15 0 0 1 0 28" + '"/>';
+            break;
+          case "prox": /* proximity sensor: diamond + sensing field */
+            s = '<path d="M' + cx + " " + (y - 17) + "L" + (cx + 17) + " " + y + "L" + cx + " " + (y + 17) + "L" + (cx - 17) + " " + y + "Z" + '"/>' +
+                '<path d="M' + (cx + 22) + " " + (y - 8) + "l9-5M" + (cx + 24) + " " + y + "h11M" + (cx + 22) + " " + (y + 8) + "l9 5" + '"/>';
+            break;
+        }
+        if (c.t === "coil") return s; /* coil carries its label inside */
+        return s + LBL(cx, y + 30, c.t === "ol" ? (c.l || "OL") : c.l);
+      }
+
+      /* Render a diagram spec: { rungs: [ [slot, ...], ... ], tap: rungIndex }
+         tap: that rung's left wire drops from the previous rung's first node
+         (the shared-STOP convention on reversing starters). */
+      function buildDiagram(spec) {
+        var W = 560, L1 = 36, L2 = 524;
+        var out = "";
+        var y = 46;
+        var rungTops = [];
+        var layouts = [];
+        var prevTapX = null;
+        spec.rungs.forEach(function (rung, ri) {
+          var rows = 1;
+          rung.forEach(function (slot) { if (slot.par) rows = Math.max(rows, slot.par.length); });
+          var widths = rung.map(function (slot) {
+            var maxRow = 1;
+            if (slot.par) slot.par.forEach(function (r) { maxRow = Math.max(maxRow, r.length); });
+            return 72 * maxRow;
+          });
+          var total = widths.reduce(function (a, b) { return a + b; }, 0);
+          var startX = (spec.tap === ri && prevTapX !== null) ? prevTapX : L1;
+          var gap = Math.max(6, (L2 - startX - total) / (rung.length + 1));
+          var xs = [], x = startX;
+          rung.forEach(function (slot, i) { x += gap; xs.push(x); x += widths[i]; });
+          layouts.push({ xs: xs, widths: widths, rows: rows, top: y });
+          rungTops.push(y);
+          prevTapX = xs[0] + widths[0];
+          y += 34 + rows * 54 + 16;
+        });
+        var H = y + 6;
+        /* rails */
+        out += '<path d="M' + L1 + " 14V" + (H - 14) + "M" + L2 + " 14V" + (H - 14) + '"/>';
+        out += '<text x="' + (L1 - 8) + '" y="' + (rungTops[0] + 4) + '" text-anchor="end" font-size="11" font-weight="600" fill="currentColor" stroke="none">L1</text>';
+        out += '<text x="' + (L2 + 8) + '" y="' + (rungTops[0] + 4) + '" font-size="11" font-weight="600" fill="currentColor" stroke="none">L2</text>';
+        spec.rungs.forEach(function (rung, ri) {
+          var lay = layouts[ri], top = lay.top;
+          var rowY = function (r) { return top + r * 54; };
+          var leftX = L1;
+          if (spec.tap === ri && ri > 0) {
+            /* drop from previous rung's node after its first slot */
+            var prev = layouts[ri - 1];
+            var tapX = prev.xs[0] + prev.widths[0];
+            out += '<path d="M' + tapX + " " + prev.top + "V" + rowY(0) + "H" + L2 + '"/>';
+            out += DOT(tapX, prev.top);
+            leftX = tapX;
+          }
+          /* main (row 0) wire */
+          out += '<path d="M' + leftX + " " + rowY(0) + "H" + L2 + '"/>';
+          rung.forEach(function (slot, si) {
+            var sx = lay.xs[si], sw = lay.widths[si];
+            if (slot.par) {
+              /* verticals joining the branch rows at both slot edges */
+              for (var e = 0; e < 2; e++) {
+                var ex = e === 0 ? sx : sx + sw;
+                out += '<path d="M' + ex + " " + rowY(0) + "V" + rowY(slot.par.length - 1) + '"/>';
+                slot.par.forEach(function (r, rIdx) { out += DOT(ex, rowY(rIdx)); });
+              }
+              slot.par.forEach(function (r, rIdx) {
+                out += '<path d="M' + sx + " " + rowY(rIdx) + "H" + (sx + sw) + '"/>';
+                r.forEach(function (comp, ci) {
+                  out += glyph(comp, sx + (ci + 0.5) * (sw / r.length), rowY(rIdx));
+                });
+              });
+            } else {
+              out += glyph(slot, sx + sw / 2, rowY(0));
+            }
+          });
+        });
+        return '<svg class="sym ladder" viewBox="0 0 ' + W + " " + H + '" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" role="img" aria-hidden="true">' + out + "</svg>";
+      }
+      function diagramOf(d) {
+        if (!d) return "";
+        if (d.raw) return '<svg class="sym glyph" viewBox="0 0 200 110" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round" role="img" aria-hidden="true">' + d.raw + "</svg>";
+        return buildDiagram(d);
+      }
+      function shuffle(a) {
+        a = a.slice();
+        for (var i = a.length - 1; i > 0; i--) {
+          var j = Math.floor(Math.random() * (i + 1));
+          var t = a[i]; a[i] = a[j]; a[j] = t;
+        }
+        return a;
+      }
+      function show(view) {
+        ["home", "quiz", "results", "study"].forEach(function (v) {
+          document.getElementById("view-" + v).classList.toggle("hidden", v !== view);
+        });
+        window.scrollTo(0, 0);
+      }
+
+
+      /* ================= ITEM BANK =================
+         Each item: one concept, a plain-English hook, a short teach text,
+         a front diagram (study deck / review thumbnail), and variants —
+         the same concept asked different ways. The drill asks one variant;
+         a miss re-queues the item in its OTHER variant. */
+      function CC(t, l) { return { t: t, l: l }; }
+      function PAR(rows) { return { par: rows }; }
+      function DG(rungs, extra) { var d = { rungs: rungs }; if (extra) { for (var k in extra) d[k] = extra[k]; } return d; }
+
+      /* --- shared rungs --- */
+      var R_SEAL = DG([[CC("pbNC", "STOP"), PAR([[CC("pbNO", "START")], [CC("ctNO", "M")]]), CC("coil", "M"), CC("ol")]]);
+      var R_JOGONLY = DG([[CC("pbNC", "STOP"), CC("pbNO", "START"), CC("coil", "M"), CC("ol")]]);
+      var R_NCSTART = DG([[CC("pbNC", "START"), CC("coil", "M"), CC("ol")]]);
+      var R_NCAUX = DG([[CC("pbNC", "STOP"), PAR([[CC("pbNO", "START")], [CC("ctNC", "M")]]), CC("coil", "M"), CC("ol")]]);
+      var R_SERIESAUX = DG([[CC("pbNC", "STOP"), CC("pbNO", "START"), CC("ctNO", "M"), CC("coil", "M"), CC("ol")]]);
+      var R_OLBYPASS = DG([[CC("pbNC", "STOP"), PAR([[CC("pbNO", "START"), CC("ol")], [CC("ctNO", "M")]]), CC("coil", "M")]]);
+      var R_PERMISS = DG([[CC("psNO", "PS"), CC("pbNC", "STOP"), PAR([[CC("pbNO", "START")], [CC("ctNO", "M")]]), CC("coil", "M"), CC("ol")]]);
+      var R_PERMISS_NC = DG([[CC("psNO", "PS"), CC("pbNC", "STOP"), PAR([[CC("pbNO", "START")], [CC("ctNO", "M")]]), CC("coil", "M"), CC("ol")]]);
+      var R_OR = DG([[PAR([[CC("fsNO", "FS-1")], [CC("fsNO", "FS-2")]]), CC("coil", "P"), CC("ol")]]);
+      var R_LAMP = DG([
+        [CC("pbNC", "STOP"), PAR([[CC("pbNO", "START")], [CC("ctNO", "M")]]), CC("coil", "M"), CC("ol")],
+        [CC("ctNO", "M"), CC("lamp", "RUN")]
+      ]);
+      var R_STOPPAR = DG([[PAR([[CC("pbNO", "START")], [CC("pbNC", "STOP")]]), CC("coil", "M"), CC("ol")]]);
+      var R_FLOAT = DG([[CC("fsNO", "FS"), CC("coil", "P"), CC("ol")]]);
+      var R_REV = DG([
+        [CC("pbNC", "STOP"), PAR([[CC("pbNO", "FWD")], [CC("ctNO", "F")]]), CC("ctNC", "R"), CC("coil", "F"), CC("ol")],
+        [PAR([[CC("pbNO", "REV")], [CC("ctNO", "R")]]), CC("ctNC", "F"), CC("coil", "R"), CC("ol")]
+      ], { tap: 1 });
+      var R_MULTI = DG([[CC("pbNC", "STOP 1"), CC("pbNC", "STOP 2"), PAR([[CC("pbNO", "START 1")], [CC("pbNO", "START 2")], [CC("ctNO", "M")]]), CC("coil", "M"), CC("ol")]]);
+      var R_MULTI_B = DG([[PAR([[CC("pbNC", "STOP")], [CC("pbNC", "STOP")]]), CC("pbNO", "START"), CC("pbNO", "START"), CC("coil", "M"), CC("ol")]]);
+      var R_MULTI_C = DG([[CC("pbNC", "STOP 1"), CC("pbNC", "STOP 2"), CC("pbNO", "START 1"), CC("pbNO", "START 2"), CC("coil", "M"), CC("ol")]]);
+      var R_MULTI_D = DG([[PAR([[CC("pbNC", "STOP")], [CC("pbNC", "STOP")]]), PAR([[CC("pbNO", "START 1")], [CC("pbNO", "START 2")], [CC("ctNO", "M")]]), CC("coil", "M"), CC("ol")]]);
+      var R_JOGCIRCUIT = DG([[CC("pbNC", "STOP"), PAR([[CC("pbNO", "START")], [CC("ctNO", "M"), CC("pbNC", "JOG")], [CC("pbNO", "JOG")]]), CC("coil", "M"), CC("ol")]]);
+      var R_JOGCIRCUIT_BAD = DG([[CC("pbNC", "STOP"), PAR([[CC("pbNO", "START")], [CC("ctNO", "M")], [CC("pbNO", "JOG")]]), CC("coil", "M"), CC("ol")]]);
+      var R_LIMIT = DG([[CC("pbNC", "STOP"), PAR([[CC("pbNO", "RAISE")], [CC("ctNO", "M")]]), CC("lsNC", "LS"), CC("coil", "M"), CC("ol")]]);
+      var R_LIMIT_NO = DG([[CC("pbNC", "STOP"), PAR([[CC("pbNO", "RAISE")], [CC("ctNO", "M")]]), CC("lsNO", "LS"), CC("coil", "M"), CC("ol")]]);
+      var R_LIMIT_PAR = DG([[CC("pbNC", "STOP"), PAR([[CC("pbNO", "RAISE")], [CC("ctNO", "M")], [CC("lsNC", "LS")]]), CC("coil", "M"), CC("ol")]]);
+      var R_PRESS = DG([[CC("psNO", "PS"), CC("coil", "M"), CC("ol")]]);
+      var R_TEMP = DG([[CC("tsNO", "TS"), CC("coil", "M"), CC("ol")]]);
+      var R_TON = DG([[CC("swNO", "SW"), CC("coil", "TR")], [CC("tdNOon", "TR"), CC("lamp", "L")]]);
+      var R_TOF = DG([[CC("swNO", "SW"), CC("coil", "TR")], [CC("tdNOoff", "TR"), CC("coil", "M")]]);
+      var R_TIMER2 = DG([[CC("swNO", "SW"), CC("coil", "TR")], [CC("ctNO", "TR"), CC("lamp", "A")], [CC("tdNOon", "TR"), CC("lamp", "B")]]);
+      var R_PLC = DG([[PAR([[CC("xic", "START_PB")], [CC("xic", "MOTOR")]]), CC("xic", "STOP_PB"), CC("ote", "MOTOR")]]);
+      var R_PLC_B = DG([[CC("xic", "START_PB"), CC("xic", "STOP_PB"), CC("ote", "MOTOR")]]);
+      var R_PLC_C = DG([[PAR([[CC("xic", "START_PB")], [CC("xio", "MOTOR")]]), CC("xic", "STOP_PB"), CC("ote", "MOTOR")]]);
+      var R_PLC_D = DG([[CC("xic", "START_PB"), CC("ote", "MOTOR"), CC("ote", "MOTOR")]]);
+      var R_PLC2 = DG([[CC("xic", "IN_1"), CC("xio", "IN_2"), CC("ote", "OUT")]]);
+      var R_PROX = DG([[CC("prox", "PROX"), CC("coil", "CR")]]);
+      var R_TD_NOTC = DG([[CC("tdNOon", "TR"), CC("lamp", "L")]]);
+      var R_TD_NCTC = DG([[CC("tdNCoff", "TR"), CC("lamp", "L")]]);
+      var R_TD_NCTO = DG([[CC("tdNCon", "TR"), CC("lamp", "L")]]);
+      var R_TD_NOTO = DG([[CC("tdNOoff", "TR"), CC("lamp", "L")]]);
+
+      var ITEMS = [
+        /* ================= READ THE LADDER ================= */
+        { id: "rl-sealin", name: "The Seal-In (Holding) Contact", cat: "Read the Ladder", front: R_SEAL,
+          hook: "The circuit holds its own door open: once it's in, it keeps itself in.",
+          teach: "A holding contact of the starter's own coil is wired in parallel with the START button. Once the coil pulls in, that contact keeps the coil fed after the button is released — the circuit holds itself on until STOP or the overload breaks the rung.",
+          variants: [
+            { kind: "diagram", diagram: R_SEAL, tag: "Read the ladder",
+              q: "START is pressed and then released. What happens to motor M?",
+              options: ["M keeps running — its own contact seals the circuit in", "M stops the moment START is released", "M never starts, because the M contact is open at rest", "M runs only while STOP is also held"],
+              answer: 0,
+              why: "The M auxiliary contact sits in parallel with START. The instant the coil energizes, that contact closes and gives current a second path around the button — so releasing START changes nothing. Only STOP or the overload can break the rung." },
+            { kind: "pick", tag: "Behavior → diagram",
+              q: "Which rung keeps the motor running after START is pressed and released?",
+              options: [
+                { d: R_SEAL, cap: "M contact in parallel with START — the seal-in rung" },
+                { d: R_JOGONLY, cap: "No holding contact — momentary only" },
+                { d: R_NCAUX, cap: "An NC M contact in parallel with START" },
+                { d: R_SERIESAUX, cap: "M contact in series with START and the coil" } ],
+              answer: 0,
+              why: "Only the first rung gives the coil a path around the released button. The second is a jog circuit. The third starts by itself the moment power is applied (its NC contact is closed at rest). The fourth can never start at all — the series M contact only closes if the coil is already on." }
+          ] },
+        { id: "rl-stop", name: "STOP Breaks the Seal", cat: "Read the Ladder", front: R_SEAL,
+          hook: "STOP doesn't pause the circuit — it erases its memory.",
+          teach: "STOP is wired in series with everything: both the start path and the seal-in path pass through it. Press STOP even for a split second and the coil drops, the holding contact falls open, and the rung stays dead after the button springs back.",
+          variants: [
+            { kind: "diagram", diagram: R_SEAL, tag: "Read the ladder",
+              q: "M is running. STOP is pressed for one second, then released. What happens?",
+              options: ["M stops and stays stopped until START is pressed again", "M keeps running — the seal-in contact holds it", "M stops, then restarts by itself when STOP is released", "M slows down but keeps turning"],
+              answer: 0,
+              why: "STOP sits in series with the whole rung, seal-in branch included. One press drops the coil, the M contact opens, and when STOP springs back there is no closed path left. That one-press finality is the whole point of three-wire control." },
+            { kind: "text", tag: "Starter logic",
+              q: "The seal-in trick only works because the holding contact is wired…",
+              options: ["In parallel with the START button", "In series with the STOP button", "Across the coil terminals", "In the overload leg only"],
+              answer: 0,
+              why: "Parallel with START — it has to bridge the button so current can flow around it once the button lets go. In series anywhere, it would just be one more contact that has to close before anything can happen." }
+          ] },
+        { id: "rl-jog-basic", name: "No Seal-In = Jogging", cat: "Read the Ladder", front: R_JOGONLY,
+          hook: "No seal-in, no memory: the motor only knows what your finger is doing right now.",
+          teach: "With no holding contact anywhere in the rung, the coil is energized only while a finger holds START. That's jogging (inching) — used to bump a motor into position — and it's what every seal-in rung would be without its auxiliary contact.",
+          variants: [
+            { kind: "diagram", diagram: R_JOGONLY, tag: "Read the ladder",
+              q: "START is pressed and released. What does M do?",
+              options: ["Runs only while START is held, then stops", "Seals in and keeps running", "Runs until the overload trips", "Starts, then reverses when START is released"],
+              answer: 0,
+              why: "There's no auxiliary contact bridging the button, so the coil's only path runs through your finger. Press — it runs. Release — the path opens and the starter drops out. This is a jogging circuit." },
+            { kind: "text", tag: "Starter logic",
+              q: "A rung with a momentary start button and NO holding contact is the standard circuit for…",
+              options: ["Jogging / inching a motor into position", "Reversing a motor", "Two-wire automatic control", "Two-hand anti-tie-down control"],
+              answer: 0,
+              why: "Jogging. Anytime you see a start button with no seal-in contact around it, the motor runs only while the button is held — exactly what you want when inching a load into place." }
+          ] },
+        { id: "rl-nc-start", name: "The NC 'Start' Trap", cat: "Read the Ladder", front: R_NCSTART,
+          hook: "An NC 'start' is a stop button wearing the wrong name tag.",
+          teach: "Contacts behave as drawn, in their resting state. An NC contact passes current until it's pressed. Wire one where the start button belongs and the 'start' position is ON at rest: the motor runs with nobody touching anything, and pressing the button stops it.",
+          variants: [
+            { kind: "diagram", diagram: R_NCSTART, tag: "Read the ladder",
+              q: "Control power is switched on and nobody touches anything. What is M doing?",
+              options: ["Running — the NC contact passes current at rest", "Nothing — it waits for START to be pressed", "Running backwards", "Tripping the overload instantly"],
+              answer: 0,
+              why: "The contact in the START position is normally closed, so the rung is complete the moment power is applied. Pressing that button would open it and stop the motor. NO starts, NC stops — swap them and the whole circuit inverts." },
+            { kind: "pick", tag: "Behavior → diagram",
+              q: "Which rung starts the motor the instant control power is applied, with no button pressed?",
+              options: [
+                { d: R_NCSTART, cap: "NC contact in the start position" },
+                { d: R_SEAL, cap: "Standard seal-in rung" },
+                { d: R_JOGONLY, cap: "Momentary start, no seal-in" },
+                { d: R_SERIESAUX, cap: "M contact in series with START" } ],
+              answer: 0,
+              why: "Only the NC contact conducts at rest, so only that rung is complete before any button moves. The seal-in and jog rungs sit open until START is pressed; the series-contact rung can never complete at all." }
+          ] },
+        { id: "rl-nc-aux", name: "NC Seal-In Contact", cat: "Read the Ladder", front: R_NCAUX,
+          hook: "A closed-at-rest seal is a self-start button you never installed.",
+          teach: "Someone fitted a normally-closed contact as the seal-in. At rest that branch is already closed, so the starter pulls in by itself the moment control power appears — and after any STOP press it restarts itself as soon as the button is released. Seal-in contacts must be NO.",
+          variants: [
+            { kind: "diagram", diagram: R_NCAUX, tag: "Read the ladder",
+              q: "Control power is switched on, hands off. What happens?",
+              options: ["M starts on its own — and restarts itself after STOP is released", "Nothing until START is pressed", "M can never start", "The overload trips as soon as power is applied"],
+              answer: 0,
+              why: "The NC auxiliary contact bridges START and is closed at rest, so the rung is complete without the button. Pressing STOP drops the coil, the NC contact re-closes, and the motor restarts the moment STOP springs back. Frightening on a real machine — and a favorite exam trap." },
+            { kind: "text", tag: "Read the ladder",
+              q: "Same rung: while M is running, the operator holds STOP in — then lets go. The motor…",
+              options: ["Restarts by itself", "Stays off until START is pressed", "Runs backwards", "Trips the overload"],
+              answer: 0,
+              why: "Holding STOP breaks the rung and drops the coil — but the instant the coil drops, the NC seal contact closes again, so releasing STOP completes the rung and the motor restarts on its own." }
+          ] },
+        { id: "rl-ol-bypass", name: "Overload in the Wrong Leg", cat: "Read the Ladder", front: R_OLBYPASS,
+          hook: "Protection only counts if every road to the coil runs through it.",
+          teach: "The overload contact must sit in the part of the rung every path shares — in series with the coil, downstream of where the start and seal branches join. Park it in the start branch only, and once the motor seals in, the holding branch feeds the coil around the tripped overload.",
+          variants: [
+            { kind: "diagram", diagram: R_OLBYPASS, tag: "Read the ladder",
+              q: "M is running and sealed in when the overload trips and its contact opens. What happens?",
+              options: ["M keeps running — the seal-in branch bypasses the overload contact", "M stops immediately", "M stops, then restarts itself", "The coil burns out instantly"],
+              answer: 0,
+              why: "Look where the OL contact sits: only in the start branch. The seal-in branch joins the rung past it, so the running motor's current path never passes through the OL contact. A trip opens a branch the motor isn't using. The OL contact belongs in series with the coil, where both branches must pass." },
+            { kind: "text", tag: "Starter logic",
+              q: "The overload contact belongs in series with the coil, positioned so that…",
+              options: ["Both the start path and the seal-in path must pass through it", "Only the start button's path passes through it", "It can be bypassed once the motor seals in", "It sits across L1 and L2 to sense voltage"],
+              answer: 0,
+              why: "In the common path — after the start and seal branches rejoin, right in series with the coil. That way a trip drops the starter no matter which branch was feeding it, exactly like pressing STOP." }
+          ] },
+        { id: "rl-permissive", name: "Permissive (Series) Contacts", cat: "Read the Ladder", front: R_PERMISS,
+          hook: "Series means everybody votes yes, or nothing moves.",
+          teach: "A pilot device wired in series ahead of the start station is a permissive: an AND condition. The rung can't complete until the pressure switch says the tank needs air. Series devices all have to agree before anything runs.",
+          variants: [
+            { kind: "diagram", diagram: R_PERMISS, note: "PS = pressure switch contact: closes when tank pressure falls below 80 psi, opens at 120 psi.", tag: "Read the ladder",
+              q: "The tank is at 100 psi. The operator presses START. What happens?",
+              options: ["Nothing — the pressure switch contact is open, so the rung is incomplete", "M starts and runs until STOP is pressed", "M starts, then the overload trips", "M runs only while START is held"],
+              answer: 0,
+              why: "At 100 psi the pressure switch hasn't closed — it closes at 80 on falling pressure. That open contact is in series with everything, so START has no path to the coil. Permissive contacts don't care what the operator wants until their condition is met." },
+            { kind: "pick", tag: "Behavior → diagram",
+              q: "Which rung refuses to start the compressor until tank pressure drops below 80 psi? (PS closes below 80 psi.)",
+              options: [
+                { d: R_PERMISS, cap: "NO pressure contact in series ahead of the station" },
+                { d: R_SEAL, cap: "Standard rung, no pressure switch at all" },
+                { d: DG([[PAR([[CC("pbNO", "START")], [CC("ctNO", "M")], [CC("psNO", "PS")]]), CC("coil", "M"), CC("ol")]]), cap: "Pressure contact in parallel with START and the seal-in" } ],
+              answer: 0,
+              why: "The NO pressure contact in series is a gatekeeper: no low-pressure signal, no start — and once running, the seal-in keeps it running to cut-out. A pressure contact in parallel would let anyone start the motor at any pressure, and would start it by itself when pressure fell." }
+          ] },
+        { id: "rl-or", name: "Parallel Contacts = OR Logic", cat: "Read the Ladder", front: R_OR,
+          hook: "Parallel is a team where any single player can score.",
+          teach: "Contacts in parallel are OR logic: any one of them completes the rung. Two float switches in parallel means either tank can call the pump. Wire them in series and you'd have AND logic — both tanks would have to call at once.",
+          variants: [
+            { kind: "diagram", diagram: R_OR, note: "Each float switch contact closes when its tank's level rises to the switch.", tag: "Read the ladder",
+              q: "What makes pump P start?",
+              options: ["Either float switch closing — they're in parallel", "Both float switches closing together", "Neither — parallel contacts short the coil out", "Both float switches opening"],
+              answer: 0,
+              why: "Each float contact is its own complete path from L1 to the coil. One closing is enough — that's OR logic, the parallel counterpart to the series AND of permissive circuits." },
+            { kind: "text", tag: "Ladder logic",
+              q: "Two start contacts in parallel give you OR logic. Two in series give you…",
+              options: ["AND logic — both must close", "OR logic as well", "NOT logic", "A short circuit"],
+              answer: 0,
+              why: "AND. Series contacts form a chain — every link must close before current reaches the coil. Parallel contacts form alternate routes — any one route carries it. Almost every ladder question reduces to spotting which of the two you're looking at." }
+          ] },
+        { id: "rl-run-lamp", name: "The RUN Lamp Rung", cat: "Read the Ladder", front: R_LAMP,
+          hook: "The lamp is a witness, not a link in the chain.",
+          teach: "Pilot lights live on their own rung, driven by an auxiliary contact of the starter they watch. A lamp is a load that only reports — it's never in the coil's path — so a dead lamp changes nothing about the machine, just about what you can see from across the room.",
+          variants: [
+            { kind: "diagram", diagram: R_LAMP, tag: "Read the ladder",
+              q: "M is running when the RUN lamp burns out. What happens to the motor?",
+              options: ["Nothing — it keeps running; the lamp only reports", "It stops — the lamp is part of the coil circuit", "It runs faster with the lamp load gone", "The overload trips"],
+              answer: 0,
+              why: "The lamp sits on its own rung, fed through an M contact, purely as an indicator. Burned out, it stops reporting — the motor's rung never knew it existed. (This is also why a dark RUN lamp never proves a motor is stopped.)" },
+            { kind: "text", tag: "Starter logic",
+              q: "A pilot light on a starter is wired…",
+              options: ["On its own rung, through an auxiliary contact of the starter", "In series with the coil, so it proves coil current", "Across the START button", "In the power circuit, in series with the motor"],
+              answer: 0,
+              why: "On a separate rung through an NO auxiliary contact: starter pulls in, contact closes, lamp lights. It's an output of the logic, never an input to it." }
+          ] },
+        { id: "rl-stop-parallel", name: "STOP Wired in Parallel", cat: "Read the Ladder", front: R_STOPPAR,
+          hook: "A stop in parallel is just another way to start.",
+          teach: "A stop device has to sit in series, where it can break every path to the coil. Wire the NC stop in parallel and its resting closed state becomes a path of its own: the motor runs with hands off, and the button 'works' only while it's physically held in.",
+          variants: [
+            { kind: "diagram", diagram: R_STOPPAR, tag: "Read the ladder",
+              q: "Control power is on and nobody is touching anything. What is M doing?",
+              options: ["Running — the NC stop branch is a closed path all by itself", "Nothing — STOP is closed, so the motor is stopped", "Running backwards", "Cycling on and off"],
+              answer: 0,
+              why: "In parallel, the stop button's NC contact is simply a closed branch — the coil is fed right through it. The motor runs until someone holds STOP in, and restarts the moment they let go. Stops go in series so they can break the rung; in parallel they become part of it." },
+            { kind: "text", tag: "Starter logic",
+              q: "A stop button must be wired in series with the rung because…",
+              options: ["It has to be able to break every path to the coil", "Series wiring makes the button light up", "Parallel contacts can't carry coil current", "Red buttons are only sold as NC contacts"],
+              answer: 0,
+              why: "Breaking the rung is the stop's whole job. In series, one open contact kills every path — start branch and seal-in branch alike. In parallel, the rest of the rung just routes around it." }
+          ] },
+
+        /* ================= STARTER LOGIC ================= */
+        { id: "sl-power-loss", name: "Three-Wire Control & Power Loss", cat: "Starter Logic", front: R_SEAL,
+          hook: "Three-wire forgets on purpose — so the machine can't wake up alone.",
+          teach: "Three-wire control (stop/start station with seal-in) drops out on a power failure and stays out: the seal-in contact is the circuit's memory, and the memory dies with the power. That's low-voltage RELEASE — the machine cannot restart itself when power returns.",
+          variants: [
+            { kind: "diagram", diagram: R_SEAL, tag: "Starter logic",
+              q: "M is running when the plant loses power for ten minutes. Power comes back. What does M do?",
+              options: ["Stays off until someone presses START", "Restarts automatically", "Restarts only if STOP wasn't pressed during the outage", "Trips the overload on the restart inrush"],
+              answer: 0,
+              why: "The seal-in contact held the rung together — and it opened the instant the coil died. With power back, both paths (START and seal) stand open. Somebody has to press START. That refusal to self-restart is exactly why three-wire control is specified on machinery." },
+            { kind: "text", tag: "Starter logic",
+              q: "Match the terms: three-wire vs. two-wire control after a power failure…",
+              options: ["Three-wire = low-voltage RELEASE (manual restart). Two-wire = low-voltage PROTECTION (automatic restart)", "Three-wire = low-voltage protection. Two-wire = low-voltage release", "Both restart automatically", "Neither drops out on power loss"],
+              answer: 0,
+              why: "Release vs. protection is the exam's favorite vocabulary trap. Three-wire RELEASES the starter and demands a human restart. Two-wire gives low-voltage PROTECTION to a process — the starter re-closes on its own when voltage returns, if its maintained contact is still closed." }
+          ] },
+        { id: "sl-two-wire", name: "Two-Wire (Maintained) Control", cat: "Starter Logic", front: R_FLOAT,
+          hook: "Two-wire never forgets, because the switch never lets go.",
+          teach: "Two-wire control uses one maintained pilot device — a float, pressure, or temperature switch — in series with the coil. No seal-in, no memory: the device IS the memory. Power fails and returns, and if the device is still calling, the load restarts by itself. Perfect for sumps and compressors; dangerous on a table saw.",
+          variants: [
+            { kind: "diagram", diagram: R_FLOAT, note: "FS = float switch: it is closed (calling for the pump) right now.", tag: "Starter logic",
+              q: "The sump is full and the float is calling when power fails for a minute, then returns. The pump…",
+              options: ["Restarts by itself — the float switch is still closed", "Stays off until a start button is pressed", "Runs backwards to drain the pit", "Trips its overload"],
+              answer: 0,
+              why: "Nothing in this rung needs a human. The float contact is a maintained switch: as long as the level holds it closed, the coil circuit is complete, outage or not. Automatic restart is a feature here — nobody stands watch over a sump." },
+            { kind: "text", tag: "Starter logic",
+              q: "Two-wire (maintained-contact) control is the right choice for…",
+              options: ["A sump pump or air compressor that must cycle unattended", "A punch press an operator feeds by hand", "A saw that must never restart after an outage", "Any machine an operator stands at"],
+              answer: 0,
+              why: "Unattended, automatic equipment — pumps, compressors, refrigeration — where self-restart is the point. Anything an operator's hands go near gets three-wire control, so a power blink can't bring it back to life on its own." }
+          ] },
+        { id: "sl-interlock", name: "Forward–Reverse Interlocking", cat: "Starter Logic", front: R_REV,
+          hook: "Each coil holds the other's door shut.",
+          teach: "Each coil's rung runs through a normally-closed auxiliary contact of the OTHER coil. With F energized, its NC contact in R's rung stands open, so the reverse coil can't pull in until the forward starter has dropped out. Electrical interlocking makes the two coils take turns — never share.",
+          variants: [
+            { kind: "diagram", diagram: R_REV, note: "Reversing starter: rung 2 taps off below the common STOP. Interlocking is by auxiliary contacts only.", tag: "Starter logic",
+              q: "F is running. The operator presses REV (the reverse start button). What happens?",
+              options: ["Nothing — F's open NC interlock contact blocks the R rung", "R takes over and F drops out", "Both coils energize and two phases short together", "F reverses instantly"],
+              answer: 0,
+              why: "R's rung passes through F's NC auxiliary contact, and an energized F holds that contact open. The REV button can be pressed all day — the rung is broken upstream of the coil. Press STOP first: F drops, its interlock contact re-closes, and only then can R pull in." },
+            { kind: "text", tag: "Starter logic",
+              q: "On that same starter, before R can energize, the operator must…",
+              options: ["Press STOP, so F drops out and its NC interlock contact re-closes", "Hold FWD and REV together", "Reset the overload", "Swap two line leads"],
+              answer: 0,
+              why: "The interlock contact only re-closes when its coil lets go. STOP drops F, the NC contact in R's rung closes again, and REV finally has a complete rung. Interlocking forces a full stop between directions." }
+          ] },
+        { id: "sl-mech-interlock", name: "The Mechanical Interlock", cat: "Starter Logic", front: R_REV,
+          hook: "The electrical interlock asks nicely; the mechanical one makes it physically impossible.",
+          teach: "Electrical interlocks trust a contact to open. If a contactor's main contacts weld shut, its auxiliary may lie — so reversing starters add a mechanical interlock: a physical linkage between the two contactors that makes it impossible for both armatures to be closed at once. Both closed on a reversing starter means two line phases bolted together.",
+          variants: [
+            { kind: "text", tag: "Starter logic",
+              q: "Besides the NC interlock contacts, a reversing starter has a mechanical interlock. Its job is to…",
+              options: ["Physically prevent both contactors from closing at the same time", "Reverse the phase rotation", "Provide the overload protection", "Seal in whichever coil started first"],
+              answer: 0,
+              why: "If F and R ever closed together, two line phases would be shorted through the crossed connections. The mechanical interlock is a bar between the contactors: one armature down physically blocks the other — protection that still works even if an auxiliary contact welds or sticks." },
+            { kind: "text", tag: "Starter logic",
+              q: "Why isn't the electrical interlock alone considered enough on a reversing starter?",
+              options: ["A welded or stuck auxiliary contact could fail to open, letting both coils try to pull in", "NC contacts wear out too fast to trust", "It only works with DC control circuits", "It makes the starter respond too slowly"],
+              answer: 0,
+              why: "Every electrical safeguard depends on a contact actually opening. Welded main contacts can hold an armature — and its auxiliary — in the closed position. The mechanical interlock doesn't care what any contact claims; it physically bars the second contactor." }
+          ] },
+        { id: "sl-swap-two", name: "Reversing = Swap Any Two Leads", cat: "Starter Logic", front: null,
+          hook: "Swap two, it turns around. Swap all three, you've just renamed the same dance.",
+          teach: "A three-phase motor's rotation follows its phase sequence. Interchanging any two of the three line leads flips the sequence and the motor runs the other way — which is all a reversing starter does, with two contactors wired to make the swap. Interchanging all three changes nothing.",
+          variants: [
+            { kind: "text", tag: "Starter logic",
+              q: "A reversing starter reverses a three-phase motor by…",
+              options: ["Swapping any two of the three line leads feeding the motor", "Swapping all three line leads", "Reversing the polarity of the control circuit", "Feeding the motor through the overloads backwards"],
+              answer: 0,
+              why: "Rotation follows phase sequence — A-B-C one way, A-C-B the other. Interchange any two leads and the sequence flips. The F contactor connects the leads straight through; the R contactor crosses two of them." },
+            { kind: "text", tag: "Starter logic",
+              q: "After a starter swap, every motor lead was moved one terminal over 'to keep them in order' — all three swapped. The motor's rotation…",
+              options: ["Is unchanged — rotating all three leads preserves the phase sequence", "Is reversed", "Is lost — the motor will only hum", "Depends on the overload setting"],
+              answer: 0,
+              why: "Moving every lead one position over preserves the sequence — the motor sees the same rotation it had before. To reverse it you must interchange exactly two leads and leave the third alone." }
+          ] },
+        { id: "sl-ol-trip", name: "What an Overload Trip Drops", cat: "Starter Logic", front: R_SEAL,
+          hook: "The overload doesn't grab the motor. It just presses STOP from the inside.",
+          teach: "The overload relay watches motor current in the power circuit, but its weapon is a single NC contact in the control circuit, in series with the coil. Trip, and it's exactly as if STOP were pressed: the contactor drops, the seal-in dies, and a three-wire starter waits for a human — after the overload is reset.",
+          variants: [
+            { kind: "diagram", diagram: R_SEAL, tag: "Starter logic",
+              q: "M is running when the driven machine jams and the overload trips. What drops out?",
+              options: ["The whole starter — the OL contact in series with the coil opens and drops it", "Only the RUN lamp", "Nothing until STOP is pressed", "Only one phase of the motor"],
+              answer: 0,
+              why: "The OL contact lives in the coil's rung. When the heaters trip it, that contact opens, coil current dies, and the contactor drops open — motor power and seal-in gone in the same instant." },
+            { kind: "text", tag: "Starter logic",
+              q: "The jam is cleared and the overload relay is reset. On three-wire control, the motor…",
+              options: ["Stays off until START is pressed", "Restarts automatically the moment the OL resets", "Restarts after a fixed 30-second delay", "Can only be jogged until the overload cools fully"],
+              answer: 0,
+              why: "Resetting the overload only re-closes its contact — it doesn't restore the seal-in, which died when the starter dropped. Three-wire control needs a fresh START press. (On two-wire control, the same reset WOULD restart the motor by itself — one more reason the distinction matters.)" }
+          ] },
+        { id: "sl-multi-station", name: "Multiple Start/Stop Stations", cat: "Starter Logic", front: R_MULTI,
+          hook: "Stops vote to kill in series; starts vote to go in parallel.",
+          teach: "Multiple stations follow one rule: stops in series, starts in parallel. Series stops mean ANY station can kill the rung; parallel starts mean ANY station can make it. The seal-in contact joins the starts in parallel, because electrically it's just the starter's own start button.",
+          variants: [
+            { kind: "pick", tag: "Behavior → diagram",
+              q: "Which rung runs ONE starter from TWO start/stop stations?",
+              options: [
+                { d: R_MULTI, cap: "Stops in series, starts in parallel, M contact sealing in" },
+                { d: R_MULTI_B, cap: "Stops in parallel, starts in series, no seal-in" },
+                { d: R_MULTI_C, cap: "Stops in series, starts in series, no seal-in" },
+                { d: R_MULTI_D, cap: "Stops in parallel, starts in parallel, M contact sealing in" } ],
+              answer: 0,
+              why: "Stops in series — any one of them breaks the whole rung. Starts in parallel — any one completes it, and the M contact seals around both. Parallel stops can be routed around (one closed stop keeps the rung alive); series starts would demand two operators pressing at the same moment." },
+            { kind: "diagram", diagram: R_MULTI, tag: "Starter logic",
+              q: "The motor is running, started from Station 1. Someone at Station 2 presses STOP. What happens?",
+              options: ["The motor stops — the stops are in series, so either one breaks the rung", "Nothing — only the station that started it can stop it", "The motor stops only if Station 1's STOP is also pressed", "The motor slows to half speed"],
+              answer: 0,
+              why: "Both stops carry the same rung current in series. Either one opening is a break in the only path to the coil, so Station 2 can stop a motor Station 1 started. That's the point of series stops: stop authority everywhere." }
+          ] },
+        { id: "sl-jog-circuit", name: "The Jog Circuit (Seal Defeated)", cat: "Starter Logic", front: R_JOGCIRCUIT,
+          hook: "Jogging is a seal-in with its memory deliberately cut while you press.",
+          teach: "The jog button is double-acting. Its NO contact feeds the coil directly, while its NC contact sits in the seal-in branch — so while JOG is held, the holding path is held open and the motor can't latch. Release the button and everything dies together.",
+          variants: [
+            { kind: "diagram", diagram: R_JOGCIRCUIT, note: "JOG is one double-acting button: its NO and NC contacts move together.", tag: "Starter logic",
+              q: "Why can't the motor seal in while the JOG button is held?",
+              options: ["The jog button's NC contact holds the seal-in branch open for as long as it's pressed", "The jog button uses a smaller, weaker coil", "The overload is bypassed during jogging", "There is no auxiliary contact anywhere in this circuit"],
+              answer: 0,
+              why: "Trace the middle branch: M contact in series with the jog button's NC contact. Holding JOG closes its NO contact to run the motor — and simultaneously holds its NC contact open, so even when the M contact closes, the seal can't complete. Release JOG and both contacts spring back; the coil dies with no sealed path." },
+            { kind: "pick", tag: "Behavior → diagram",
+              q: "Which rung lets you bump (jog) the motor with JOG, yet run it sealed-in from START?",
+              options: [
+                { d: R_JOGCIRCUIT, cap: "Jog NC contact in the seal branch; jog NO contact feeding the coil" },
+                { d: R_SEAL, cap: "Standard seal-in rung — no jog function" },
+                { d: R_JOGCIRCUIT_BAD, cap: "Jog button simply paralleled with START, seal branch untouched" },
+                { d: R_FLOAT, cap: "Maintained float switch feeding the coil (two-wire)" } ],
+              answer: 0,
+              why: "Only the first breaks the seal while jogging. In the third, the jog button is just a second start button — the M contact seals around it and the motor latches on the first bump, which is exactly the accident the real jog circuit exists to prevent." }
+          ] },
+        { id: "sl-restart-diagnosis", name: "The Self-Restarting Motor", cat: "Starter Logic", front: null,
+          hook: "If it restarts itself, something is still holding the button — find out what.",
+          teach: "A starter that restarts itself after every overload reset is telling you its control switch never opened. With two-wire control the maintained pilot device stays closed through the trip — reset the overload and the rung is complete again. On three-wire control, the same behavior means something is welded or shorted.",
+          variants: [
+            { kind: "text", scenario: "A sump motor restarts by itself every time its overload is reset — nobody is near the controls. It did the same thing after last night's brief power outage.", tag: "Starter logic",
+              q: "The most likely explanation is…",
+              options: ["It's on two-wire control — the maintained float switch is still calling", "Its STOP button is wired NO", "Its overload heaters are oversized", "Its motor is wired for the wrong voltage"],
+              answer: 0,
+              why: "Two-wire control has no seal-in to lose: a float, pressure, or temperature switch in series with the coil simply stays closed. Trip, reset, power blip — whenever the rung becomes complete again, the motor runs. Automatic restart is normal here." },
+            { kind: "text", scenario: "The same self-restarting behavior shows up on a mixer with a start/stop station (three-wire control).", tag: "Starter logic",
+              q: "Now the most likely cause is…",
+              options: ["A welded holding contact or a shorted START button — something is bridging the start path", "The overload relay is brand new", "Normal three-wire operation", "The STOP button is the wrong color"],
+              answer: 0,
+              why: "Three-wire control cannot restart itself honestly: the seal-in died with the coil. If it restarts anyway, current is reaching the coil around the start button — a welded auxiliary contact or a damaged, shorted START are the classic culprits." }
+          ] },
+        { id: "sl-hoa", name: "Hand–Off–Auto", cat: "Starter Logic", front: null,
+          hook: "HAND is you, AUTO is the float switch — the selector just decides who's driving.",
+          teach: "A Hand-Off-Auto selector gives one starter three personalities. HAND feeds the coil directly — the motor runs, period. OFF kills it. AUTO hands the coil to a pilot device like a float or pressure switch, which cycles it unattended. Exam questions live in AUTO: trace which device is really in charge.",
+          variants: [
+            { kind: "text", tag: "Starter logic",
+              q: "A pump starter is in AUTO, cycling on a float switch. Maintenance flips the selector to HAND. The pump…",
+              options: ["Runs continuously, ignoring the float switch", "Still cycles with the float switch", "Cannot run in HAND", "Runs only when the level is high"],
+              answer: 0,
+              why: "HAND bypasses the pilot device and feeds the coil directly — that's its purpose: testing and manual override. The float switch only has authority in AUTO. Leave the selector forgotten in HAND and a sump pump will happily run its pit dry." },
+            { kind: "text", tag: "Starter logic",
+              q: "In the AUTO position, what actually starts and stops the motor?",
+              options: ["The pilot device (float / pressure / temperature switch) wired through the AUTO contact", "The START button on the starter door", "The overload relay", "The selector switch itself, on a built-in timer"],
+              answer: 0,
+              why: "AUTO routes the coil through the pilot device, which cycles the motor on its own conditions — level, pressure, temperature. The selector chose the driver; the device does the driving." }
+          ] }
+,
+        /* ================= DEVICES IN CONTEXT ================= */
+        { id: "dc-limit-stop", name: "Limit Switch Stops Travel", cat: "Devices in Context", front: R_LIMIT,
+          hook: "A limit switch is the machine pressing its own stop button.",
+          teach: "A limit switch is a contact worked by the machine instead of a finger. Put its NC contact in the coil's rung and the load itself cuts the rung at the end of travel — the seal-in dies with it, so the motor stays stopped until it's commanded again.",
+          variants: [
+            { kind: "diagram", diagram: R_LIMIT, note: "LS = limit switch at the top of the hoist's travel; the rising load strikes it at the top.", tag: "Devices in context",
+              q: "The hoist rises and the load strikes the limit switch at the top. What happens?",
+              options: ["The motor stops and stays stopped — the limit contact breaks the rung and the seal-in with it", "The motor reverses automatically", "Nothing — limit switches only signal a PLC", "The overload trips"],
+              answer: 0,
+              why: "The LS contact is NC and in series with the coil. The load opens it, the coil drops, the seal-in contact falls open — and even if the load bounces off the switch, there's no sealed path left to restart the hoist on its own." },
+            { kind: "text", tag: "Devices in context",
+              q: "A limit switch differs from a pushbutton in that…",
+              options: ["It's actuated by machine motion — a lever, roller, or plunger the moving part strikes", "It can only be used on DC circuits", "It has no electrical contacts", "It must be reset by hand after every operation"],
+              answer: 0,
+              why: "Same contact action, different finger: a moving part does the pressing. Limit switches guard ends of travel, confirm positions, and sequence machinery — anywhere the machine's own position is the signal." }
+          ] },
+        { id: "dc-limit-failsafe", name: "Fail-Safe Limit Wiring", cat: "Devices in Context", front: R_LIMIT,
+          hook: "Wire it so that broken and tripped look exactly alike.",
+          teach: "Wire a safety limit NC and hold the rung through it, and the dangerous failures all fail safe: a cut wire, a loose terminal, or the switch being struck all look identical to the circuit — an open rung and a stopped machine. Fail-safe design means the broken thing and the tripped thing are the same thing.",
+          variants: [
+            { kind: "text", tag: "Devices in context",
+              q: "An overtravel limit switch is wired NC, in series with the coil, closed during normal travel. Its wire breaks mid-shift. The machine…",
+              options: ["Stops and can't run — a broken wire opens the rung just like a tripped limit", "Keeps running — that wire carries no power", "Runs faster without the limit", "Reverses direction"],
+              answer: 0,
+              why: "That's the fail-safe principle — the same reason STOP buttons are NC. In a series NC chain, every failure mode (broken wire, loose lug, burned contact) opens the circuit, and an open circuit is a stopped machine." },
+            { kind: "pick", tag: "Behavior → diagram",
+              q: "Which rung stops the hoist if the limit-switch wire breaks?",
+              options: [
+                { d: R_LIMIT, cap: "NC limit contact in series with the coil" },
+                { d: R_LIMIT_NO, cap: "NO limit contact in series with the coil" },
+                { d: R_LIMIT_PAR, cap: "NC limit contact in parallel with RAISE and the seal-in" } ],
+              answer: 0,
+              why: "Only the series NC contact is in the coil's only path, so any break — switch or wire — kills the rung. An NO contact in series couldn't run the motor until the limit was struck (backwards), and a parallel contact can be routed around: a broken wire there changes nothing." }
+          ] },
+        { id: "dc-float", name: "Float Switch Differential", cat: "Devices in Context", front: R_FLOAT,
+          hook: "The float has two opinions about the water level — one for starting, one for stopping.",
+          teach: "Float switches have built-in differential: they switch ON at one level and OFF at a distinctly different one. That gap is deliberate — without it, the pump would chatter on and off with every ripple at a single setpoint.",
+          variants: [
+            { kind: "diagram", diagram: R_FLOAT, note: "FS tips closed when the sump level rises to it; it tips back open only after the level falls well below that point.", tag: "Devices in context",
+              q: "The pump has drained the sump to the float's halfway point and the level is still falling. The pump…",
+              options: ["Keeps running until the float drops to its OFF point", "Stopped the moment the level started falling", "Is chattering on and off rapidly", "Reverses to refill the sump"],
+              answer: 0,
+              why: "A float switch doesn't flip at a single line. It tips closed at the high level and stays closed — through the whole drawdown — until the low level tips it back open. That differential is what keeps the pump from short-cycling itself to death." },
+            { kind: "text", tag: "Devices in context",
+              q: "The gap between a float switch's ON level and OFF level is called its differential. It exists to…",
+              options: ["Prevent rapid short-cycling of the pump", "Make the pump run faster", "Compensate for voltage drop in long runs", "Let two pumps share one switch"],
+              answer: 0,
+              why: "Short-cycling is the killer: without differential, waves at the setpoint would start and stop the motor dozens of times a minute, cooking the starter and the motor. The gap forces a full, healthy run and a full stop." }
+          ] },
+        { id: "dc-pressure", name: "Pressure Switch: Cut-In / Cut-Out", cat: "Devices in Context", front: R_PRESS,
+          hook: "Cut-in wakes it up; cut-out puts it to bed.",
+          teach: "A pressure switch runs a compressor between two setpoints: cut-IN, where falling pressure closes the contact and starts the motor, and cut-OUT, where rising pressure opens it again. Between the two points, the switch simply remembers what it last did.",
+          variants: [
+            { kind: "diagram", diagram: R_PRESS, note: "PS closes at 90 psi (cut-in) as pressure falls, and opens at 120 psi (cut-out) as pressure rises.", tag: "Devices in context",
+              q: "The compressor is running and tank pressure reaches 120 psi. What happens?",
+              options: ["The pressure switch opens and the starter drops out", "The motor speeds up to build more pressure", "The pressure switch closes harder", "The overload trips by design"],
+              answer: 0,
+              why: "120 psi is the cut-out: the contact opens, the two-wire rung breaks, the starter drops. The motor stays off while the tank drains down to 90 — the cut-in — where the contact re-closes and the cycle repeats." },
+            { kind: "text", tag: "Devices in context",
+              q: "On a pressure switch, 'cut-in' and 'cut-out' mean…",
+              options: ["Cut-in: the pressure where the contact closes and starts the motor. Cut-out: where it opens and stops it", "Cut-in is the tank's maximum safe pressure", "Cut-out is the valve you open to service the tank", "The order the switch's wires are landed"],
+              answer: 0,
+              why: "Cut-in 90, cut-out 120 in this example — and the difference between them is the switch's differential, keeping the compressor from short-cycling just like the float switch's gap does for a pump." }
+          ] },
+        { id: "dc-temp", name: "Temperature Switch Control", cat: "Devices in Context", front: R_TEMP,
+          hook: "Heat flips the switch; the switch runs the fan; nobody touches anything.",
+          teach: "Temperature switches are named by what the contact does as temperature moves: 'closes on rise' is the cooling pattern (fans, refrigeration), 'opens on rise' is the heating pattern. Wire a closes-on-rise switch in series with a fan starter and the fan runs itself — no buttons involved.",
+          variants: [
+            { kind: "diagram", diagram: R_TEMP, note: "TS = temperature switch: its contact closes on a rise to 85°F and opens again a few degrees lower.", tag: "Devices in context",
+              q: "The room has cooled to 80°F after the exhaust fan ran for a while. The fan…",
+              options: ["Is off — the TS contact opened as the temperature fell back through its setpoint", "Keeps running until someone stops it", "Runs backwards to pull heat back in", "Cycles once per second at 80°F"],
+              answer: 0,
+              why: "This is two-wire control with temperature as the pilot. The contact closed at 85 on the way up, ran the fan, and opened a few degrees lower on the way down — the small differential between those points keeps it from chattering right at 85." },
+            { kind: "text", tag: "Devices in context",
+              q: "For heating control — say a unit heater in a warehouse — the temperature switch contact should…",
+              options: ["Open on a temperature rise (and close on a fall)", "Close on a temperature rise", "Stay closed at all temperatures", "Be replaced by a float switch"],
+              answer: 0,
+              why: "Heating is the mirror image of cooling: the contact closes when the room gets cold (calling for heat) and opens when the setpoint is reached. Same switch family, opposite action — and exams phrase it both ways to see if you're awake." }
+          ] },
+        { id: "dc-ton", name: "On-Delay Timer (TON)", cat: "Devices in Context", front: R_TON,
+          hook: "On-delay is a slow yes: the coil hears you now, the contact agrees five seconds later.",
+          teach: "An on-delay (TON) timer starts counting when its coil energizes and changes its timed contacts only after the set time has fully elapsed. NOTC is its signature contact: open at rest, and it closes — late — when the timer times out.",
+          variants: [
+            { kind: "diagram", diagram: R_TON, note: "TR is an ON-DELAY timer set for 5 seconds.", tag: "Devices in context",
+              q: "The switch has been closed for 3 seconds. The lamp is…",
+              options: ["Still off — the NOTC contact closes only after the full 5 seconds", "On — the contact closed when the switch did", "Flickering until the timer times out", "On, but at half brightness"],
+              answer: 0,
+              why: "The TR coil has power and is counting, but an on-delay contact doesn't move until the count completes. At 3 of 5 seconds the NOTC contact is still exactly where it was drawn: open. At 5 seconds it closes and the lamp lights." },
+            { kind: "text", tag: "Devices in context",
+              q: "An on-delay timer's timed contacts change state…",
+              options: ["A set time AFTER the coil is energized", "The instant the coil is energized", "A set time after the coil is de-energized", "Only while the coil is de-energized"],
+              answer: 0,
+              why: "'On-delay' says it plainly: the delay happens on the way ON. Energize the coil, wait out the dial, then the contacts move — and they snap back the instant the coil drops." }
+          ] },
+        { id: "dc-tof", name: "Off-Delay Timer (TOF)", cat: "Devices in Context", front: R_TOF,
+          hook: "Off-delay is a slow goodbye: off is announced now, executed in thirty seconds.",
+          teach: "An off-delay (TOF) timer's contacts move the instant the coil energizes — then, when the coil drops, they hold their position for the set time before falling back. It's the run-on timer: exhaust fans, cooling fans, and conveyors that must clear themselves after the command stops.",
+          variants: [
+            { kind: "diagram", diagram: R_TOF, note: "TR is an OFF-DELAY timer set for 30 seconds. Coil M drives an exhaust fan.", tag: "Devices in context",
+              q: "The operator has just switched SW off, after the fan ran for an hour. The fan…",
+              options: ["Keeps running for 30 more seconds, then stops", "Stops the instant SW opens", "Keeps running forever", "Slows gradually over the 30 seconds"],
+              answer: 0,
+              why: "The NOTO contact closed the moment TR energized and stays closed for the timed period after TR drops — that's the fan's run-on. (The gradual slow-down answer describes a VFD ramp; a timer contact is a switch, not a dimmer.)" },
+            { kind: "text", tag: "Devices in context",
+              q: "An off-delay timer's timed contacts change state…",
+              options: ["Instantly when the coil energizes — and return a set time after it de-energizes", "A set time after the coil energizes", "Only while the coil is off", "Never — they need a second timer to move"],
+              answer: 0,
+              why: "The delay in an off-delay lives entirely on the back end. Front end: the contacts move at once, like an ordinary relay. Back end: coil off, contacts wait out the dial, then drop. NOTO is the classic — closed while running, opens late." }
+          ] },
+        { id: "dc-timer-two-contacts", name: "Instantaneous vs. Timed Contacts", cat: "Devices in Context", front: R_TIMER2,
+          hook: "Same timer, two clocks: one contact is a sprinter, the other set an alarm.",
+          teach: "One timer can carry both kinds of contacts. Instantaneous contacts are just relay contacts — they move with the coil. Timed contacts wait for the dial. Reading any timer rung means asking of every contact: instant or timed?",
+          variants: [
+            { kind: "diagram", diagram: R_TIMER2, note: "TR is an on-delay timer set for 5 s. Rung 2's TR contact is INSTANTANEOUS; rung 3's is TIMED.", tag: "Devices in context",
+              q: "SW has been closed for exactly 1 second. Which lamps are lit?",
+              options: ["Lamp A only — the instantaneous contact closed with the coil; the timed contact is still waiting", "Lamp B only", "Both lamps", "Neither lamp"],
+              answer: 0,
+              why: "The instantaneous TR contact in rung 2 behaved like any relay contact — closed the moment the coil picked up. The timed NOTC contact in rung 3 needs the full 5 seconds; at 1 second it's still open. Five seconds in, both lamps will be lit." },
+            { kind: "text", tag: "Devices in context",
+              q: "The difference between a timer's instantaneous and timed contacts is…",
+              options: ["Instantaneous contacts move with the coil; timed contacts move after the set delay", "Timed contacts can carry more current", "Instantaneous contacts exist only on off-delay timers", "There is no difference — it's just a drawing style"],
+              answer: 0,
+              why: "Both belong to the same timer and the same coil. The instantaneous set is for logic that must happen now (sealing in, or signaling 'timer running'); the timed set is the whole reason the timer exists." }
+          ] },
+        { id: "dc-two-hand", name: "Two-Hand Control", cat: "Devices in Context", front: null,
+          hook: "It doesn't trust your hands to stay out — it gives them both a job somewhere safe.",
+          teach: "Two-hand control puts a button under each of the operator's hands, arranged so the machine cycles only while BOTH are pressed. The safety isn't electrical redundancy — it's geography. If both hands are provably on buttons, neither hand can be in the die.",
+          variants: [
+            { kind: "text", tag: "Devices in context",
+              q: "A press with two-hand control runs only while the operator holds BOTH buttons. The point is…",
+              options: ["Both hands are occupied on the buttons, so neither can be in the work area", "Two buttons feed the coil more current", "It's cheaper than a light curtain", "Either hand alone can run it in an emergency"],
+              answer: 0,
+              why: "Location, not electricity. The buttons are placed apart, out of the die space, and the machine needs both held. An operator physically cannot have a hand in the press while it cycles." },
+            { kind: "text", tag: "Devices in context",
+              q: "Two-hand controls also include anti-tie-down logic. It exists to stop operators from…",
+              options: ["Taping or blocking one button down and running the press one-handed", "Pressing both buttons too quickly", "Using both hands at once", "Jogging the press between cycles"],
+              answer: 0,
+              why: "Tape one button down and two-hand control becomes one-hand control with the other hand free to feed parts — the exact accident the design prevents. Anti-tie-down requires both buttons freshly pressed, together, every cycle." }
+          ] },
+        { id: "dc-jog-vs-run", name: "Jog vs. Run", cat: "Devices in Context", front: R_JOGCIRCUIT,
+          hook: "Run is a commitment; jog is a handshake — let go and it's over.",
+          teach: "Jog and run are the same motor with two different contracts. RUN seals in and keeps its promise until STOP. JOG promises nothing — motion only while the button is physically held. The entire difference lives in whether the seal-in branch is allowed to close.",
+          variants: [
+            { kind: "diagram", diagram: R_JOGCIRCUIT, note: "START gives sealed (run) operation. JOG is double-acting: while pressed, it feeds the coil and holds the seal branch open.", tag: "Devices in context",
+              q: "The operator taps JOG three times. The motor…",
+              options: ["Bumps three times, stopping at every release", "Starts on the first tap and keeps running", "Runs backwards on the second tap", "Does nothing — jogging requires STOP to be held too"],
+              answer: 0,
+              why: "Each press feeds the coil through the jog contact while the jog's NC contact holds the seal branch open. Each release kills the coil with no sealed path to save it. Three taps, three bumps — that's inching a load into position." },
+            { kind: "text", tag: "Devices in context",
+              q: "Put plainly, jog control means…",
+              options: ["Momentary operation — the motor runs only while the button is held", "The motor runs at half speed", "The motor alternates forward and reverse", "Timed operation for a set number of seconds"],
+              answer: 0,
+              why: "Momentary, unsealed, finger-on-the-button control. Not slower, not timed, not alternating — just honest: motion exactly as long as the press, and not a millisecond longer." }
+          ] },
+
+        /* ================= TROUBLESHOOTING ================= */
+        { id: "ts-dies-on-release", name: "Dies the Instant START Is Released", cat: "Troubleshooting", front: R_SEAL,
+          hook: "If it only runs while you hold it, the circuit lost its memory, not its power.",
+          teach: "Runs-while-held, dies-on-release is the seal-in branch's signature failure. The start path works (the motor starts), the coil works (it pulls in), but the parallel holding path never closes — so the starter's memory is gone the instant your finger leaves the button.",
+          variants: [
+            { kind: "text", scenario: "Pressing START pulls the starter in and the motor runs — but it dies the instant START is released. STOP tests fine, and the overload has not tripped.", tag: "Troubleshooting",
+              q: "The most likely fault is…",
+              options: ["The holding (auxiliary) contact isn't closing — or its seal-branch wire is broken", "The STOP button is stuck open", "The overload heaters are oversized", "Two of the motor leads are swapped"],
+              answer: 0,
+              why: "Everything except the seal works: the rung completes through START, which proves the coil, STOP, and OL are all healthy. What's missing is the second path around the button — an aux contact that isn't making, or the wire from it. The classic first check on any 'dies on release' call." },
+            { kind: "text", scenario: "Same symptom, second machine: the motor dies the instant START is released. You meter across the auxiliary (holding) contact while a helper holds START and the starter is pulled in.", tag: "Troubleshooting",
+              q: "The reading that confirms a failed holding contact is…",
+              options: ["Full control voltage across the contact — it's still open even though its coil is energized", "Zero volts across the contact", "Continuity measured with the circuit live", "Voltage only on the line side of the contact"],
+              answer: 0,
+              why: "A closed contact has essentially no voltage drop across it; an open one in a live circuit shows the full control voltage. Voltage across the aux contact with the coil pulled in means the contact never closed — failed contact (or its wiring), proven in one reading." }
+          ] },
+        { id: "ts-single-phase", name: "Contactor Pulls In, Motor Only Hums", cat: "Troubleshooting", front: null,
+          hook: "Control says go, motor just hums — count the phases.",
+          teach: "A contactor that pulls in solidly tells you the control circuit is healthy. A motor that only hums and then trips is a power-circuit story — classically one blown line fuse: single-phasing. The motor can't start on two phases, sits at locked-rotor current, and the overload does its job.",
+          variants: [
+            { kind: "text", scenario: "Pressing START pulls the contactor in with a solid clunk. The motor doesn't turn — it hums loudly, and within seconds the overload trips.", tag: "Troubleshooting",
+              q: "The most likely fault is…",
+              options: ["One line fuse is blown — the motor is single-phasing", "The seal-in contact is open", "The STOP button is wired NO", "A timer in the circuit is set wrong"],
+              answer: 0,
+              why: "The clunk clears the control circuit: coil, buttons, and seal are all doing their jobs. A three-phase motor with one phase missing can't develop starting torque — it hums at locked-rotor current until the overload saves it. Check the fuses and the contactor's power contacts." },
+            { kind: "text", tag: "Troubleshooting",
+              q: "Why does single-phasing trip the overload so fast?",
+              options: ["The stalled motor draws locked-rotor-level current on the remaining phases without ever starting", "The overload relay senses the missing fuse directly", "Single-phasing runs the motor backwards against its load", "It doesn't — the trip must be a coincidence"],
+              answer: 0,
+              why: "A stalled motor is nearly a short circuit with a job title: current several times full-load amps flows in the good phases, the heaters heat, and the OL opens the control rung. The trip is the protection working — the fault is upstream." }
+          ] },
+        { id: "ts-self-start", name: "Starts Itself When Power Appears", cat: "Troubleshooting", front: R_SEAL,
+          hook: "If it starts itself, something is standing on the start button forever.",
+          teach: "A three-wire starter that starts itself has a path around the start button that nobody drew. The seal-in contact is the only thing in the rung designed to bypass START — when it welds shut (or the START button shorts), the bypass becomes permanent and the starter pulls in whenever power is present.",
+          variants: [
+            { kind: "text", scenario: "Every time control power is switched on, the motor starts by itself. Nobody touches START. It runs fine and stops normally with STOP — then restarts the moment STOP is released.", tag: "Troubleshooting",
+              q: "The most likely fault is…",
+              options: ["The holding contact is welded shut (or the START button is shorted closed)", "The overload is tripped", "The STOP button has failed open", "The coil is rated for too high a voltage"],
+              answer: 0,
+              why: "Stopping works, so the rung itself is healthy. Starting without a press means the parallel path around START is permanently closed — a welded auxiliary contact is the textbook cause, with a shorted or jammed START button as the other suspect. Either way: something is bridging the button." },
+            { kind: "text", tag: "Troubleshooting",
+              q: "Why is a welded holding contact more dangerous than a failed-open one?",
+              options: ["It defeats the no-restart protection — the machine can start itself after outages and stops", "It makes the motor run backwards", "It only damages the pilot light", "It isn't — both failures are equally safe"],
+              answer: 0,
+              why: "Failed-open costs you a nuisance: the motor won't seal in. Welded shut costs you the core safety of three-wire control — no automatic restart — because the starter now behaves like two-wire control with none of the warning." }
+          ] },
+        { id: "ts-fwd-dead", name: "Forward Dead, Reverse Fine", cat: "Troubleshooting", front: R_REV,
+          hook: "Whatever both directions share is innocent. Interrogate what's different.",
+          teach: "When one direction works, everything the two rungs share is innocent: power, STOP, overload, control voltage. The fault lives in what's unique to the dead direction — and in the F rung, the unique suspect with motive is R's NC interlock contact, sitting open when it should be closed.",
+          variants: [
+            { kind: "text", scenario: "Pressing REV runs the motor in reverse, perfectly. Pressing FWD: nothing — no clunk, no hum. The F coil tests good, and the FWD start button tests good.", tag: "Troubleshooting",
+              q: "The most likely fault is…",
+              options: ["R's NC interlock contact in the F rung is stuck open", "The overload is tripped", "Two line leads are swapped", "The common STOP button has failed"],
+              answer: 0,
+              why: "Reverse working clears the shared path — STOP, overload, and control power are all proven live. The F rung's private parts are its button (tested good), its coil (tested good), and R's interlock contact. An interlock contact that failed open after the last reverse run blocks F forever while leaving R untouched." },
+            { kind: "text", tag: "Troubleshooting",
+              q: "The general rule this call teaches: when one of two similar circuits works…",
+              options: ["The fault is in components unique to the dead circuit — shared components are already proven", "Always replace the overload first", "The motor is burned out until proven otherwise", "Swap both coils and see what happens"],
+              answer: 0,
+              why: "Troubleshooting is elimination. Every shared component just passed a live test under the working direction. Spend your meter time where the two circuits differ — that's where the fault has to live." }
+          ] },
+        { id: "ts-overtravel", name: "Hoist Won't Stop at the Top", cat: "Troubleshooting", front: R_LIMIT,
+          hook: "The machine did exactly what the circuit said. The circuit never heard the limit.",
+          teach: "A hoist that strains at the top of travel is announcing that its limit switch never opened the rung: the switch wasn't struck (actuator misadjusted, linkage worn) or its contact is stuck. The motor isn't misbehaving — it's obeying a rung that was never broken.",
+          variants: [
+            { kind: "text", scenario: "The hoist raises normally — but at the top it doesn't stop. The motor strains against the structure until the overload finally trips it.", tag: "Troubleshooting",
+              q: "The most likely fault is…",
+              options: ["The limit switch isn't opening — misadjusted actuator or a stuck/welded contact", "The seal-in contact has failed open", "The STOP button is wired in parallel", "The overload heaters are too large"],
+              answer: 0,
+              why: "The raise circuit works end to end; the failure is only at the moment the limit should act. Either the load never strikes the switch (adjustment, worn roller, bent arm) or it strikes and the contact doesn't open. A failed-open seal would cause the opposite symptom — dying on release." },
+            { kind: "text", scenario: "On the same hoist, you watch the limit switch while a helper raises the load. The lever is struck and moves through its full travel — the motor still doesn't stop.", tag: "Troubleshooting",
+              q: "Your conclusion…",
+              options: ["The actuator is fine — the contact inside the switch (or its wiring) has failed", "The motor is oversized for the hoist", "The seal-in contact is the fault", "The overload should be removed and jumpered"],
+              answer: 0,
+              why: "Full lever travel rules out adjustment and alignment. If the machine still doesn't stop, the signal dies inside the switch or between the switch and the rung — meter the contact while working the lever. (And never jumper an overload: it was the only thing that saved this machine.)" }
+          ] },
+        { id: "ts-chatter", name: "The Chattering Contactor", cat: "Troubleshooting", front: null,
+          hook: "Chatter is the coil stuttering — feed it steadily and it speaks clearly.",
+          teach: "A chattering contactor is dropping out and re-pulling many times a second: its coil is being fed intermittently or weakly. When the fault is present while START is held — before the seal even matters — suspect the series path: a dirty or bouncing STOP contact, a loose control connection, or low control voltage.",
+          variants: [
+            { kind: "text", scenario: "Pressing and holding START makes the starter chatter violently — buzzing, pulling in and dropping out over and over, the whole time the button is held.", tag: "Troubleshooting",
+              q: "The most likely fault is…",
+              options: ["A dirty/intermittent STOP contact or low control voltage — the coil's feed keeps breaking", "The holding contact fails to close", "The overload heaters are too large", "Two motor leads are swapped"],
+              answer: 0,
+              why: "Timing is the clue: the chatter happens while START is held, when the seal-in contact is irrelevant. The coil is losing its feed mid-press — an intermittent series contact (STOP is the only other device in the path), a loose wire, or a control transformer sagging under load. A bad holding contact gives a different symptom entirely: clean pull-in, death on release." },
+            { kind: "text", tag: "Troubleshooting",
+              q: "How do you separate a chatter fault from a seal-in fault at the panel?",
+              options: ["Chatter while the button is HELD = feed problem. Clean start that dies on RELEASE = seal-in problem", "They are the same fault with two names", "By the color of the pilot light", "Chatter always means the motor is single-phasing"],
+              answer: 0,
+              why: "One question splits the whole tree: does it misbehave while held, or when released? Held — the basic feed path can't stay complete. Released — the feed is fine but the memory (seal-in) won't take over." }
+          ] },
+        { id: "ts-lamp-dark", name: "Dark RUN Lamp, Running Motor", cat: "Troubleshooting", front: R_LAMP,
+          hook: "The lamp reports on the coil, not the shaft. Read it for what it actually knows.",
+          teach: "A dark RUN lamp with a running motor is an indicator-circuit fault: lamp burned out, or the auxiliary contact feeding the lamp rung has failed. The reverse case matters more: a lamp that lights proves the coil is energized — if the shaft isn't turning, the fault is downstream in the power circuit.",
+          variants: [
+            { kind: "text", scenario: "The motor is audibly running and production is moving — but the RUN lamp on the panel is dark.", tag: "Troubleshooting",
+              q: "The most likely fault is…",
+              options: ["A burned-out lamp, or the auxiliary contact feeding the lamp rung has failed", "The motor isn't actually running", "The overload has tripped", "The START button is shorted closed"],
+              answer: 0,
+              why: "The lamp lives on its own rung through an M auxiliary contact. A running motor means the starter is in — so the lamp circuit itself is broken: bulb first (the cheapest check in the building), then the aux contact and its wiring. The machine is fine; its witness is dead." },
+            { kind: "text", scenario: "Different call: the RUN lamp lights when START is pressed, but the motor shaft never turns.", tag: "Troubleshooting",
+              q: "What has the lamp already told you?",
+              options: ["The control circuit and coil are working — look in the power circuit (fuses, power contacts, overload, motor)", "The lamp must be wired wrong", "The seal-in contact is open", "Nothing — lamps never prove anything"],
+              answer: 0,
+              why: "The lamp is fed by the starter's own auxiliary contact, so a lit lamp means the contactor pulled in. Control side: cleared. The failure is between the line and the shaft — power contacts, a blown fuse, an open heater, or the motor itself." }
+          ] },
+
+        /* ================= SYMBOLS & PLC ================= */
+        { id: "sx-nctc", name: "Timed Contact Codes (NOTC / NOTO / NCTO / NCTC)", cat: "Symbols & PLC", front: R_TD_NCTC,
+          hook: "Read the code like a sentence: what's it at rest, and what does the timer finally do to it?",
+          teach: "Timed-contact codes read like a label: first the resting state (NO or NC), then T, then what the delay produces — C for timed-to-close, O for timed-to-open. On the drawing, the little arc sits above the blade for on-delay contacts and below it for off-delay contacts.",
+          variants: [
+            { kind: "pick", tag: "Symbol expansion",
+              q: "Which contact is NCTC — closed at rest, opens the instant its coil energizes, and closes again only after a delay once the coil de-energizes?",
+              options: [
+                { d: R_TD_NCTC, cap: "NC contact, off-delay arc (below the blade)" },
+                { d: R_TD_NCTO, cap: "NC contact, on-delay arc (above the blade)" },
+                { d: R_TD_NOTO, cap: "NO contact, off-delay arc (below the blade)" },
+                { d: R_TD_NOTC, cap: "NO contact, on-delay arc (above the blade)" } ],
+              answer: 0,
+              why: "NCTC: Normally Closed, Timed Closed. At rest it's closed; energizing snaps it open instantly — no delay on that end; the delay is on the return, closing late after the coil drops. That's an off-delay NC contact: NC blade, arc below it." },
+            { kind: "text", tag: "Symbol expansion",
+              q: "Decode NCTO: at rest the contact is ___, and its timed action is ___.",
+              options: ["Closed at rest; it opens after the delay when its coil energizes", "Open at rest; it closes after the delay", "Closed at rest; it closes after the delay", "Open at rest; it opens instantly with the coil"],
+              answer: 0,
+              why: "NC = closed at rest. TO = timed open: the opening is what waits for the timer. Since the contact starts closed and energizing the coil is what starts the count, NCTO is the on-delay NC contact." }
+          ] },
+        { id: "sx-notc-decode", name: "NOTC, Decoded Cold", cat: "Symbols & PLC", front: R_TD_NOTC,
+          hook: "NOTC: Not yet — Then Closes.",
+          teach: "NOTC is the workhorse timed contact: Normally Open, Timed Closed. It's the contact behind 'five seconds after the coil energizes, the contact closes' — the on-delay NO. Its mirror, NOTO, closes instantly and opens late.",
+          variants: [
+            { kind: "text", tag: "Symbol expansion",
+              q: "A timer contact is marked NOTC. Its coil has been energized for longer than the set time. The contact is…",
+              options: ["Closed — it was open at rest and closed when the delay elapsed", "Open — it opens after the delay", "Closed only while the coil is de-energized", "Waiting to close until the coil de-energizes"],
+              answer: 0,
+              why: "NO says where it starts (open); TC says what the timer does (closes it). Energize an on-delay coil, wait out the dial, and the NOTC contact closes — and it snaps back open the moment the coil drops." },
+            { kind: "text", tag: "Symbol expansion",
+              q: "Which contact closes the INSTANT its coil energizes, then opens 10 seconds after the coil de-energizes?",
+              options: ["NOTO", "NOTC", "NCTO", "NCTC"],
+              answer: 0,
+              why: "NOTO — Normally Open, Timed Open. The closing is instant (no timer on that end); the opening is what's timed, and a timed opening can only happen after the coil lets go. That's the off-delay fan run-on contact." }
+          ] },
+        { id: "sx-prox", name: "Proximity Sensor", cat: "Symbols & PLC", front: R_PROX,
+          hook: "A limit switch with no arm to break: it feels the metal coming.",
+          teach: "A proximity sensor switches without touching: it projects a sensing field and changes state when a target — usually metal — enters it. On schematics it's the diamond with field lines. No lever, no roller, no contact wear — which is why it replaced limit switches in half the places parts fly past.",
+          variants: [
+            { kind: "diagram", diagram: R_PROX, tag: "Symbol expansion",
+              q: "What device is drawn switching coil CR in this rung?",
+              options: ["A proximity sensor", "A photocell (light sensor)", "A limit switch", "A pressure switch"],
+              answer: 0,
+              why: "The diamond with the short field lines on its sensing face is the proximity sensor: it detects a target without contact. No roller arm (that's a limit switch), no incoming light arrows (photocell), no bellows (pressure switch)." },
+            { kind: "text", tag: "Symbol expansion",
+              q: "The practical advantage of a proximity sensor over a limit switch is…",
+              options: ["No mechanical contact — nothing to wear, bend, or get struck out of adjustment", "It works without any power supply", "It can switch full motor current directly, any size", "It costs less than any mechanical switch"],
+              answer: 0,
+              why: "Solid-state sensing with no moving actuator means no wear and nothing for the load to damage — at the price of needing power and switching only small, control-level currents, usually into a relay or a PLC input." }
+          ] },
+        { id: "sx-xic-stop", name: "PLC: XIC, XIO & the NC Stop", cat: "Symbols & PLC", front: R_PLC,
+          hook: "Program the bit you have, not the button you imagine.",
+          teach: "PLC instructions examine the input's bit, not the field device. XIC is true when its input is ON. Wire the stop NC (so a broken wire stops the machine) and the input sits ON until the button is pressed — so the program uses XIC for the stop, and pressing the button turns the input OFF and breaks the rung.",
+          variants: [
+            { kind: "diagram", diagram: R_PLC, note: "PLC rung. Field wiring: the STOP pushbutton is wired NORMALLY CLOSED to its input (fail-safe), so the input is ON whenever the button is NOT pressed.", tag: "Symbols & PLC",
+              q: "Given that NC-wired stop button, why is STOP_PB programmed as XIC instead of XIO?",
+              options: ["The NC button holds the input ON until pressed — XIC passes the rung while the input is ON, and pressing STOP turns it OFF and kills the rung", "XIC is the instruction that means 'normally closed contact'", "XIO would seal the output in permanently", "It doesn't matter — XIC and XIO are interchangeable"],
+              answer: 0,
+              why: "XIC ('examine if closed') is true when the input bit is 1. The NC-wired stop delivers a 1 at rest, so XIC keeps the rung true; pressing the button — or a wire breaking, the fail-safe bonus — drops the input to 0, XIC goes false, and the output dies. Program XIO here and the logic inverts: the motor would need the stop HELD in to run." },
+            { kind: "text", tag: "Symbols & PLC",
+              q: "XIO (examine if open) is true when…",
+              options: ["Its input bit is 0 — the input is OFF", "Its input bit is 1 — the input is ON", "The output is energized", "The rung above it is true"],
+              answer: 0,
+              why: "XIO is the NC of the PLC world: it passes power when its input is off. Pair it with an NO field device and you get NC logic; pair XIC with an NC field device — like our stop button — and you get the same result by the other road. What matters is the bit, not the button." }
+          ] },
+        { id: "sx-ote", name: "PLC: OTE, the Output", cat: "Symbols & PLC", front: R_PLC2,
+          hook: "XIC and XIO are questions. OTE is the answer.",
+          teach: "Every PLC rung ends in an output instruction. OTE — Output Energize — is the coil of PLC ladder: when the rung's logic is true, the output turns on; when the logic breaks, it turns off. XIC and XIO ask questions; OTE acts on the answers.",
+          variants: [
+            { kind: "diagram", diagram: R_PLC2, tag: "Symbols & PLC",
+              q: "In this PLC rung, the OTE instruction is…",
+              options: ["The output — the 'coil' that turns on when the rung's logic is true", "A normally closed contact", "A timer instruction", "A meter test point"],
+              answer: 0,
+              why: "OTE sits where a relay coil sits in hardwired ladder, because it plays the same role: it's driven by everything to its left. The parentheses glyph ( ) is the giveaway — PLC contacts are brackets, outputs are parens." },
+            { kind: "text", tag: "Symbols & PLC",
+              q: "'Examine if closed' is to XIC as 'examine if open' is to…",
+              options: ["XIO", "OTE", "TON", "A jumper wire"],
+              answer: 0,
+              why: "XIO. Three instructions cover most of basic PLC ladder: XIC asks 'is it on?', XIO asks 'is it off?', and OTE does something about the answer." }
+          ] },
+        { id: "sx-plc-seal", name: "PLC Seal-In", cat: "Symbols & PLC", front: R_PLC,
+          hook: "The output holds its own door open — in software this time.",
+          teach: "PLC seal-in is the hardwired seal-in translated word for word: the output's own address, examined with an XIC, in a branch parallel with the start instruction. When the output turns on, its branch keeps the rung true after the start input lets go — same memory, no copper.",
+          variants: [
+            { kind: "diagram", diagram: R_PLC, tag: "Symbols & PLC",
+              q: "What creates the seal-in (holding) action in this PLC rung?",
+              options: ["The branch with an XIC addressed to MOTOR itself, in parallel with START_PB", "The OTE latching itself internally", "The STOP_PB instruction holding the rung", "The scan cycle remembering the last state"],
+              answer: 0,
+              why: "It's the auxiliary contact all over again: MOTOR's own XIC in parallel with the start path. Output on → its contact branch true → rung stays true when START_PB releases. Remove that branch and the PLC motor jogs exactly like a hardwired rung with no seal." },
+            { kind: "pick", tag: "Behavior → diagram",
+              q: "Which PLC rung seals in — keeping MOTOR on after START_PB is released?",
+              options: [
+                { d: R_PLC, cap: "MOTOR's own XIC in parallel with START_PB" },
+                { d: R_PLC_B, cap: "No holding branch — START_PB in series only" },
+                { d: R_PLC_C, cap: "An XIO of MOTOR in parallel with START_PB" },
+                { d: R_PLC_D, cap: "Two OTE instructions in series" } ],
+              answer: 0,
+              why: "The sealing branch must be TRUE while the output is on — that's an XIC of the output's own address. The XIO version is true only while the output is OFF: it would let the motor start, then immediately break its own rung. No branch at all means jog." }
+          ] },
+        { id: "sx-vfd-vhz", name: "VFD: Speed from Frequency", cat: "Symbols & PLC", front: null,
+          hook: "The drive doesn't feed the motor the line — it invents a new line, at whatever speed it likes.",
+          teach: "A VFD drives its motor with synthesized AC whose frequency it chooses: 60 Hz is full speed, 30 Hz is half. To keep torque healthy it raises voltage along with frequency — constant volts-per-hertz. Speed control is just the drive deciding what 'the power line' means today.",
+          variants: [
+            { kind: "text", tag: "Symbols & PLC",
+              q: "A VFD controls the speed of an AC motor by changing…",
+              options: ["The frequency — and, with it, the voltage — of the power it feeds the motor", "Only the voltage", "The number of poles wound in the motor", "The overload relay setting"],
+              answer: 0,
+              why: "AC motor speed is set by supply frequency. The drive rectifies the incoming line to DC, then inverts it back to AC at any frequency it wants — scaling voltage proportionally (V/Hz) so the motor's torque stays constant instead of fading as frequency drops." },
+            { kind: "text", tag: "Symbols & PLC",
+              q: "A VFD-driven motor needs to run at half speed. The drive outputs roughly…",
+              options: ["30 Hz at about half voltage", "60 Hz at half voltage", "120 Hz at full voltage", "Straight DC"],
+              answer: 0,
+              why: "Half of 60 Hz is 30 Hz, and V/Hz discipline halves the voltage along with it. Frequency alone sets the speed; the matched voltage keeps the motor's magnetic circuit — and its torque — where it belongs." }
+          ] },
+        { id: "sx-vfd-control", name: "VFD: Run & Fault Basics", cat: "Symbols & PLC", front: null,
+          hook: "Talk to the drive's brain; never yank its arms.",
+          teach: "You don't start and stop a VFD motor by switching its output or cycling its input power — you command the drive's low-voltage digital inputs (run/FWD, stop, speed reference) and let the drive ramp the motor. The drive gives back a fault relay contact that changes state when it trips, ready to wire into an alarm or a control rung.",
+          variants: [
+            { kind: "text", tag: "Symbols & PLC",
+              q: "A pushbutton station is added to start and stop a VFD-driven motor. The station wires to…",
+              options: ["The drive's digital input terminals (run/FWD and common) — the drive starts and stops the motor itself", "Contactors in the drive's output leads, switched under load", "The drive's input fuses, cycling line power for each start", "The braking resistor terminals"],
+              answer: 0,
+              why: "Drives are controlled at their command terminals: a small contact closure tells the drive to run, and it ramps the motor up and down electronically. Switching the output under load can destroy the drive's output transistors, and cycling input power for every start is slow, hard on the drive, and throws away its protection logic." },
+            { kind: "text", tag: "Symbols & PLC",
+              q: "A VFD trips on a fault while running unattended. The first automatic signal of that trip in the control cabinet usually comes from…",
+              options: ["The drive's fault relay contact changing state — wired to an alarm, a PLC input, or a permissive rung", "The overload heaters left over from the old starter", "The motor's centrifugal switch", "Nothing — drive faults give no external signal"],
+              answer: 0,
+              why: "VFDs provide a programmable relay output that changes state on fault — the drive-era replacement for the overload contact. Wire it to a beacon, a PLC input, or in series where it can drop a permissive: the drive reports its own trouble." }
+          ] }
+      ];
+
+      var byId = {};
+      ITEMS.forEach(function (it) { byId[it.id] = it; });
+      var CATS = [];
+      ITEMS.forEach(function (it) { if (CATS.indexOf(it.cat) === -1) CATS.push(it.cat); });
+      function frontOf(it) { return it.front ? diagramOf(it.front) : ""; }
+
+      /* ================= HOME ================= */
+      document.getElementById("item-count").textContent = ITEMS.length + " concepts";
+      document.getElementById("cat-strip").innerHTML = CATS.map(function (c) {
+        var n = ITEMS.filter(function (it) { return it.cat === c; }).length;
+        return '<span class="cat-chip">' + c + " · <b>" + n + "</b></span>";
+      }).join("");
+
+      (function countdown() {
+        var target = new Date(2027, 0, 1); /* January test window */
+        var now = new Date();
+        var weeks = Math.round((target - now) / (7 * 24 * 3600 * 1000));
+        if (weeks > 0 && weeks < 40) {
+          document.getElementById("countdown").hidden = false;
+          document.getElementById("countdown-text").textContent =
+            "About " + weeks + " weeks to the January test window — a few rungs a day beats cramming.";
+        }
+      })();
+
+      /* ================= QUIZ ENGINE ================= */
+      var quiz = null; /* { mode, queue, i, score, streak, firstTry, firstPick, firstVariant, mastered, attempts, startedAt, timerInt, runId } */
+      var runSeq = 0;
+      var sessionMissed = {};
+      var lastMissed = [];
+      var lastMode = "drill";
+
+      function optLabel(o) { return typeof o === "string" ? o : o.cap; }
+      function makeQuestion(item, vIdx) {
+        var vi = (typeof vIdx === "number") ? vIdx : Math.floor(Math.random() * item.variants.length);
+        var v = item.variants[vi];
+        return { item: item, vIdx: vi, variant: v, order: shuffle(v.options.map(function (_, i) { return i; })), picked: -1, requeue: false };
+      }
+      function otherVariant(item, cur) {
+        if (item.variants.length < 2) return cur;
+        var opts = item.variants.map(function (_, i) { return i; }).filter(function (i) { return i !== cur; });
+        return opts[Math.floor(Math.random() * opts.length)];
+      }
+      function startQuiz(mode, pool) {
+        var usePool = pool && pool.length ? pool.slice() : ITEMS.slice();
+        var count = mode === "mock" ? 20 : mode === "drill" ? 12 : usePool.length;
+        var pickedItems = shuffle(usePool).slice(0, Math.min(count, usePool.length));
+        if (quiz && quiz.timerInt) clearInterval(quiz.timerInt);
+        quiz = {
+          mode: mode,
+          queue: pickedItems.map(function (it) { return makeQuestion(it); }),
+          i: 0, score: 0, streak: 0,
+          firstTry: {}, firstPick: {}, firstVariant: {}, mastered: {}, attempts: {},
+          startedAt: Date.now(), timerInt: null, runId: ++runSeq
+        };
+        show("quiz");
+        document.getElementById("q-mode").textContent =
+          mode === "mock" ? "MOCK EXAM" : mode === "missed" ? "REVIEW YOUR MISSES" : "QUICK DRILL";
+        var timerEl = document.getElementById("q-timer");
+        if (mode === "mock") {
+          timerEl.hidden = false;
+          quiz.timerInt = setInterval(function () {
+            var s = Math.floor((Date.now() - quiz.startedAt) / 1000);
+            timerEl.querySelector("b").textContent = Math.floor(s / 60) + ":" + ("0" + (s % 60)).slice(-2);
+          }, 500);
+        } else { timerEl.hidden = true; }
+        renderQuestion();
+      }
+      function renderQuestion() {
+        var q = quiz.queue[quiz.i];
+        var v = q.variant;
+        var total = quiz.queue.length;
+        document.getElementById("q-count").textContent = "QUESTION " + (quiz.i + 1) + " OF " + total;
+        document.getElementById("q-score").textContent = quiz.score;
+        var streakEl = document.getElementById("q-streak");
+        streakEl.hidden = quiz.streak < 2;
+        streakEl.querySelector("b").textContent = quiz.streak;
+        document.getElementById("q-progress").style.width = ((quiz.i) / total * 100) + "%";
+        document.getElementById("tb-cat").textContent = "Category: " + q.item.cat;
+        document.getElementById("q-explain").className = "explain";
+        document.getElementById("q-explain").innerHTML = "";
+        document.getElementById("q-next").classList.add("hidden");
+
+        document.getElementById("q-prompt").textContent = (q.requeue ? "Second look · " : "") + (v.tag || q.item.cat);
+        document.getElementById("q-question").textContent = v.q;
+
+        var stage = document.getElementById("q-stage");
+        if (v.diagram) stage.innerHTML = diagramOf(v.diagram);
+        else if (v.scenario) stage.innerHTML = '<div class="scenario">' + v.scenario + "</div>";
+        else if (v.kind === "pick") stage.innerHTML = '<div class="stage-name">Pick the diagram</div>';
+        else stage.innerHTML = '<div class="stage-name">' + q.item.name + "</div>";
+        var note = document.getElementById("q-note");
+        if (v.note) { note.textContent = v.note; note.classList.remove("hidden"); }
+        else { note.textContent = ""; note.classList.add("hidden"); }
+
+        var opts = document.getElementById("q-opts");
+        opts.innerHTML = "";
+        opts.classList.toggle("diagrams", v.kind === "pick");
+        q.order.forEach(function (optIdx, pos) {
+          var o = v.options[optIdx];
+          var b = document.createElement("button");
+          if (v.kind === "pick") {
+            b.className = "opt diagram-opt";
+            b.setAttribute("aria-label", "Option " + "ABCD"[pos] + ": " + o.cap);
+            b.innerHTML = '<span class="letter">' + "ABCD"[pos] + "</span>" + diagramOf(o.d);
+          } else {
+            b.className = "opt";
+            b.innerHTML = '<span class="letter">' + "ABCD"[pos] + "</span><span>" + o + "</span>";
+          }
+          b.addEventListener("click", function () { choose(pos); });
+          opts.appendChild(b);
+        });
+      }
+      function choose(pos) {
+        var q = quiz.queue[quiz.i];
+        if (!q || q.picked !== -1) return;
+        q.picked = pos;
+        var v = q.variant;
+        var correctPos = q.order.indexOf(v.answer);
+        var right = pos === correctPos;
+        var id = q.item.id;
+        quiz.attempts[id] = (quiz.attempts[id] || 0) + 1;
+        if (!(id in quiz.firstTry)) { quiz.firstTry[id] = right; quiz.firstPick[id] = v.options[q.order[pos]]; quiz.firstVariant[id] = q.vIdx; }
+        var comingBack = false;
+        if (right) {
+          quiz.score++; quiz.streak++; quiz.mastered[id] = true;
+        } else {
+          quiz.streak = 0; sessionMissed[id] = true;
+          /* a miss comes back a few questions later, asked the other way,
+             until it's answered right */
+          if (quiz.mode !== "mock" && quiz.attempts[id] <= 3) {
+            var rq = makeQuestion(q.item, otherVariant(q.item, q.vIdx));
+            rq.requeue = true;
+            quiz.queue.splice(Math.min(quiz.i + 3, quiz.queue.length), 0, rq);
+            comingBack = true;
+          }
+        }
+
+        var btns = document.getElementById("q-opts").children;
+        for (var k = 0; k < btns.length; k++) {
+          btns[k].disabled = true;
+          if (k === correctPos) btns[k].classList.add("correct");
+          else if (k === pos) btns[k].classList.add("wrong");
+          else btns[k].classList.add("dim");
+        }
+        document.getElementById("q-score").textContent = quiz.score;
+        var streakEl = document.getElementById("q-streak");
+        streakEl.hidden = quiz.streak < 2;
+        streakEl.querySelector("b").textContent = quiz.streak;
+        document.getElementById("q-progress").style.width = ((quiz.i + 1) / quiz.queue.length * 100) + "%";
+
+        if (quiz.mode === "mock") {
+          var rid = quiz.runId;
+          setTimeout(function () { if (quiz && quiz.runId === rid) nextQuestion(); }, 450);
+          return;
+        }
+        var ex = document.getElementById("q-explain");
+        ex.className = "explain show";
+        var pickedOpt = v.options[q.order[pos]];
+        var verdict = right ? "Correct." : (v.kind === "pick"
+          ? "Not quite — the right rung is: " + optLabel(v.options[v.answer])
+          : "Not quite — you picked: " + optLabel(pickedOpt));
+        ex.innerHTML =
+          '<p class="verdict ' + (right ? "good" : "bad") + '">' + verdict + "</p>" +
+          "<p>" + v.why + "</p>" +
+          '<p class="hook"><b>Think of it as</b><br>' + q.item.hook + "</p>" +
+          (comingBack
+            ? '<p class="again">This one comes back around in a few questions — asked a different way — and keeps coming back until you nail it.</p>'
+            : (!right ? '<p class="again">It stays tagged in your misses — the review round at the end is built from them.</p>' : ""));
+        var next = document.getElementById("q-next");
+        next.textContent = quiz.i === quiz.queue.length - 1 ? "See results →" : "Next question →";
+        next.classList.remove("hidden");
+        next.focus();
+        if (ex.scrollIntoView) {
+          var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+          ex.scrollIntoView({ block: "nearest", behavior: reduce ? "auto" : "smooth" });
+        }
+      }
+      function nextQuestion() {
+        if (!quiz) return;
+        if (quiz.i < quiz.queue.length - 1) { quiz.i++; renderQuestion(); }
+        else showResults();
+      }
+      document.getElementById("q-next").addEventListener("click", nextQuestion);
+      document.addEventListener("keydown", function (e) {
+        if (document.getElementById("view-quiz").classList.contains("hidden")) return;
+        var q = quiz && quiz.queue[quiz.i];
+        if (!q) return;
+        if (q.picked === -1 && ["1", "2", "3", "4"].indexOf(e.key) !== -1) choose(Number(e.key) - 1);
+        else if (q.picked !== -1 && quiz.mode !== "mock" && (e.key === "Enter" || e.key === " ")) {
+          var next = document.getElementById("q-next");
+          if (document.activeElement === next) return;
+          if (!next.classList.contains("hidden")) { e.preventDefault(); nextQuestion(); }
+        }
+      });
+
+      /* ================= RESULTS ================= */
+      function showResults() {
+        if (!quiz) return;
+        if (quiz.timerInt) clearInterval(quiz.timerInt);
+        lastMode = quiz.mode;
+        var ids = Object.keys(quiz.firstTry);
+        var total = ids.length;
+        var rightFirst = ids.filter(function (id) { return quiz.firstTry[id]; }).length;
+        var masteredCount = ids.filter(function (id) { return quiz.mastered[id]; }).length;
+        var pct = total ? Math.round(rightFirst / total * 100) : 0;
+        document.getElementById("r-mode").textContent =
+          (quiz.mode === "mock" ? "Mock Exam" : quiz.mode === "missed" ? "Review Your Misses" : "Quick Drill") + " · Results";
+        document.getElementById("r-score").textContent = pct + "%";
+        var pass = document.getElementById("r-pass");
+        if (quiz.mode === "mock") {
+          pass.className = "pass-tag " + (pct >= 70 ? "pass" : "fail");
+          pass.textContent = pct >= 70 ? "✓ Passing range" : "✗ Below the bar";
+          pass.style.display = "";
+        } else { pass.style.display = "none"; }
+        var mins = Math.max(1, Math.round((Date.now() - quiz.startedAt) / 60000));
+        document.getElementById("r-sub").textContent =
+          "You got " + rightFirst + " of " + total + " right on the first try in about " + mins + (mins === 1 ? " minute" : " minutes") + "." +
+          (masteredCount > rightFirst ? " Counting the second looks, you finished having mastered " + masteredCount + " of " + total + "." : "") +
+          (quiz.mode === "mock"
+            ? (pct >= 70 ? " Most licensing exams set the bar near 70% — you would have cleared it. Keep the reps going and it only gets safer." : " Most licensing exams set the bar near 70%. The misses below are exactly what to drill before the test.")
+            : (pct === 100 ? " Flawless run. That's exam-day automatic." : " Every miss below is now tagged in the study deck so you can hammer it."));
+
+        /* category breakdown (first-try performance) */
+        var bd = {};
+        ids.forEach(function (id) {
+          var c = byId[id].cat;
+          bd[c] = bd[c] || { right: 0, total: 0 };
+          bd[c].total++; if (quiz.firstTry[id]) bd[c].right++;
+        });
+        document.getElementById("r-breakdown").innerHTML =
+          "<h3>By category</h3>" + Object.keys(bd).map(function (c) {
+            var p = Math.round(bd[c].right / bd[c].total * 100);
+            return '<div class="bd-row"><span>' + c + '</span><span class="bd-num">' + bd[c].right + "/" + bd[c].total + '</span>' +
+              '<span class="bd-bar"><span class="bd-fill' + (p < 70 ? " low" : "") + '" style="display:block;width:' + p + '%"></span></span></div>';
+          }).join("");
+
+        /* weak spots summary */
+        var missedItems = ids.filter(function (id) { return !quiz.firstTry[id]; }).map(function (id) { return byId[id]; });
+        lastMissed = missedItems;
+        var weak = document.getElementById("r-weak");
+        if (missedItems.length === 0) {
+          weak.innerHTML = "";
+        } else {
+          var weakCats = Object.keys(bd).filter(function (c) { return bd[c].right < bd[c].total; })
+            .sort(function (a, b) { return (bd[a].right / bd[a].total) - (bd[b].right / bd[b].total); });
+          weak.innerHTML = "<h3>Weak spots</h3>" +
+            '<p style="margin:0;color:var(--muted);font-size:15px;">Shakiest category: <strong style="color:var(--ink);">' + weakCats[0] + "</strong>. " +
+            "These are the concepts that tripped you up — the review round is built from exactly this list.</p>" +
+            '<div class="weak-list">' + missedItems.map(function (it) {
+              var got = quiz.mastered[it.id];
+              return '<span class="weak-chip' + (got ? " mastered" : "") + '">' + it.name + (got ? " · got it on retry" : " · still shaky") + "</span>";
+            }).join("") + "</div>";
+        }
+
+        /* missed review */
+        var review = document.getElementById("r-review");
+        if (missedItems.length === 0) {
+          review.innerHTML = '<p class="allgood">Nothing to review — you nailed every concept this run.</p>';
+        } else {
+          review.innerHTML = "<h3>Review your misses (" + missedItems.length + ")</h3>" + missedItems.map(function (it) {
+            var fv = it.variants[quiz.firstVariant[it.id] || 0];
+            var picked = quiz.firstPick[it.id];
+            var thumb = it.front ? '<div class="thumb">' + frontOf(it) + "</div>"
+                                 : '<div class="thumb"><div class="thumb-name">' + it.name + "</div></div>";
+            return '<div class="miss">' + thumb + "<div>" +
+              "<h4>" + it.name + "</h4>" +
+              '<p class="yours">You picked: ' + (picked !== undefined ? optLabel(picked) : "—") + "</p>" +
+              "<p><strong>Right answer:</strong> " + optLabel(fv.options[fv.answer]) + "</p>" +
+              "<p>" + it.teach + "</p>" +
+              "<p><strong>Think of it as:</strong> " + it.hook + "</p></div></div>";
+          }).join("");
+        }
+        var retryBtn = document.getElementById("r-retry-missed");
+        retryBtn.hidden = missedItems.length === 0;
+        retryBtn.textContent = "Review your misses (" + missedItems.length + ")";
+        document.getElementById("r-again").textContent = quiz.mode === "mock" ? "Retake mock exam" : "Run it again";
+        refreshHomeReview();
+        show("results");
+      }
+
+      /* ================= STUDY ================= */
+      var studyFilter = "All";
+      function renderStudy() {
+        var chips = document.getElementById("study-chips");
+        chips.innerHTML = "";
+        ["All"].concat(CATS).concat(["Missed this session"]).forEach(function (c) {
+          var b = document.createElement("button");
+          b.className = "chip-btn" + (studyFilter === c ? " active" : "");
+          b.textContent = c;
+          b.addEventListener("click", function () { studyFilter = c; renderStudy(); });
+          chips.appendChild(b);
+        });
+        var term = document.getElementById("study-search").value.trim().toLowerCase();
+        var list = document.getElementById("study-list");
+        list.innerHTML = "";
+        CATS.forEach(function (cat) {
+          var items = ITEMS.filter(function (it) {
+            if (it.cat !== cat) return false;
+            if (studyFilter === "Missed this session" && !sessionMissed[it.id]) return false;
+            if (studyFilter !== "All" && studyFilter !== "Missed this session" && it.cat !== studyFilter) return false;
+            if (term && (it.name + " " + it.teach + " " + it.hook).toLowerCase().indexOf(term) === -1) return false;
+            return true;
+          });
+          if (!items.length) return;
+          var h = document.createElement("h3");
+          h.className = "study-cat";
+          h.innerHTML = cat + " <small>" + items.length + " concepts</small>";
+          list.appendChild(h);
+          var grid = document.createElement("div");
+          grid.className = "grid";
+          items.forEach(function (it) {
+            var card = document.createElement("div");
+            card.className = "flip";
+            var frontInner = it.front ? frontOf(it) : '<span class="front-name">' + it.name + "</span>";
+            card.innerHTML =
+              (sessionMissed[it.id] ? '<span class="missed-tag">Missed</span>' : "") +
+              '<button class="flip-inner" aria-label="Flip card for ' + it.name + '">' +
+              '<span class="face front">' + frontInner + '<span class="tap">Tap to flip</span></span>' +
+              '<span class="face back"><h4>' + it.name + "</h4><p>" + it.teach + "<br><br><strong>Think of it as:</strong> " + it.hook + "</p></span>" +
+              "</button>";
+            card.querySelector(".flip-inner").addEventListener("click", function () { card.classList.toggle("flipped"); });
+            grid.appendChild(card);
+          });
+          list.appendChild(grid);
+        });
+        if (!list.children.length) {
+          list.innerHTML = '<p style="color:var(--muted)">No concepts match. ' +
+            (studyFilter === "Missed this session" ? "Take a quiz first — anything you miss will land here." : "Try a different search.") + "</p>";
+        }
+      }
+      document.getElementById("study-search").addEventListener("input", renderStudy);
+
+      /* ================= WIRING ================= */
+      function refreshHomeReview() {
+        var n = Object.keys(sessionMissed).length;
+        var b = document.getElementById("btn-review-home");
+        b.classList.toggle("hidden", n === 0);
+        b.textContent = "Review your misses — " + n + " concept" + (n === 1 ? "" : "s") + " from this session →";
+      }
+      document.getElementById("btn-drill").addEventListener("click", function () { startQuiz("drill"); });
+      document.getElementById("btn-mock").addEventListener("click", function () { startQuiz("mock"); });
+      document.getElementById("btn-study").addEventListener("click", function () { studyFilter = "All"; renderStudy(); show("study"); });
+      document.getElementById("btn-review-home").addEventListener("click", function () {
+        var pool = Object.keys(sessionMissed).map(function (id) { return byId[id]; });
+        if (pool.length) startQuiz("missed", pool);
+      });
+      document.getElementById("r-again").addEventListener("click", function () {
+        if (lastMode === "missed") startQuiz("missed", lastMissed);
+        else startQuiz(lastMode);
+      });
+      document.getElementById("r-study").addEventListener("click", function () { studyFilter = "All"; renderStudy(); show("study"); });
+      document.getElementById("r-retry-missed").addEventListener("click", function () { startQuiz("missed", lastMissed); });
+      document.querySelectorAll("[data-home]").forEach(function (b) {
+        b.addEventListener("click", function () {
+          if (quiz && quiz.timerInt) clearInterval(quiz.timerInt);
+          quiz = null; /* kills any pending auto-advance from the old run */
+          refreshHomeReview();
+          show("home");
+        });
+      });
+    </script>
+  </body>
+</html>

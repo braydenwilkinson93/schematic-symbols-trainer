@@ -1,0 +1,1695 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="color-scheme" content="light dark" />
+    <link rel="icon" href="data:," />
+    <title>NEC Calculation Drills — Learned Cold, Pack 3</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Barlow:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+    <style>
+      :root {
+        --bg: #edf0f2;
+        --grid: rgba(23, 63, 95, 0.09);
+        --panel: #ffffff;
+        --panel-2: #f4f7f8;
+        --stage: #fbfcfd;
+        --ink: #152a3a;
+        --muted: #57707f;
+        --line: #cfd9de;
+        --line-strong: #a9bcc6;
+        --navy: #173f5f;
+        --accent: #f2b234;
+        --accent-deep: #c07f06;
+        --accent-ink: #241a02;
+        --good: #177a4c;
+        --good-bg: #e2f3ea;
+        --bad: #c0392b;
+        --bad-bg: #fbe9e6;
+        --chip: #e6edf1;
+        --shadow: 0 10px 30px rgba(21, 42, 58, 0.10);
+      }
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --bg: #08141f;
+          --grid: rgba(140, 190, 235, 0.08);
+          --panel: #0e2233;
+          --panel-2: #0b1a28;
+          --stage: #0a1c2c;
+          --ink: #e9f2f8;
+          --muted: #9db4c4;
+          --line: #1f3a4f;
+          --line-strong: #33536e;
+          --navy: #7fb3dd;
+          --accent: #f2b234;
+          --accent-deep: #f2b234;
+          --accent-ink: #241a02;
+          --good: #3ecf8e;
+          --good-bg: #0f2e22;
+          --bad: #ef7d6b;
+          --bad-bg: #3a1d18;
+          --chip: #14304a;
+          --shadow: 0 10px 30px rgba(0, 0, 0, 0.45);
+        }
+      }
+      * { box-sizing: border-box; }
+      html { -webkit-text-size-adjust: 100%; }
+      body {
+        margin: 0;
+        font-family: "Barlow", system-ui, sans-serif;
+        color: var(--ink);
+        background:
+          linear-gradient(var(--grid) 1px, transparent 1px),
+          linear-gradient(90deg, var(--grid) 1px, transparent 1px),
+          var(--bg);
+        background-size: 28px 28px, 28px 28px, auto;
+        line-height: 1.45;
+      }
+      .wrap { max-width: 920px; margin: 0 auto; padding: 22px 16px 56px; }
+
+      .kicker {
+        font-family: "IBM Plex Mono", monospace;
+        font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase;
+        color: var(--accent-deep); font-weight: 600; margin: 0 0 6px;
+      }
+      h1 {
+        font-family: "Barlow Condensed", sans-serif;
+        font-weight: 700; font-size: clamp(34px, 7vw, 54px);
+        line-height: 0.98; margin: 0 0 10px; letter-spacing: 0.01em;
+        text-transform: uppercase;
+      }
+      .lede { font-size: 17px; color: var(--muted); max-width: 62ch; margin: 0 0 14px; }
+      .lede strong { color: var(--ink); }
+      .countdown {
+        display: inline-flex; align-items: center; gap: 8px;
+        font-family: "IBM Plex Mono", monospace; font-size: 13px;
+        background: var(--chip); border: 1px solid var(--line);
+        padding: 7px 12px; border-radius: 999px; margin-bottom: 22px;
+      }
+      .countdown .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent); flex: none; }
+
+      /* ---------- mode cards ---------- */
+      .modes { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin: 4px 0 26px; }
+      .mode-card {
+        text-align: left; cursor: pointer; font: inherit; color: var(--ink);
+        background: var(--panel); border: 1px solid var(--line); border-radius: 10px;
+        padding: 16px 16px 14px; box-shadow: var(--shadow);
+        display: flex; flex-direction: column; gap: 6px;
+        transition: transform 0.15s ease, border-color 0.15s ease;
+      }
+      .mode-card:hover { border-color: var(--accent); transform: translateY(-2px); }
+      .mode-card:focus-visible, button:focus-visible, input:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+      .mode-card .mc-tag {
+        font-family: "IBM Plex Mono", monospace; font-size: 11px; letter-spacing: 0.12em;
+        text-transform: uppercase; color: var(--accent-deep); font-weight: 600;
+      }
+      .mode-card .mc-name { font-family: "Barlow Condensed", sans-serif; font-size: 24px; font-weight: 600; line-height: 1.05; }
+      .mode-card .mc-desc { font-size: 14px; color: var(--muted); }
+      .mode-card .mc-go { margin-top: auto; font-weight: 700; font-size: 14px; color: var(--navy); }
+      @media (prefers-color-scheme: dark) { .mode-card .mc-go { color: var(--accent); } }
+
+      .cat-strip { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 8px; }
+      .cat-chip {
+        font-family: "IBM Plex Mono", monospace; font-size: 12px;
+        border: 1px solid var(--line); background: var(--panel);
+        padding: 5px 10px; border-radius: 999px; color: var(--muted);
+      }
+      .cat-chip b { color: var(--ink); font-weight: 600; }
+
+      /* ---------- calc sheet / quiz stage ---------- */
+      .sheet {
+        background: var(--panel); border: 1.5px solid var(--line-strong);
+        border-radius: 6px; box-shadow: var(--shadow);
+      }
+      .sheet-top { position: sticky; top: 0; z-index: 6; background: var(--panel); border-radius: 6px 6px 0 0; }
+      .sheet-head {
+        display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+        padding: 12px 16px; border-bottom: 1px solid var(--line);
+        font-family: "IBM Plex Mono", monospace; font-size: 12.5px;
+      }
+      .sheet-head .q-count { font-weight: 600; letter-spacing: 0.06em; }
+      .sheet-head .spacer { flex: 1; }
+      .pill {
+        border: 1px solid var(--line); background: var(--panel-2); border-radius: 999px;
+        padding: 3px 10px; font-family: "IBM Plex Mono", monospace; font-size: 12px;
+      }
+      .pill b { font-weight: 600; }
+      .pill.streak { border-color: var(--accent); color: var(--accent-deep); font-weight: 600; }
+      .progress { height: 6px; background: var(--panel-2); border-bottom: 1px solid var(--line); }
+      .progress > div { height: 100%; background: var(--accent); width: 0%; transition: width 0.3s ease; }
+      .sheet-body { padding: 20px 16px 8px; }
+      .q-prompt {
+        font-family: "IBM Plex Mono", monospace; font-size: 12px; letter-spacing: 0.12em;
+        text-transform: uppercase; color: var(--muted); text-align: center; margin: 0 0 6px;
+      }
+      .q-question {
+        font-size: clamp(18px, 3.4vw, 21px); font-weight: 600; text-align: center;
+        margin: 0 auto 10px; line-height: 1.3; max-width: 56ch;
+      }
+      .sym-stage {
+        background:
+          linear-gradient(var(--grid) 1px, transparent 1px),
+          linear-gradient(90deg, var(--grid) 1px, transparent 1px),
+          var(--stage);
+        background-size: 22px 22px, 22px 22px, auto;
+        border: 1px solid var(--line); border-radius: 6px;
+        display: flex; align-items: center; justify-content: center;
+        padding: 18px 14px; margin: 6px auto 4px; max-width: 720px; min-height: 120px;
+      }
+      .sym-stage .scenario { font-size: 16.5px; line-height: 1.55; text-align: left; max-width: 58ch; padding: 2px 4px; }
+      .sym-stage .scenario .given {
+        font-family: "IBM Plex Mono", monospace; font-size: 12px; letter-spacing: 0.12em;
+        text-transform: uppercase; color: var(--accent-deep); font-weight: 600; display: block; margin-bottom: 6px;
+      }
+      .sym-stage .scenario b { font-family: "IBM Plex Mono", monospace; font-weight: 600; font-size: 15.5px; }
+      .d-note {
+        font-family: "IBM Plex Mono", monospace; font-size: 12px; color: var(--muted);
+        text-align: center; margin: 8px auto 0; max-width: 640px;
+      }
+
+      .opts { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; max-width: 680px; margin: 16px auto 6px; }
+      .opt {
+        font: inherit; cursor: pointer; text-align: left; color: var(--ink);
+        background: var(--panel); border: 1.5px solid var(--line-strong); border-radius: 8px;
+        padding: 13px 14px; font-size: 16.5px; font-weight: 600;
+        display: flex; align-items: center; gap: 11px; min-height: 60px;
+        -webkit-tap-highlight-color: transparent;
+        transition: border-color 0.12s ease, background 0.12s ease;
+      }
+      .opt:hover:not(:disabled) { border-color: var(--accent); }
+      .opt:disabled { cursor: default; opacity: 1; }
+      .opt .letter {
+        font-family: "IBM Plex Mono", monospace; font-size: 12.5px; font-weight: 600;
+        border: 1.5px solid var(--line-strong); border-radius: 5px;
+        width: 26px; height: 26px; flex: none; display: flex; align-items: center; justify-content: center;
+      }
+      .opt.correct { border-color: var(--good); background: var(--good-bg); }
+      .opt.correct .letter { border-color: var(--good); color: var(--good); }
+      .opt.wrong { border-color: var(--bad); background: var(--bad-bg); }
+      .opt.wrong .letter { border-color: var(--bad); color: var(--bad); }
+      .opt.dim { opacity: 0.55; }
+
+      .explain {
+        max-width: 680px; margin: 14px auto 4px; border-radius: 8px; padding: 14px 16px;
+        border: 1px solid var(--line); background: var(--panel-2); display: none;
+      }
+      .explain.show { display: block; }
+      .explain .verdict { font-family: "Barlow Condensed", sans-serif; font-size: 22px; font-weight: 700; margin: 0 0 2px; }
+      .explain .verdict.good { color: var(--good); }
+      .explain .verdict.bad { color: var(--bad); }
+      .explain p { margin: 4px 0; font-size: 15.5px; }
+      .explain .steps { font-family: "IBM Plex Mono", monospace; font-size: 14px; background: var(--panel); border: 1px solid var(--line); border-radius: 6px; padding: 9px 12px; margin: 8px 0; line-height: 1.6; overflow-x: auto; white-space: nowrap; }
+      .explain .hook b { color: var(--navy); font-family: "IBM Plex Mono", monospace; font-size: 11.5px; letter-spacing: 0.1em; text-transform: uppercase; }
+      @media (prefers-color-scheme: dark) { .explain .hook b { color: var(--accent); } }
+      .explain .again { color: var(--accent-deep); font-weight: 600; font-size: 14.5px; }
+
+      .sheet-actions { display: flex; gap: 10px; justify-content: center; padding: 14px 16px 20px; flex-wrap: wrap; }
+      .btn {
+        font: inherit; font-weight: 700; font-size: 16px; cursor: pointer;
+        border-radius: 8px; padding: 12px 22px; border: 1.5px solid var(--line-strong);
+        background: var(--panel); color: var(--ink);
+      }
+      .btn.primary { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+      .btn.primary:hover { filter: brightness(1.05); }
+      .btn.ghost:hover { border-color: var(--accent); }
+      .btn:disabled { opacity: 0.45; cursor: default; }
+      .title-block {
+        display: flex; flex-wrap: wrap; border-top: 1.5px solid var(--line-strong);
+        border-radius: 0 0 5px 5px;
+        font-family: "IBM Plex Mono", monospace; font-size: 10.5px; letter-spacing: 0.08em;
+        text-transform: uppercase; color: var(--muted);
+      }
+      .title-block span { padding: 7px 12px; border-right: 1px solid var(--line); }
+      .title-block span:last-child { border-right: none; margin-left: auto; }
+
+      /* ---------- results ---------- */
+      .score-big {
+        font-family: "Barlow Condensed", sans-serif; font-weight: 700;
+        font-size: clamp(52px, 12vw, 84px); line-height: 1; text-align: center; margin: 8px 0 2px;
+      }
+      .score-sub { text-align: center; color: var(--muted); font-size: 16.5px; margin: 0 auto 6px; max-width: 52ch; }
+      .pass-tag {
+        display: block; width: fit-content; margin: 10px auto 4px;
+        font-family: "IBM Plex Mono", monospace; font-size: 12.5px; font-weight: 600;
+        letter-spacing: 0.1em; text-transform: uppercase; padding: 6px 14px; border-radius: 999px;
+      }
+      .pass-tag.pass { background: var(--good-bg); color: var(--good); border: 1px solid var(--good); }
+      .pass-tag.fail { background: var(--bad-bg); color: var(--bad); border: 1px solid var(--bad); }
+      .breakdown { max-width: 560px; margin: 20px auto 4px; }
+      .breakdown h3, .review h3 {
+        font-family: "Barlow Condensed", sans-serif; font-size: 21px; font-weight: 600;
+        margin: 0 0 10px; text-transform: uppercase; letter-spacing: 0.03em;
+      }
+      .bd-row { display: grid; grid-template-columns: 1fr auto; gap: 4px 12px; align-items: center; margin-bottom: 10px; font-size: 15px; }
+      .bd-row .bd-bar { grid-column: 1 / -1; height: 7px; background: var(--panel-2); border: 1px solid var(--line); border-radius: 99px; overflow: hidden; }
+      .bd-row .bd-fill { height: 100%; background: var(--navy); }
+      .bd-row .bd-fill.low { background: var(--bad); }
+      .bd-row .bd-num { font-family: "IBM Plex Mono", monospace; font-size: 13px; color: var(--muted); }
+      .weak-list { display: flex; flex-wrap: wrap; gap: 8px; margin: 8px 0 2px; }
+      .weak-chip {
+        font-size: 14px; font-weight: 600; border-radius: 999px; padding: 4px 11px;
+        border: 1px solid var(--bad); color: var(--bad); background: var(--bad-bg);
+      }
+      .weak-chip.mastered { border-color: var(--line-strong); color: var(--muted); background: var(--panel-2); }
+      .review-banner { width: 100%; margin: 0 0 22px; min-height: 52px; }
+      .review { max-width: 680px; margin: 24px auto 4px; }
+      .miss {
+        display: grid; grid-template-columns: 200px 1fr; gap: 14px; align-items: center;
+        border: 1px solid var(--line); border-radius: 8px; padding: 10px 14px; margin-bottom: 10px;
+        background: var(--panel);
+      }
+      .miss .thumb { background: var(--stage); border: 1px solid var(--line); border-radius: 5px; padding: 10px 8px; }
+      .miss .thumb .thumb-name {
+        font-family: "Barlow Condensed", sans-serif; font-weight: 600; font-size: 19px;
+        text-align: center; line-height: 1.1; padding: 4px 4px 2px;
+      }
+      .miss .thumb .thumb-formula {
+        font-family: "IBM Plex Mono", monospace; font-size: 12px; text-align: center;
+        color: var(--accent-deep); padding: 2px 2px 4px; line-height: 1.45;
+      }
+      .miss h4 { margin: 0 0 2px; font-size: 16.5px; }
+      .miss p { margin: 2px 0; font-size: 14.5px; color: var(--muted); }
+      .miss .yours { color: var(--bad); }
+      .allgood { text-align: center; font-size: 17px; padding: 8px 0 2px; }
+
+      /* ---------- study ---------- */
+      .study-tools { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin: 0 0 16px; }
+      .chip-btn {
+        font: inherit; font-size: 14px; font-weight: 600; cursor: pointer;
+        border: 1.5px solid var(--line-strong); background: var(--panel); color: var(--ink);
+        border-radius: 999px; padding: 7px 14px;
+      }
+      .chip-btn.active { background: var(--navy); border-color: var(--navy); color: #fff; }
+      @media (prefers-color-scheme: dark) { .chip-btn.active { color: #0a1c2c; background: var(--accent); border-color: var(--accent); } }
+      .search {
+        font: inherit; font-size: 15px; padding: 9px 13px; border-radius: 999px;
+        border: 1.5px solid var(--line-strong); background: var(--panel); color: var(--ink);
+        flex: 1; min-width: 170px;
+      }
+      .study-cat {
+        font-family: "Barlow Condensed", sans-serif; font-size: 24px; font-weight: 600;
+        text-transform: uppercase; letter-spacing: 0.03em; margin: 26px 0 12px;
+        display: flex; align-items: baseline; gap: 10px;
+      }
+      .study-cat small { font-family: "IBM Plex Mono", monospace; font-size: 12px; color: var(--muted); letter-spacing: 0.08em; }
+      .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 12px; }
+      .flip { perspective: 900px; height: 252px; }
+      .flip-inner {
+        position: relative; width: 100%; height: 100%; transform-style: preserve-3d;
+        transition: transform 0.45s ease; cursor: pointer; background: none; border: none; padding: 0; font: inherit; text-align: left;
+      }
+      .flip.flipped .flip-inner { transform: rotateY(180deg); }
+      .face {
+        position: absolute; inset: 0; backface-visibility: hidden; -webkit-backface-visibility: hidden;
+        border: 1px solid var(--line); border-radius: 10px; background: var(--panel);
+        padding: 14px; display: flex; flex-direction: column; overflow: hidden;
+      }
+      .face.front { align-items: center; justify-content: center; gap: 10px; text-align: center; }
+      .face.front .front-name {
+        font-family: "Barlow Condensed", sans-serif; font-weight: 600;
+        font-size: 24px; text-align: center; line-height: 1.1; padding: 0 6px;
+      }
+      .face.front .front-formula {
+        font-family: "IBM Plex Mono", monospace; font-size: 13.5px; font-weight: 600;
+        color: var(--accent-deep); line-height: 1.5; padding: 0 4px;
+      }
+      .face.front .tap { font-family: "IBM Plex Mono", monospace; font-size: 10.5px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); }
+      .face.back { transform: rotateY(180deg); background: var(--panel-2); }
+      .face.back h4 { margin: 0 0 4px; font-size: 17px; line-height: 1.15; }
+      .face.back p { margin: 0; font-size: 13.5px; color: var(--muted); overflow-y: auto; }
+      .missed-tag {
+        position: absolute; top: 10px; right: 10px; z-index: 2;
+        font-family: "IBM Plex Mono", monospace; font-size: 10px; font-weight: 600;
+        letter-spacing: 0.08em; text-transform: uppercase;
+        background: var(--accent); color: var(--accent-ink); border-radius: 99px; padding: 3px 8px;
+      }
+
+      /* ---------- formula sheet ---------- */
+      .fs-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 6px; }
+      .fs-card { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 16px; box-shadow: var(--shadow); }
+      .fs-card.wide { grid-column: 1 / -1; }
+      .fs-card h3 {
+        font-family: "Barlow Condensed", sans-serif; font-size: 21px; font-weight: 600;
+        text-transform: uppercase; letter-spacing: 0.03em; margin: 0 0 8px;
+      }
+      .fs-card .fs-ref { font-family: "IBM Plex Mono", monospace; font-size: 11px; color: var(--accent-deep); letter-spacing: 0.08em; text-transform: uppercase; font-weight: 600; }
+      .fs-card p { font-size: 14.5px; color: var(--muted); margin: 4px 0; }
+      .fs-card p b, .fs-card li b { color: var(--ink); }
+      .fs-card ul { margin: 4px 0; padding-left: 18px; font-size: 14.5px; color: var(--muted); }
+      .fs-formula {
+        font-family: "IBM Plex Mono", monospace; font-size: 14px; font-weight: 600;
+        background: var(--panel-2); border: 1px solid var(--line); border-radius: 6px;
+        padding: 8px 11px; margin: 8px 0; line-height: 1.65;
+      }
+      .fs-scroll { overflow-x: auto; }
+      table.fs { border-collapse: collapse; width: 100%; font-size: 13.5px; margin: 6px 0 2px; }
+      table.fs th, table.fs td { border: 1px solid var(--line); padding: 5px 8px; text-align: left; white-space: nowrap; }
+      table.fs th { font-family: "IBM Plex Mono", monospace; font-size: 11.5px; letter-spacing: 0.05em; text-transform: uppercase; background: var(--panel-2); color: var(--muted); }
+      table.fs td { font-family: "IBM Plex Mono", monospace; font-size: 13px; }
+
+      .hidden { display: none !important; }
+      footer { margin-top: 40px; color: var(--muted); font-size: 13.5px; text-align: center; }
+      .backlink {
+        background: none; border: none; font: inherit; font-weight: 700; cursor: pointer;
+        color: var(--navy); padding: 6px 0; font-size: 15px;
+      }
+      @media (prefers-color-scheme: dark) { .backlink { color: var(--accent); } }
+
+      @media (max-width: 640px) {
+        .modes { grid-template-columns: 1fr; }
+        .opts { grid-template-columns: 1fr; }
+        .miss { grid-template-columns: 128px 1fr; }
+        .fs-grid { grid-template-columns: 1fr; }
+        .sheet-actions .btn { flex: 1 1 100%; min-height: 52px; }
+        #view-results .sheet-actions .btn { flex: 1 1 auto; }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .flip-inner, .progress > div, .mode-card { transition: none; }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+
+      <!-- ============ HOME ============ -->
+      <section id="view-home">
+        <p class="kicker">Learned Cold — Pack 3 · NEC Calculations</p>
+        <h1>NEC Calculation Drills</h1>
+        <p class="lede">Pack 1 taught you to name the symbols. Pack 2 taught you to read the rungs. This pack is the math the exam is actually graded on: <strong id="item-count">45 concepts</strong> — motor circuits, ampacity and derating, conduit and box fill, voltage drop, load calculations, and transformers. Every answer shows its work, step by step, so the method sticks — not just the number.</p>
+        <div class="countdown" id="countdown" hidden><span class="dot"></span><span id="countdown-text"></span></div>
+
+        <div class="modes">
+          <button class="mode-card" id="btn-drill">
+            <span class="mc-tag">12 questions · Worked answers</span>
+            <span class="mc-name">Quick Drill</span>
+            <span class="mc-desc">Fast reps with the full calculation shown after every question. Miss one and it comes back — with different numbers — until you nail it.</span>
+            <span class="mc-go">Start drilling →</span>
+          </button>
+          <button class="mode-card" id="btn-mock">
+            <span class="mc-tag">20 questions · No feedback till the end</span>
+            <span class="mc-name">Mock Exam</span>
+            <span class="mc-desc">Runs like the real test: answer everything, then get your score, a pass/fail line, weak spots by category, and a worked review of every miss.</span>
+            <span class="mc-go">Take the mock exam →</span>
+          </button>
+          <button class="mode-card" id="btn-study">
+            <span class="mc-tag">All concepts · Flip cards</span>
+            <span class="mc-name">Study Deck</span>
+            <span class="mc-desc">Every formula and rule, grouped by category. Tap a card to flip it for the rule, the article reference, and how the exam tries to trip you.</span>
+            <span class="mc-go">Open study deck →</span>
+          </button>
+          <button class="mode-card" id="btn-formulas">
+            <span class="mc-tag">Reference · The cheat sheet</span>
+            <span class="mc-name">Formula Sheet</span>
+            <span class="mc-desc">The whole pack on one sheet: every formula, the FLC table values, fill areas, box volumes, and demand factors used in the drills.</span>
+            <span class="mc-go">Open formula sheet →</span>
+          </button>
+        </div>
+
+        <button class="btn primary review-banner hidden" id="btn-review-home"></button>
+
+        <div class="cat-strip" id="cat-strip"></div>
+      </section>
+
+      <!-- ============ QUIZ ============ -->
+      <section id="view-quiz" class="hidden">
+        <button class="backlink" data-home>← Quit to menu</button>
+        <div class="sheet">
+          <div class="sheet-top">
+          <div class="sheet-head">
+            <span class="q-count" id="q-count">QUESTION 1 OF 12</span>
+            <span class="pill" id="q-mode">QUICK DRILL</span>
+            <span class="spacer"></span>
+            <span class="pill" id="q-timer" hidden>TIME <b>0:00</b></span>
+            <span class="pill">SCORE <b id="q-score">0</b></span>
+            <span class="pill streak" id="q-streak" hidden>STREAK <b>0</b></span>
+          </div>
+          <div class="progress"><div id="q-progress"></div></div>
+          </div>
+          <div class="sheet-body">
+            <p class="q-prompt" id="q-prompt">Do the math</p>
+            <h2 class="q-question" id="q-question"></h2>
+            <div class="sym-stage" id="q-stage"></div>
+            <p class="d-note hidden" id="q-note"></p>
+            <div class="opts" id="q-opts"></div>
+            <div class="explain" id="q-explain"></div>
+          </div>
+          <div class="sheet-actions">
+            <button class="btn primary hidden" id="q-next">Next question →</button>
+          </div>
+          <div class="title-block">
+            <span>DWG NO. NC-303</span><span id="tb-cat">Category —</span><span>Scale: None</span><span>Sheet 1 of 1</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ RESULTS ============ -->
+      <section id="view-results" class="hidden">
+        <button class="backlink" data-home>← Back to menu</button>
+        <div class="sheet">
+          <div class="sheet-body" style="padding-top:26px;">
+            <p class="q-prompt" id="r-mode">Mock Exam · Results</p>
+            <div class="score-big" id="r-score">0%</div>
+            <span class="pass-tag" id="r-pass"></span>
+            <p class="score-sub" id="r-sub"></p>
+            <div class="breakdown" id="r-weak"></div>
+            <div class="breakdown" id="r-breakdown"></div>
+            <div class="review" id="r-review"></div>
+          </div>
+          <div class="sheet-actions">
+            <button class="btn primary" id="r-retry-missed" hidden>Review your misses</button>
+            <button class="btn ghost" id="r-again">Retake</button>
+            <button class="btn ghost" id="r-study">Study the deck</button>
+          </div>
+          <div class="title-block">
+            <span>DWG NO. NC-303</span><span>Result sheet</span><span>Scale: None</span><span>Sheet 1 of 1</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ STUDY ============ -->
+      <section id="view-study" class="hidden">
+        <button class="backlink" data-home>← Back to menu</button>
+        <p class="kicker">Study Deck</p>
+        <h1 style="font-size:clamp(30px,6vw,42px);">Know every formula cold</h1>
+        <p class="lede">Tap a card to flip it. Work category by category — and remember the exam's favorite trick: it doesn't test whether you know the formula, it tests whether you grab the right number to feed it. Table value or nameplate? 90°C column or 75°C? That's where the points are lost.</p>
+        <div class="study-tools">
+          <div id="study-chips" style="display:flex;flex-wrap:wrap;gap:8px;"></div>
+          <input class="search" id="study-search" type="search" placeholder="Search concepts… e.g. voltage drop, box fill, FLC" aria-label="Search concepts" />
+        </div>
+        <div id="study-list"></div>
+      </section>
+
+      <!-- ============ FORMULA SHEET ============ -->
+      <section id="view-formulas" class="hidden">
+        <button class="backlink" data-home>← Back to menu</button>
+        <p class="kicker">Reference Sheet</p>
+        <h1 style="font-size:clamp(30px,6vw,42px);">The whole pack on one sheet</h1>
+        <p class="lede">Every formula and table value the drills are built from, at the values the NEC prints them. Article references are to the 2023 NEC.</p>
+        <div class="fs-grid">
+
+          <div class="fs-card">
+            <span class="fs-ref">Foundations</span>
+            <h3>Ohm's Law &amp; Power</h3>
+            <div class="fs-formula">E = I × R &nbsp;·&nbsp; I = E ÷ R &nbsp;·&nbsp; R = E ÷ I<br>P = E × I &nbsp;·&nbsp; VA (1φ) = E × I<br>P (3φ) = 1.732 × E × I × PF<br>kWh = kW × hours</div>
+            <p>Two 10 Ω resistors in <b>parallel</b> = 5 Ω. In <b>series</b> = 20 Ω. Parallel always lands below the smallest resistor.</p>
+          </div>
+
+          <div class="fs-card">
+            <span class="fs-ref">Article 430</span>
+            <h3>Motor Circuit Rules</h3>
+            <ul>
+              <li>Conductors &amp; protection: use <b>Table FLC</b> (430.250 / 430.248). Overloads: use <b>nameplate FLA</b> (430.6).</li>
+              <li>Branch conductor: <b>125% × FLC</b> (430.22)</li>
+              <li>Overload max: <b>125%</b> of nameplate (SF ≥ 1.15 or rise ≤ 40°C), otherwise <b>115%</b> (430.32)</li>
+              <li>Feeder conductor: <b>125% of largest FLC + sum of the rest</b> (430.24)</li>
+              <li>Feeder protection max: <b>largest branch device + sum of other FLCs</b> (430.62)</li>
+              <li>Disconnect ampere rating: at least <b>115% × FLC</b> (430.110)</li>
+              <li>A 480V system uses the <b>460V column</b>; a 240V system uses <b>230V</b>.</li>
+            </ul>
+          </div>
+
+          <div class="fs-card wide">
+            <span class="fs-ref">Table 430.52 · Max branch-circuit short-circuit / ground-fault protection, % of FLC</span>
+            <h3>Motor Protection Percentages</h3>
+            <div class="fs-scroll"><table class="fs">
+              <tr><th>Device</th><th>Max % of FLC</th><th>If it doesn't land on a standard size…</th></tr>
+              <tr><td>Inverse-time breaker</td><td>250%</td><td>Next higher standard size is permitted</td></tr>
+              <tr><td>Dual-element (time-delay) fuse</td><td>175%</td><td>Next higher standard size is permitted</td></tr>
+              <tr><td>Nontime-delay fuse</td><td>300%</td><td>Next higher standard size is permitted</td></tr>
+              <tr><td>Instantaneous-trip breaker</td><td>800%</td><td>Adjustable / engineer-supervised settings differ</td></tr>
+            </table></div>
+          </div>
+
+          <div class="fs-card wide">
+            <span class="fs-ref">Table 430.250 excerpts · Full-load current, 3-phase motors</span>
+            <h3>FLC Values Used in This Pack</h3>
+            <div class="fs-scroll"><table class="fs">
+              <tr><th>HP</th><th>208V</th><th>230V</th><th>460V</th></tr>
+              <tr><td>3</td><td>10.6</td><td>9.6</td><td>4.8</td></tr>
+              <tr><td>5</td><td>16.7</td><td>15.2</td><td>7.6</td></tr>
+              <tr><td>7½</td><td>24.2</td><td>22</td><td>11</td></tr>
+              <tr><td>10</td><td>30.8</td><td>28</td><td>14</td></tr>
+              <tr><td>15</td><td>46.2</td><td>42</td><td>21</td></tr>
+              <tr><td>20</td><td>59.4</td><td>54</td><td>27</td></tr>
+              <tr><td>25</td><td>74.8</td><td>68</td><td>34</td></tr>
+            </table></div>
+            <p>Single-phase (Table 430.248): 1 HP = 16A @ 115V / 8A @ 230V · 2 HP = 12A @ 230V · 5 HP = 28A @ 230V.</p>
+          </div>
+
+          <div class="fs-card">
+            <span class="fs-ref">Article 310</span>
+            <h3>Ampacity &amp; Adjustment</h3>
+            <ul>
+              <li>Start in the <b>90°C column</b> for THHN derating; the final answer can't beat the <b>termination temperature</b> column (usually 75°C).</li>
+              <li>Small conductors (240.4(D)): <b>14 AWG → 15A, 12 AWG → 20A, 10 AWG → 30A</b> max breaker, no matter what the 90°C column says.</li>
+              <li>Continuous load: size conductors and breakers at <b>125%</b>.</li>
+              <li>Parallel conductors: <b>1/0 AWG minimum</b>, same length, material, and size.</li>
+            </ul>
+            <div class="fs-scroll"><table class="fs">
+              <tr><th>Current-carrying conductors</th><th>4–6</th><th>7–9</th><th>10–20</th></tr>
+              <tr><td>Adjustment factor</td><td>80%</td><td>70%</td><td>50%</td></tr>
+              <tr><th>Ambient (90°C base)</th><th>40°C</th><th>50°C</th><th>60°C</th></tr>
+              <tr><td>Correction factor</td><td>0.91</td><td>0.82</td><td>0.71</td></tr>
+            </table></div>
+          </div>
+
+          <div class="fs-card">
+            <span class="fs-ref">Table 310.16 excerpts · Copper</span>
+            <h3>Ampacities Used in This Pack</h3>
+            <div class="fs-scroll"><table class="fs">
+              <tr><th>AWG</th><th>75°C</th><th>90°C (THHN)</th></tr>
+              <tr><td>12</td><td>25</td><td>30</td></tr>
+              <tr><td>10</td><td>35</td><td>40</td></tr>
+              <tr><td>8</td><td>50</td><td>55</td></tr>
+              <tr><td>6</td><td>65</td><td>75</td></tr>
+              <tr><td>4</td><td>85</td><td>95</td></tr>
+              <tr><td>3</td><td>100</td><td>115</td></tr>
+              <tr><td>2</td><td>115</td><td>130</td></tr>
+              <tr><td>1/0</td><td>150</td><td>170</td></tr>
+              <tr><td>3/0</td><td>200</td><td>230</td></tr>
+            </table></div>
+          </div>
+
+          <div class="fs-card">
+            <span class="fs-ref">Chapter 9 · 314.16 · 314.28</span>
+            <h3>Fill Rules</h3>
+            <ul>
+              <li>Raceway fill (Ch. 9, Table 1): <b>1 conductor 53% · 2 conductors 31% · 3 or more 40%</b>. A nipple 24 in. or shorter may fill to <b>60%</b>.</li>
+              <li>Box fill volume per conductor: <b>14 AWG 2.00 in³ · 12 AWG 2.25 in³ · 10 AWG 2.50 in³</b>.</li>
+              <li>Each device yoke = <b>2 allowances</b>. All equipment grounds together = <b>1 allowance</b>. Internal clamps = <b>1 allowance</b>.</li>
+              <li>Pull boxes: straight pull = <b>8 ×</b> largest raceway; angle pull = <b>6 ×</b> largest + the other raceways in the row.</li>
+            </ul>
+            <div class="fs-scroll"><table class="fs">
+              <tr><th>THHN area</th><th>14 AWG</th><th>12 AWG</th><th>10 AWG</th><th>8 AWG</th></tr>
+              <tr><td>in²</td><td>0.0097</td><td>0.0133</td><td>0.0211</td><td>0.0366</td></tr>
+              <tr><th>EMT 40% fill</th><th>½ in.</th><th>¾ in.</th><th>1 in.</th><th>1¼ in.</th></tr>
+              <tr><td>in² allowed</td><td>0.122</td><td>0.213</td><td>0.346</td><td>0.598</td></tr>
+            </table></div>
+          </div>
+
+          <div class="fs-card">
+            <span class="fs-ref">Voltage drop · Informational notes to 210.19 &amp; 215.2</span>
+            <h3>Voltage Drop</h3>
+            <div class="fs-formula">VD (1φ) = 2 × K × I × L ÷ CM<br>VD (3φ) = 1.732 × K × I × L ÷ CM<br>CM needed = 2 × K × I × L ÷ VD allowed<br>K: copper 12.9 · aluminum 21.2</div>
+            <p><b>L</b> is the one-way distance. Target: <b>3%</b> on a branch circuit, <b>5%</b> total feeder + branch. Circular mils: 12 AWG 6,530 · 10 AWG 10,380 · 8 AWG 16,510 · 6 AWG 26,240 · 4 AWG 41,110.</p>
+          </div>
+
+          <div class="fs-card">
+            <span class="fs-ref">Article 220</span>
+            <h3>Load Calculation Factors</h3>
+            <ul>
+              <li>Dwelling general lighting: <b>3 VA per ft²</b> (Table 220.12)</li>
+              <li>Small-appliance circuits: <b>1,500 VA each, minimum two</b>; laundry circuit: <b>1,500 VA</b></li>
+              <li>Dwelling demand (Table 220.42): first <b>3,000 VA at 100%</b>, remainder at <b>35%</b></li>
+              <li>Range (Table 220.55): one 12 kW range = <b>8 kW demand</b>; add <b>5%</b> for each kW above 12</li>
+              <li>Dryer: <b>5,000 VA minimum</b> or nameplate, whichever is larger; 5 dryers demand at <b>85%</b></li>
+              <li>Noncoincident loads (220.60): count only the <b>larger</b> — heating or cooling, never both</li>
+            </ul>
+          </div>
+
+          <div class="fs-card">
+            <span class="fs-ref">Article 450</span>
+            <h3>Transformers</h3>
+            <div class="fs-formula">I (1φ) = kVA × 1,000 ÷ V<br>I (3φ) = kVA × 1,000 ÷ (V × 1.732)</div>
+            <p>Primary-only protection where primary current is 9A or more: maximum <b>125%</b> of primary current — and where that doesn't land on a standard size, the <b>next higher standard size</b> is permitted (Table 450.3(B), Note 1).</p>
+          </div>
+
+        </div>
+      </section>
+
+      <footer>All values follow the 2023 NEC: Table 430.250 / 430.248 full-load currents, Table 430.52 percentages, Table 310.16 ampacities, Chapter 9 Tables 1, 4, and 5, 314.16 box fill, and Article 220 demand factors. Voltage-drop limits are the Code's informational-note recommendations (3% branch / 5% total). Pack 3 of the Learned Cold series — companion to the Electrical Schematic Symbols Trainer and Motor Controls &amp; Ladder Logic.</footer>
+    </div>
+
+    <script>
+      function shuffle(a) {
+        a = a.slice();
+        for (var i = a.length - 1; i > 0; i--) {
+          var j = Math.floor(Math.random() * (i + 1));
+          var t = a[i]; a[i] = a[j]; a[j] = t;
+        }
+        return a;
+      }
+      function show(view) {
+        ["home", "quiz", "results", "study", "formulas"].forEach(function (v) {
+          document.getElementById("view-" + v).classList.toggle("hidden", v !== view);
+        });
+        window.scrollTo(0, 0);
+      }
+
+      /* ================= ITEM BANK =================
+         Each item: one calculation concept, the formula up front, a plain-
+         English hook, a teach text, and two variants — the same concept
+         with different numbers. The drill asks one variant; a miss re-queues
+         the item in its OTHER variant. Every "why" shows the arithmetic.
+         All values per the 2023 NEC tables named in each tag. */
+      var ITEMS = [
+        /* ================= OHM'S LAW & POWER ================= */
+        { id: "ol-voltage", name: "Find the Voltage: E = I × R", cat: "Ohm's Law & Power", formula: "E = I × R",
+          hook: "Cover the E on the wheel — what's left is I times R.",
+          teach: "Ohm's law: voltage equals current times resistance. Given any two of E, I, and R, the third is one step away. Every other calculation in this pack is built on this triangle.",
+          variants: [
+            { kind: "text", tag: "Ohm's law", q: "What voltage is pushing this current through the resistance?",
+              scenario: '<span class="given">Given</span>A heating element draws <b>20A</b> and measures <b>6 Ω</b> of resistance.',
+              options: ["120V", "26V", "3.3V", "240V"], answer: 0,
+              steps: "E = I × R = 20 × 6 = 120V",
+              why: "Multiply current by resistance. If you divided instead (20 ÷ 6) you'd get 3.3V — the exam plants that distractor on purpose." },
+            { kind: "text", tag: "Ohm's law", q: "How much current flows through this resistor?",
+              scenario: '<span class="given">Given</span>A <b>12 Ω</b> resistor is connected across a <b>240V</b> source.',
+              options: ["20A", "0.05A", "288A", "12A"], answer: 0,
+              steps: "I = E ÷ R = 240 ÷ 12 = 20A",
+              why: "Cover the I on the wheel: current is voltage divided by resistance." }
+          ] },
+        { id: "ol-power", name: "Find the Current: I = P ÷ E", cat: "Ohm's Law & Power", formula: "I = P ÷ E",
+          hook: "Watts divided by volts gives you the amps the breaker will see.",
+          teach: "Nameplates speak watts; breakers speak amps. Convert with I = P ÷ E before you size anything. This is the single most-used conversion on the exam.",
+          variants: [
+            { kind: "text", tag: "Power law", q: "How much current does this heater draw?",
+              scenario: '<span class="given">Given</span>A water heater element is rated <b>1,500W</b> at <b>120V</b>.',
+              options: ["12.5A", "8A", "0.08A", "15A"], answer: 0,
+              steps: "I = P ÷ E = 1,500 ÷ 120 = 12.5A",
+              why: "Watts over volts. And note: 12.5A on a 15A circuit is fine — until the load runs continuous, which is a different rule (see the 125% continuous-load drills)." },
+            { kind: "text", tag: "Power law", q: "How much power is this circuit delivering?",
+              scenario: '<span class="given">Given</span>A <b>240V</b> circuit is carrying <b>20A</b> to a resistive load.',
+              options: ["4,800W", "12W", "260W", "9,600W"], answer: 0,
+              steps: "P = E × I = 240 × 20 = 4,800W",
+              why: "Volts times amps equals watts for a resistive (unity power factor) load. That's 4.8 kW." }
+          ] },
+        { id: "ol-resistance", name: "Find the Resistance: R = E ÷ I", cat: "Ohm's Law & Power", formula: "R = E ÷ I",
+          hook: "If it draws a lot of amps at low voltage, the resistance is small. The numbers should feel right before you compute them.",
+          teach: "Resistance is voltage divided by current. Sanity-check direction: high current at a given voltage means low resistance; a trickle of current means high resistance.",
+          variants: [
+            { kind: "text", tag: "Ohm's law", q: "What is the resistance of this load?",
+              scenario: '<span class="given">Given</span>A load connected to <b>120V</b> draws <b>10A</b>.',
+              options: ["12 Ω", "0.083 Ω", "1,200 Ω", "110 Ω"], answer: 0,
+              steps: "R = E ÷ I = 120 ÷ 10 = 12 Ω",
+              why: "Volts over amps. Multiplying (120 × 10 = 1,200) is the planted trap." },
+            { kind: "text", tag: "Ohm's law", q: "What is the resistance of this load?",
+              scenario: '<span class="given">Given</span>A load connected to <b>208V</b> draws <b>26A</b>.',
+              options: ["8 Ω", "0.125 Ω", "5,408 Ω", "182 Ω"], answer: 0,
+              steps: "R = E ÷ I = 208 ÷ 26 = 8 Ω",
+              why: "208 ÷ 26 = 8 exactly — exam writers love numbers that land clean when you use the right operation." }
+          ] },
+        { id: "ol-threephase-power", name: "Three-Phase Power", cat: "Ohm's Law & Power", formula: "P = 1.732 × E × I × PF",
+          hook: "Three-phase always carries the 1.732. Forget it and your answer is off by almost half.",
+          teach: "For a balanced three-phase load, true power is 1.732 × line voltage × line current × power factor. Volt-amps (apparent power) is the same formula without the PF. Single-phase VA is just E × I.",
+          variants: [
+            { kind: "text", tag: "3-phase power", q: "What is the true power of this three-phase load?",
+              scenario: '<span class="given">Given</span>A balanced 3-phase load: <b>480V</b>, <b>50A</b>, power factor <b>0.80</b>.',
+              options: ["About 33.3 kW", "19.2 kW", "41.6 kW", "24 kW", ], answer: 0,
+              steps: "P = 1.732 × 480 × 50 × 0.80 = 33,254W ≈ 33.3 kW",
+              why: "Skip the PF and you get 41.6 kVA — that's apparent power, not watts. Skip the 1.732 and you get 19.2 kW. The exam offers both traps." },
+            { kind: "text", tag: "Volt-amps", q: "What is the apparent power (VA) of this single-phase load?",
+              scenario: '<span class="given">Given</span>A single-phase load draws <b>30A</b> at <b>240V</b>.',
+              options: ["7.2 kVA", "8 kVA", "3.6 kVA", "12.5 kVA"], answer: 0,
+              steps: "VA = E × I = 240 × 30 = 7,200 VA = 7.2 kVA",
+              why: "Single-phase VA is just volts times amps — no 1.732, no power factor. VA is what you use to size transformers and services." }
+          ] },
+        { id: "ol-series-parallel", name: "Series vs. Parallel Resistance", cat: "Ohm's Law & Power", formula: "Series adds · Parallel divides",
+          hook: "Series: resistances stack. Parallel: the total always lands below the smallest branch.",
+          teach: "Series resistances simply add. For two equal resistors in parallel, the total is half of one. For unequal resistors: R = (R1 × R2) ÷ (R1 + R2). A parallel total larger than the smallest branch is impossible — use that to kill wrong options fast.",
+          variants: [
+            { kind: "text", tag: "Parallel resistance", q: "What is the total resistance?",
+              scenario: '<span class="given">Given</span>Two <b>10 Ω</b> resistors connected in <b>parallel</b>.',
+              options: ["5 Ω", "20 Ω", "10 Ω", "100 Ω"], answer: 0,
+              steps: "R = (10 × 10) ÷ (10 + 10) = 100 ÷ 20 = 5 Ω",
+              why: "Equal resistors in parallel: just halve one of them. 20 Ω would be the answer if they were in series." },
+            { kind: "text", tag: "Series resistance", q: "What is the total resistance?",
+              scenario: '<span class="given">Given</span>A <b>12 Ω</b> and an <b>8 Ω</b> resistor connected in <b>series</b>.',
+              options: ["20 Ω", "4.8 Ω", "96 Ω", "10 Ω"], answer: 0,
+              steps: "R = 12 + 8 = 20 Ω",
+              why: "Series resistances add, end of story. 4.8 Ω is what you'd get if you ran the parallel formula on them — the exam's favorite swap." }
+          ] },
+        { id: "ol-kwh", name: "Energy: kWh = kW × Hours", cat: "Ohm's Law & Power", formula: "kWh = kW × hours",
+          hook: "Power is the rate; energy is the rate times the clock. The utility bills the second one.",
+          teach: "Kilowatts measure how fast energy is used; kilowatt-hours measure how much was used. Multiply the kW draw by the hours run. Watch the watts-to-kilowatts conversion — 1,500W is 1.5 kW, not 1,500.",
+          variants: [
+            { kind: "text", tag: "Energy", q: "How much energy does this load use?",
+              scenario: '<span class="given">Given</span>A <b>2 kW</b> load runs for <b>5 hours</b>.',
+              options: ["10 kWh", "0.4 kWh", "7 kWh", "1,000 kWh"], answer: 0,
+              steps: "kWh = 2 × 5 = 10 kWh",
+              why: "Straight multiplication once everything is in kilowatts and hours." },
+            { kind: "text", tag: "Energy", q: "How much energy does this load use?",
+              scenario: '<span class="given">Given</span>A <b>1,500W</b> heater runs for <b>4 hours</b>.',
+              options: ["6 kWh", "6,000 kWh", "375 kWh", "1.5 kWh"], answer: 0,
+              steps: "1,500W = 1.5 kW → 1.5 × 4 = 6 kWh",
+              why: "The trap is the unit: forget to convert watts to kilowatts and you're off by a factor of 1,000 (the 6,000 kWh option)." }
+          ] },
+
+        /* ================= MOTOR CALCULATIONS ================= */
+        { id: "mc-flc-lookup", name: "Table FLC Lookup (430.250)", cat: "Motor Calculations", formula: "FLC from Table 430.250",
+          hook: "The table doesn't care what the nameplate says — for sizing conductors and protection, the table number rules.",
+          teach: "430.6(A)(1): conductor sizing, disconnects, and short-circuit/ground-fault protection are all based on the full-load current in Table 430.250 (three-phase) or 430.248 (single-phase) — never the nameplate. Memorize the common ones: 5 HP = 15.2A @ 230V, 10 HP = 28A @ 230V / 14A @ 460V, 25 HP = 34A @ 460V.",
+          variants: [
+            { kind: "text", tag: "Table 430.250", q: "What is the full-load current for this motor?",
+              scenario: '<span class="given">Given</span>A <b>10 HP</b>, three-phase motor operating at <b>460V</b>.',
+              options: ["14A", "28A", "21A", "11A"], answer: 0,
+              steps: "Table 430.250 → 10 HP @ 460V = 14A",
+              why: "28A is the same motor at 230V — same horsepower, half the voltage, double the current. The exam pairs the two columns to catch skimmers." },
+            { kind: "text", tag: "Table 430.250", q: "What is the full-load current for this motor?",
+              scenario: '<span class="given">Given</span>A <b>25 HP</b>, three-phase motor operating at <b>230V</b>.',
+              options: ["68A", "34A", "74.8A", "54A"], answer: 0,
+              steps: "Table 430.250 → 25 HP @ 230V = 68A",
+              why: "34A is the 460V value for the same motor; 74.8A is the 208V value. Three columns, three traps — read the voltage twice before you answer." }
+          ] },
+        { id: "mc-conductor-125", name: "Motor Branch Conductor: 125% of FLC", cat: "Motor Calculations", formula: "Conductor ampacity ≥ 1.25 × FLC",
+          hook: "Motors get a 25% head start: the conductor is sized like the load never stops — because starting and running hot is its whole life.",
+          teach: "430.22: a single motor's branch-circuit conductors need an ampacity of at least 125% of the Table FLC. You don't then add a separate continuous-load multiplier — the 125% in 430.22 already is the continuous-duty allowance for a motor.",
+          variants: [
+            { kind: "text", tag: "430.22", q: "What minimum conductor ampacity is required?",
+              scenario: '<span class="given">Given</span>A <b>10 HP</b>, 460V, three-phase motor. Table FLC = <b>14A</b>.',
+              options: ["17.5A", "14A", "16.1A", "35A"], answer: 0,
+              steps: "14 × 1.25 = 17.5A minimum ampacity",
+              why: "16.1A is 115% — that's the disconnect rule, not the conductor rule. 35A is the breaker size at 250%, a completely different number for a completely different job." },
+            { kind: "text", tag: "430.22", q: "What minimum conductor ampacity is required?",
+              scenario: '<span class="given">Given</span>A <b>5 HP</b>, 230V, three-phase motor. Table FLC = <b>15.2A</b>.',
+              options: ["19A", "15.2A", "17.5A", "38A"], answer: 0,
+              steps: "15.2 × 1.25 = 19A minimum ampacity",
+              why: "So a 12 AWG copper conductor (20A) just makes it — which is exactly why this motor shows up on exams. Always run the 125% before you reach for the ampacity table." }
+          ] },
+        { id: "mc-breaker-250", name: "Inverse-Time Breaker: 250% of FLC", cat: "Motor Calculations", formula: "Max breaker = 2.50 × FLC",
+          hook: "The breaker is sized for the inrush, not the run — 250% looks wrong until you picture a motor at standstill.",
+          teach: "Table 430.52 lets an inverse-time breaker go to 250% of Table FLC so it can ride through starting current. The conductors stay protected by the overload relay — the breaker is only there for shorts and ground faults. If 250% doesn't land on a standard size, 430.52(C)(1) permits the next higher standard size.",
+          variants: [
+            { kind: "text", tag: "Table 430.52", q: "What is the maximum standard inverse-time breaker for this motor?",
+              scenario: '<span class="given">Given</span>A <b>10 HP</b>, 460V, three-phase motor. Table FLC = <b>14A</b>.',
+              options: ["35A", "30A", "40A", "17.5A"], answer: 0,
+              steps: "14 × 2.50 = 35A — a standard size, use it",
+              why: "The math lands exactly on 35A, so no rounding rule is needed. Picking 30A 'to be safe' undersizes the protection and nuisance-trips on start." },
+            { kind: "text", tag: "430.52(C)(1)", q: "What is the maximum standard inverse-time breaker for this motor?",
+              scenario: '<span class="given">Given</span>A <b>20 HP</b>, 460V, three-phase motor. Table FLC = <b>27A</b>.',
+              options: ["70A", "60A", "65A", "32A"], answer: 0,
+              steps: "27 × 2.50 = 67.5A → next higher standard size = 70A",
+              why: "67.5A isn't a standard breaker size, and 430.52(C)(1) — Exception 1 — lets you go UP to the next standard size, 70A. Going down to 60A is allowed too, but the question asks for the maximum." }
+          ] },
+        { id: "mc-fuses", name: "Motor Fuses: 175% / 300%", cat: "Motor Calculations", formula: "Dual-element 175% · Nontime-delay 300%",
+          hook: "Time-delay fuses trust the motor to start; nontime-delay fuses need triple the room to believe it.",
+          teach: "Table 430.52: dual-element (time-delay) fuses max out at 175% of FLC — their delay element rides through inrush. Nontime-delay fuses have no delay, so they get 300%. Both may round up to the next standard size when the percentage misses one.",
+          variants: [
+            { kind: "text", tag: "Table 430.52", q: "What is the maximum standard dual-element fuse for this motor?",
+              scenario: '<span class="given">Given</span>A <b>25 HP</b>, 460V, three-phase motor. Table FLC = <b>34A</b>.',
+              options: ["60A", "50A", "85A", "40A"], answer: 0,
+              steps: "34 × 1.75 = 59.5A → next higher standard size = 60A",
+              why: "85A is the inverse-time breaker answer (250%) for the same motor — the exam's favorite cross-wire. Fuse type decides the percentage; read the device before you multiply." },
+            { kind: "text", tag: "Table 430.52", q: "What is the maximum standard nontime-delay fuse for this motor?",
+              scenario: '<span class="given">Given</span>A <b>10 HP</b>, 460V, three-phase motor. Table FLC = <b>14A</b>.',
+              options: ["45A", "35A", "25A", "40A"], answer: 0,
+              steps: "14 × 3.00 = 42A → next higher standard size = 45A",
+              why: "300% for a fuse with no time delay. 25A is the dual-element neighborhood (175% ≈ 24.5A) — close numbers, different devices, different answers." }
+          ] },
+        { id: "mc-overload", name: "Overloads: Nameplate × 115% / 125%", cat: "Motor Calculations", formula: "OL max = nameplate FLA × 1.25 or 1.15",
+          hook: "Overloads protect the motor in front of you — so they read its nameplate, not a table.",
+          teach: "430.32: overloads are sized from the motor's nameplate FLA — the one exception to the Table FLC rule. Maximum 125% if the motor has a service factor of 1.15 or higher, or a temperature rise of 40°C or less. Everything else: 115%. (If that won't let the motor start, 430.32(C) allows a step up — but the exam's base rule is 115/125.)",
+          variants: [
+            { kind: "text", tag: "430.32", q: "What is the maximum overload trip setting for this motor?",
+              scenario: '<span class="given">Given</span>Nameplate FLA = <b>12A</b>, service factor <b>1.15</b>.',
+              options: ["15A", "13.8A", "17.5A", "30A"], answer: 0,
+              steps: "SF 1.15 → 125% → 12 × 1.25 = 15A",
+              why: "Service factor 1.15 or better earns the 125% column. 13.8A is the 115% answer — for a motor without the service factor or low temp rise." },
+            { kind: "text", tag: "430.32", q: "What is the maximum overload trip setting for this motor?",
+              scenario: '<span class="given">Given</span>Nameplate FLA = <b>20A</b>, service factor <b>1.0</b>, temperature rise <b>50°C</b>.',
+              options: ["23A", "25A", "17.5A", "50A"], answer: 0,
+              steps: "SF 1.0 and rise over 40°C → 115% → 20 × 1.15 = 23A",
+              why: "Neither qualifier is met, so it's 115%, not 125%. And note the starting point: 20A came off the nameplate — Table 430.250 never enters an overload calculation." }
+          ] },
+        { id: "mc-feeder-conductor", name: "Motor Feeder Conductors (430.24)", cat: "Motor Calculations", formula: "1.25 × largest FLC + sum of the rest",
+          hook: "Only the biggest motor gets the 125%. The rest ride at face value.",
+          teach: "430.24: feeder conductors supplying several motors need ampacity of 125% of the largest motor's FLC plus 100% of every other motor's FLC. Applying 125% to all of them oversizes the feeder — a classic exam overbuild trap.",
+          variants: [
+            { kind: "text", tag: "430.24", q: "What minimum feeder conductor ampacity is required?",
+              scenario: '<span class="given">Given</span>Two 460V motors on one feeder: <b>10 HP</b> (FLC 14A) and <b>5 HP</b> (FLC 7.6A).',
+              options: ["25.1A", "27A", "21.6A", "17.5A"], answer: 0,
+              steps: "1.25 × 14 + 7.6 = 17.5 + 7.6 = 25.1A",
+              why: "27A is 125% of everything (21.6 × 1.25) — the overbuild trap. The 125% belongs to the largest motor only." },
+            { kind: "text", tag: "430.24", q: "What minimum feeder conductor ampacity is required?",
+              scenario: '<span class="given">Given</span>Three 460V motors on one feeder: <b>25 HP</b> (34A), <b>15 HP</b> (21A), <b>7½ HP</b> (11A).',
+              options: ["74.5A", "66A", "82.5A", "42.5A"], answer: 0,
+              steps: "1.25 × 34 + 21 + 11 = 42.5 + 32 = 74.5A",
+              why: "66A forgets the 125% entirely; 82.5A applies it to everyone. Largest motor gets the multiplier, the rest come in at 100%." }
+          ] },
+        { id: "mc-feeder-ocpd", name: "Motor Feeder Protection (430.62)", cat: "Motor Calculations", formula: "Largest branch device + sum of other FLCs",
+          hook: "The feeder breaker protects the biggest motor's worst day, plus everyone else's normal day.",
+          teach: "430.62(A): the feeder's short-circuit/ground-fault device rating must not exceed the largest branch-circuit device rating in the group plus the sum of the other motors' FLCs. It's a ceiling, not a target — if the total isn't a standard size, go DOWN, because the rule says 'shall not exceed.'",
+          variants: [
+            { kind: "text", tag: "430.62", q: "What is the maximum standard feeder breaker for this group?",
+              scenario: '<span class="given">Given</span>Two 460V motors: a <b>10 HP</b> (FLC 14A) on a <b>35A</b> breaker, and a <b>5 HP</b> (FLC 7.6A).',
+              options: ["40A", "45A", "42.6A exactly, no rounding needed", "70A"], answer: 0,
+              steps: "35 + 7.6 = 42.6A max → next standard size DOWN = 40A",
+              why: "Unlike the branch-circuit rule, 430.62 gives no 'next size up' — the rating shall not exceed the calculated value, so 42.6A caps you at a 40A breaker." },
+            { kind: "text", tag: "430.62", q: "What is the maximum rating allowed for the feeder device?",
+              scenario: '<span class="given">Given</span>Three 460V motors: the largest branch device is a <b>60A</b> fuse; the other two motors have FLCs of <b>21A</b> and <b>11A</b>.',
+              options: ["92A", "60A", "100A", "125A"], answer: 0,
+              steps: "60 + 21 + 11 = 92A maximum",
+              why: "Largest device plus the other motors' full-load currents — not their device ratings, and not 125% of anything. The 100A option is a standard size but it exceeds the 92A ceiling." }
+          ] },
+        { id: "mc-disconnect", name: "Disconnect Rating: 115% of FLC", cat: "Motor Calculations", formula: "Disconnect amps ≥ 1.15 × FLC",
+          hook: "Three different percentages live in Article 430: 125% feeds it, 250% protects it, 115% disconnects it.",
+          teach: "430.110(A): an ampere-rated disconnect for a motor must be rated at least 115% of the Table FLC (it also needs a horsepower rating at least equal to the motor's, but the exam's math question is the 115%). Keep the three percentages sorted by job: conductors 125%, branch protection per Table 430.52, disconnect 115%.",
+          variants: [
+            { kind: "text", tag: "430.110", q: "What minimum ampere rating must this disconnect have?",
+              scenario: '<span class="given">Given</span>A <b>25 HP</b>, 460V, three-phase motor. Table FLC = <b>34A</b>.',
+              options: ["39.1A", "42.5A", "34A", "85A"], answer: 0,
+              steps: "34 × 1.15 = 39.1A minimum",
+              why: "42.5A is the 125% conductor number; 85A is the 250% breaker number. Same motor, three percentages, three different components — the exam shuffles them relentlessly." },
+            { kind: "text", tag: "430.110", q: "What minimum ampere rating must this disconnect have?",
+              scenario: '<span class="given">Given</span>A <b>10 HP</b>, 460V, three-phase motor. Table FLC = <b>14A</b>.',
+              options: ["16.1A", "17.5A", "14A", "20A"], answer: 0,
+              steps: "14 × 1.15 = 16.1A minimum",
+              why: "115% for the disconnect. In practice you'd install a standard 30A safety switch — but the question asks for the Code minimum the rating is calculated from." }
+          ] },
+        { id: "mc-table-vs-nameplate", name: "Table FLC vs. Nameplate FLA", cat: "Motor Calculations", formula: "Table → sizing · Nameplate → overloads",
+          hook: "One motor, two current ratings: the table builds the circuit, the nameplate guards the motor.",
+          teach: "430.6: use Table 430.250/430.248 FLC for sizing conductors, disconnects, controllers, and short-circuit/ground-fault protection. Use the nameplate FLA for overload protection only. And use the table column for the motor's rated voltage: a motor nameplated 460V on a 480V system still uses the 460V column — the table is built around motor nameplate voltages (230/460), not system voltages (240/480).",
+          variants: [
+            { kind: "text", tag: "430.6", q: "Which current do you use to size this motor's overload protection?",
+              scenario: '<span class="given">Given</span>The nameplate on a motor reads <b>11.4A</b>. Table 430.250 lists <b>14A</b> for its horsepower and voltage.',
+              options: ["The nameplate value, 11.4A", "The Table 430.250 value, 14A", "The larger of the two, to be safe", "The average of the two"], answer: 0,
+              steps: "Overloads → nameplate FLA (430.6(A)(2), 430.32)",
+              why: "The overload relay lives on that specific motor and heats with its actual current — so it keys off the nameplate. The table value builds everything upstream of it." },
+            { kind: "text", tag: "430.6 / Table 430.250", q: "Which table column gives this motor's FLC?",
+              scenario: '<span class="given">Given</span>A motor nameplated <b>460V</b> is installed on a <b>480V</b> system.',
+              options: ["The 460V column", "The 480V column", "The 575V column, rounded for safety", "Average the 460V and 575V columns"], answer: 0,
+              steps: "Motor voltage rating 460V → 460V column",
+              why: "There is no 480V column. Motors are rated 460V for use on 480V systems (and 230V on 240V systems) — the table follows the motor's nameplate voltage, and utilization voltage is deliberately lower than distribution voltage." }
+          ] },
+
+        /* ================= AMPACITY & DERATING ================= */
+        { id: "ad-small-conductor", name: "Small-Conductor Breaker Limits (240.4(D))", cat: "Ampacity & Derating", formula: "14 AWG→15A · 12 AWG→20A · 10 AWG→30A",
+          hook: "The 90°C column is for math. 240.4(D) is the law for small wire.",
+          teach: "240.4(D) caps overcurrent protection on small copper conductors regardless of insulation rating: 14 AWG → 15A, 12 AWG → 20A, 10 AWG → 30A. You may still start derating calculations from the 90°C ampacity (30A for 12 AWG THHN) — but the breaker can never exceed the 240.4(D) cap.",
+          variants: [
+            { kind: "text", tag: "240.4(D)", q: "What is the maximum circuit breaker for this conductor?",
+              scenario: '<span class="given">Given</span><b>12 AWG</b> copper THHN, 90°C ampacity <b>30A</b>, supplying a general branch circuit.',
+              options: ["20A", "30A", "25A", "15A"], answer: 0,
+              steps: "240.4(D) caps 12 AWG copper at 20A",
+              why: "The 30A in the 90°C column is real ampacity for derating math — but 240.4(D) forbids protecting general-use 12 AWG with anything over a 20A breaker. (Motor circuits are the famous exception — Article 430's percentages govern there.)" },
+            { kind: "text", tag: "240.4(D)", q: "What is the maximum circuit breaker for this conductor?",
+              scenario: '<span class="given">Given</span><b>10 AWG</b> copper THHN supplying a general branch circuit.',
+              options: ["30A", "40A", "35A", "20A"], answer: 0,
+              steps: "240.4(D) caps 10 AWG copper at 30A",
+              why: "10 AWG THHN shows 40A at 90°C and 35A at 75°C — both are decoys. The small-conductor rule caps the breaker at 30A." }
+          ] },
+        { id: "ad-termination", name: "Termination Temperature Rules", cat: "Ampacity & Derating", formula: "Final ampacity ≤ termination column",
+          hook: "The wire can take the heat. The lug can't. The weaker link sets the number.",
+          teach: "110.14(C): conductor ampacity is limited by the temperature rating of the terminations. Equipment rated 100A or less defaults to 60°C terminations unless marked otherwise; larger equipment defaults to 75°C. In practice, exam math runs: derate from the 90°C column, then cap the final answer at the 75°C column value for typical modern equipment.",
+          variants: [
+            { kind: "text", tag: "110.14(C) / Table 310.16", q: "What is the usable ampacity of this conductor on 75°C terminations?",
+              scenario: '<span class="given">Given</span><b>3 AWG</b> copper THHN landed on <b>75°C</b>-rated lugs. Table 310.16: 90°C = 115A, 75°C = 100A.',
+              options: ["100A", "115A", "85A", "130A"], answer: 0,
+              steps: "Termination limit → use the 75°C column = 100A",
+              why: "THHN's 90°C rating is available for derating calculations, but the current the circuit may actually carry is set by the lug: 100A." },
+            { kind: "text", tag: "110.14(C) / Table 310.16", q: "What is the usable ampacity of this conductor on 75°C terminations?",
+              scenario: '<span class="given">Given</span><b>1/0 AWG</b> copper THHN landed on <b>75°C</b>-rated lugs. Table 310.16: 90°C = 170A, 75°C = 150A.',
+              options: ["150A", "170A", "125A", "200A"], answer: 0,
+              steps: "Termination limit → use the 75°C column = 150A",
+              why: "Same rule at every size: the 90°C column is the starting point for adjustment math, the termination column is the ceiling on the final answer." }
+          ] },
+        { id: "ad-derating-count", name: "Bundling Adjustment (310.15(C)(1))", cat: "Ampacity & Derating", formula: "4–6 CCC: 80% · 7–9: 70% · 10–20: 50%",
+          hook: "Conductors in a conduit heat each other. Count the ones carrying current, then take the haircut.",
+          teach: "Table 310.15(C)(1): more than three current-carrying conductors in a raceway or cable triggers an adjustment factor — 4–6 at 80%, 7–9 at 70%, 10–20 at 50%. Start from the 90°C ampacity for THHN, apply the factor, then check the result against the termination-temperature ceiling and the 240.4(D) caps.",
+          variants: [
+            { kind: "text", tag: "Table 310.15(C)(1)", q: "What is the adjusted ampacity of these conductors?",
+              scenario: '<span class="given">Given</span><b>Six</b> current-carrying <b>8 AWG</b> THHN copper conductors in one conduit. 90°C ampacity = <b>55A</b>.',
+              options: ["44A", "55A", "38.5A", "27.5A"], answer: 0,
+              steps: "6 CCC → 80% → 55 × 0.80 = 44A",
+              why: "38.5A is the 70% (7–9 conductor) answer; 27.5A is 50%. Count the conductors first — the bracket you land in is the whole question." },
+            { kind: "text", tag: "Table 310.15(C)(1)", q: "What is the adjusted ampacity of these conductors?",
+              scenario: '<span class="given">Given</span><b>Nine</b> current-carrying <b>4 AWG</b> THHN copper conductors in one conduit. 90°C ampacity = <b>95A</b>.',
+              options: ["66.5A", "76A", "95A", "47.5A"], answer: 0,
+              steps: "9 CCC → 70% → 95 × 0.70 = 66.5A",
+              why: "Nine is still the 70% bracket — the drop to 50% doesn't hit until the tenth current-carrying conductor. Bracket edges are where the exam lives." }
+          ] },
+        { id: "ad-ambient", name: "Ambient Temperature Correction", cat: "Ampacity & Derating", formula: "Ampacity × correction factor",
+          hook: "The ampacity table assumes a 30°C room. Hotter room, weaker wire.",
+          teach: "Table 310.15(B)(1): when ambient temperature differs from 30°C (86°F), multiply ampacity by the correction factor for the insulation's temperature column. For 90°C insulation: 40°C ambient → 0.91, 50°C → 0.82, 60°C → 0.71. Correction (temperature) and adjustment (bundling) are separate multipliers — apply both when both apply.",
+          variants: [
+            { kind: "text", tag: "Table 310.15(B)(1)", q: "What is the corrected ampacity of this conductor?",
+              scenario: '<span class="given">Given</span><b>6 AWG</b> THHN copper (90°C ampacity <b>75A</b>) in a boiler room with a <b>40°C</b> ambient.',
+              options: ["68.25A", "75A", "61.5A", "82.5A"], answer: 0,
+              steps: "75 × 0.91 = 68.25A",
+              why: "40°C ambient on the 90°C column uses the 0.91 factor. 61.5A is the 50°C answer (0.82) — one row off in the correction table." },
+            { kind: "text", tag: "Table 310.15(B)(1)", q: "What is the corrected ampacity of this conductor?",
+              scenario: '<span class="given">Given</span><b>2 AWG</b> THHN copper (90°C ampacity <b>130A</b>) where the ambient is <b>50°C</b>.',
+              options: ["106.6A", "118.3A", "130A", "92.3A"], answer: 0,
+              steps: "130 × 0.82 = 106.6A",
+              why: "50°C → 0.82 on the 90°C column. Use the factor from the insulation's own column, not the termination column — the final result still gets capped by the termination limit afterward." }
+          ] },
+        { id: "ad-continuous", name: "Continuous Load: the 125% Rule", cat: "Ampacity & Derating", formula: "Conductor & breaker ≥ 1.25 × continuous amps",
+          hook: "Three hours or more, and the load is continuous — everything upstream grows by a quarter.",
+          teach: "210.19(A)(1) and 215.2: conductors and overcurrent devices supplying a continuous load (maximum current for 3 hours or more) must be rated at least 125% of that load (unless the assembly is listed for 100% operation). Size the wire's ampacity — at the termination temperature — to meet or beat the multiplied value.",
+          variants: [
+            { kind: "text", tag: "210.19(A)(1)", q: "What minimum conductor ampacity is required for this load?",
+              scenario: '<span class="given">Given</span>A continuous load of <b>40A</b>. Terminations are 75°C. Copper ampacities at 75°C: 10 AWG = 35A, 8 AWG = 50A, 6 AWG = 65A.',
+              options: ["50A — so 8 AWG copper", "40A — so 10 AWG copper", "65A — so 6 AWG copper", "32A — so 10 AWG copper"], answer: 0,
+              steps: "40 × 1.25 = 50A → 8 AWG Cu (50A @ 75°C)",
+              why: "The conductor must carry the 125% figure, not the load figure. 10 AWG at 35A fails twice: it's under the multiplied value and under the termination check." },
+            { kind: "text", tag: "210.19(A)(1)", q: "What is the minimum breaker and conductor ampacity for this load?",
+              scenario: '<span class="given">Given</span>Store lighting runs <b>24A</b> continuously, every day, all day.',
+              options: ["30A", "24A", "20A", "40A"], answer: 0,
+              steps: "24 × 1.25 = 30A",
+              why: "Lighting in a store is the textbook continuous load. A 24A load on a 25A breaker looks fine on paper and cooks in practice — the 125% rule exists because breakers run hot at their rating for hours." }
+          ] },
+        { id: "ad-parallel", name: "Parallel Conductors", cat: "Ampacity & Derating", formula: "Parallel ampacity = sum of the sets",
+          hook: "Two pipes side by side carry twice the water — if they're identical twins.",
+          teach: "310.10(H): conductors may be paralleled only at 1/0 AWG and larger, and every conductor in a parallel set must be the same material, size, length, and insulation, terminated the same way. Feeder ampacity is the sum of the sets: two 400 kcmil runs carry twice one run — that's the entire math the exam asks for here.",
+          variants: [
+            { kind: "text", tag: "310.10(H)", q: "What is the ampacity of this paralleled feeder?",
+              scenario: '<span class="given">Given</span>Two sets of <b>3/0 AWG</b> copper per phase, 75°C ampacity <b>200A</b> each.',
+              options: ["400A", "200A", "350A", "600A"], answer: 0,
+              steps: "200 + 200 = 400A",
+              why: "Parallel sets add. No 125%, no demand factor — the trap options are the numbers from other rules wandering into the wrong question." },
+            { kind: "text", tag: "310.10(H)", q: "What is the smallest conductor size permitted to be run in parallel?",
+              scenario: '<span class="given">Given</span>A feeder is being designed with two sets of conductors per phase to reach the needed ampacity.',
+              options: ["1/0 AWG", "2 AWG", "4 AWG", "250 kcmil"], answer: 0,
+              steps: "310.10(H)(1) → 1/0 AWG minimum for paralleled conductors",
+              why: "Below 1/0, small differences in length and termination resistance unbalance the current split too easily, so the Code bans paralleling outright. 250 kcmil is permitted — it's just not the minimum." }
+          ] },
+        { id: "ad-neutral-ccc", name: "When the Neutral Counts", cat: "Ampacity & Derating", formula: "Nonlinear loads → neutral is a CCC",
+          hook: "A neutral loafing along with leftover current doesn't count. A neutral hauling harmonic current works as hard as any phase.",
+          teach: "310.15(E): a neutral that carries only the unbalanced current from the other conductors of the same circuit is NOT counted as current-carrying. But on a 4-wire, 3-phase wye system where the major portion of the load is nonlinear (LED drivers, computers, VFDs), the neutral carries harmonic current and MUST be counted — which can push a raceway into a derating bracket.",
+          variants: [
+            { kind: "text", tag: "310.15(E)(3)", q: "How many current-carrying conductors are in this raceway for derating?",
+              scenario: '<span class="given">Given</span>A 4-wire, 3-phase wye feeder (3 phases + neutral) serving mostly <b>LED lighting and computer loads</b>.',
+              options: ["4 — the neutral counts", "3 — neutrals never count", "2 — only the ungrounded conductors count", "6 — each conductor counts double under harmonics"], answer: 0,
+              steps: "Nonlinear major portion → neutral is a CCC → 4 CCC → 80% bracket",
+              why: "Triplen harmonics from nonlinear loads add up in the neutral instead of canceling. Four current-carrying conductors moves the raceway into the 80% adjustment bracket." },
+            { kind: "text", tag: "310.15(E)(1)", q: "Does the neutral count as a current-carrying conductor here?",
+              scenario: '<span class="given">Given</span>A neutral conductor that carries <b>only the unbalanced current</b> from the other conductors of the same circuit.',
+              options: ["No — it is not counted", "Yes — every neutral always counts", "Yes — and it counts as two", "Only if it is smaller than the phase conductors"], answer: 0,
+              steps: "310.15(E)(1) → an unbalanced-only neutral is not a CCC",
+              why: "Same component, opposite answer — it all turns on what the neutral is actually carrying. Leftover imbalance: not counted. Harmonic current from nonlinear loads: counted." }
+          ] }
+,
+
+        /* ================= CONDUIT & BOX FILL ================= */
+        { id: "fb-max-count", name: "Max Conductors in a Raceway", cat: "Conduit & Box Fill", formula: "Count = 40% fill area ÷ conductor area",
+          hook: "Divide what the pipe allows by what each wire takes. Always round DOWN — a fraction of a wire doesn't fit.",
+          teach: "Chapter 9, Table 1 caps 3+ conductors at 40% of the raceway's internal area (Table 4). Table 5 gives each conductor's area: 12 AWG THHN = 0.0133 in². Divide the allowed fill area by the conductor area and drop the fraction — you can't install 0.17 of a conductor.",
+          variants: [
+            { kind: "text", tag: "Ch. 9 Tables 1, 4, 5", q: "How many of these conductors fit in this raceway?",
+              scenario: '<span class="given">Given</span><b>12 AWG THHN</b> conductors (0.0133 in² each) in <b>¾ in. EMT</b> — 40% fill area = <b>0.213 in²</b>.',
+              options: ["16", "17", "9", "26"], answer: 0,
+              steps: "0.213 ÷ 0.0133 = 16.02 → 16 conductors",
+              why: "Round down: the leftover 0.02 buys you nothing. Annex C Table C.1 gives the same 16 for this exact combination — the exam expects you to land on it either way." },
+            { kind: "text", tag: "Ch. 9 Tables 1, 4, 5", q: "How many of these conductors fit in this raceway?",
+              scenario: '<span class="given">Given</span><b>12 AWG THHN</b> conductors (0.0133 in² each) in <b>½ in. EMT</b> — 40% fill area = <b>0.122 in²</b>.',
+              options: ["9", "10", "16", "6"], answer: 0,
+              steps: "0.122 ÷ 0.0133 = 9.17 → 9 conductors",
+              why: "9.17 rounds DOWN to 9. Rounding to 10 overfills the raceway past 40% — a violation, not a rounding choice." }
+          ] },
+        { id: "fb-mixed-fill", name: "Mixed-Size Conduit Fill", cat: "Conduit & Box Fill", formula: "Total area = Σ (count × area each)",
+          hook: "Different sizes? Add up everybody's area, then find the smallest pipe whose 40% covers it.",
+          teach: "When conductor sizes are mixed, there's no Annex C shortcut: multiply each size's count by its Table 5 area, add them, and pick the smallest raceway whose 40% fill area (Table 4) equals or beats the total. Always compare against the NEXT size up when a pipe falls barely short.",
+          variants: [
+            { kind: "text", tag: "Ch. 9 Tables 4 & 5", q: "What is the smallest EMT that legally holds this combination?",
+              scenario: '<span class="given">Given</span>Three <b>10 AWG THHN</b> (0.0211 in²) and three <b>12 AWG THHN</b> (0.0133 in²). EMT 40% fill: ½ in. = 0.122, ¾ in. = 0.213.',
+              options: ["½ in. EMT", "¾ in. EMT", "1 in. EMT", "It cannot be done in EMT"], answer: 0,
+              steps: "3 × 0.0211 + 3 × 0.0133 = 0.0633 + 0.0399 = 0.1032 in² → fits ½ in. (0.122)",
+              why: "0.1032 in² slides under the ½-inch pipe's 0.122 allowance. The instinct to upsize 'for the pull' is good practice in the field — but the exam asks for the Code minimum." },
+            { kind: "text", tag: "Ch. 9 Tables 4 & 5", q: "What is the smallest EMT that legally holds these conductors?",
+              scenario: '<span class="given">Given</span>Six <b>8 AWG THHN</b> (0.0366 in² each). EMT 40% fill: ¾ in. = 0.213, 1 in. = 0.346.',
+              options: ["1 in. EMT", "¾ in. EMT", "½ in. EMT", "1¼ in. EMT"], answer: 0,
+              steps: "6 × 0.0366 = 0.2196 in² → ¾ in. (0.213) is too small → 1 in. EMT",
+              why: "Short by seven thousandths of a square inch — and still short. Near-misses are the entire point of mixed-fill questions; run the number, don't eyeball it." }
+          ] },
+        { id: "fb-percent-table", name: "The 53 / 31 / 40 Fill Percentages", cat: "Conduit & Box Fill", formula: "1 wire 53% · 2 wires 31% · 3+ wires 40%",
+          hook: "Two wires get LESS percentage than three. Jam two fat conductors in a pipe and you'll find out why.",
+          teach: "Chapter 9, Table 1: one conductor may fill 53% of a raceway, two conductors only 31%, and three or more 40%. The two-conductor dip is real — two circles side by side wedge against the pipe wall and each other. Exception: a nipple 24 inches or shorter may be filled to 60% regardless of count.",
+          variants: [
+            { kind: "text", tag: "Ch. 9 Table 1", q: "What maximum percent fill applies to this raceway?",
+              scenario: '<span class="given">Given</span>A conduit containing <b>five</b> conductors.',
+              options: ["40%", "31%", "53%", "60%"], answer: 0,
+              steps: "3 or more conductors → 40%",
+              why: "The 53% figure is for a single conductor; 60% is the short-nipple allowance. Five conductors is squarely in 40% territory." },
+            { kind: "text", tag: "Ch. 9 Table 1, Note 4", q: "What maximum percent fill applies to this raceway section?",
+              scenario: '<span class="given">Given</span>A conduit nipple, <b>18 inches</b> long, between two enclosures, containing several conductors.',
+              options: ["60%", "40%", "31%", "53%"], answer: 0,
+              steps: "Nipple ≤ 24 in. → 60% fill permitted",
+              why: "Chapter 9, Table 1, Note 4 lets short nipples fill to 60% — derating for bundling also doesn't apply to a nipple that short. Length is the trigger: at 25 inches this answer flips back to the standard percentages." }
+          ] },
+        { id: "fb-box-volume", name: "Box Fill Volume (314.16)", cat: "Conduit & Box Fill", formula: "Volume needed = allowances × in³ per size",
+          hook: "Every conductor rents space in the box, and the rent is set by its size: 12 AWG costs 2.25 cubic inches.",
+          teach: "314.16(B): each conductor that enters or passes through a box counts as one volume allowance — 2.00 in³ for 14 AWG, 2.25 in³ for 12 AWG, 2.50 in³ for 10 AWG (Table 314.16(B)). A device yoke counts as two allowances of the largest conductor on it; all equipment grounding conductors together count as one; internal clamps count as one.",
+          variants: [
+            { kind: "text", tag: "314.16(B)", q: "What minimum box volume is required?",
+              scenario: '<span class="given">Given</span>A device box with <b>four 12 AWG</b> conductors, <b>one equipment grounding conductor</b>, and <b>one switch</b>. 12 AWG = 2.25 in³ per allowance.',
+              options: ["15.75 in³", "13.5 in³", "11.25 in³", "18 in³"], answer: 0,
+              steps: "4 conductors + 1 (grounds together) + 2 (switch yoke) = 7 allowances × 2.25 = 15.75 in³",
+              why: "The switch counts double and the ground counts once — swap either rule and you land on a decoy. Four conductors alone would be 9 in³; nobody's decoy, but everyone's undercount." },
+            { kind: "text", tag: "314.16(B)", q: "What minimum box volume is required?",
+              scenario: '<span class="given">Given</span>A device box with <b>six 14 AWG</b> conductors, <b>one equipment grounding conductor</b>, and <b>one receptacle</b>. 14 AWG = 2.00 in³ per allowance.',
+              options: ["18 in³", "14 in³", "16 in³", "12 in³"], answer: 0,
+              steps: "6 + 1 (grounds) + 2 (receptacle yoke) = 9 allowances × 2.00 = 18 in³",
+              why: "A standard 4 × 4 × 1½ in. box is exactly 18 in³ — this combination is Code-legal with zero room to spare, which is precisely why the exam uses it." }
+          ] },
+        { id: "fb-box-count", name: "How Many Conductors Fit the Box?", cat: "Conduit & Box Fill", formula: "Allowances = box volume ÷ in³ per conductor",
+          hook: "Run box fill backwards: the box tells you its budget, each conductor spends 2.25 of it.",
+          teach: "Table 314.16(A) lists metal box volumes: a 4 in. square × 1½ in. deep box is 18 in³; × 2⅛ in. deep is 30.3 in³. Divide the marked volume by the per-conductor allowance for your wire size and round DOWN. Remember devices, clamps, and grounds spend from the same budget.",
+          variants: [
+            { kind: "text", tag: "314.16(A) & (B)", q: "How many 12 AWG conductor allowances does this box provide?",
+              scenario: '<span class="given">Given</span>A box with a marked volume of <b>27 in³</b>, all conductors <b>12 AWG</b> (2.25 in³ each).',
+              options: ["12", "13", "10", "27"], answer: 0,
+              steps: "27 ÷ 2.25 = 12 allowances",
+              why: "Clean division this time — but note 'allowances' isn't the same as 'conductors in the box' once a device or clamps take their cut." },
+            { kind: "text", tag: "314.16(A) & (B)", q: "How many 12 AWG conductor allowances does this box provide?",
+              scenario: '<span class="given">Given</span>A <b>4 × 4 × 1½ in.</b> square box, volume <b>18 in³</b>, all conductors <b>12 AWG</b> (2.25 in³ each).',
+              options: ["8", "9", "7", "18"], answer: 0,
+              steps: "18 ÷ 2.25 = 8 allowances",
+              why: "Eight allowances total — feed that box a receptacle (2) and a ground (1) and only five allowances remain for current-carrying conductors. This is how legal-looking boxes end up illegally stuffed." }
+          ] },
+        { id: "fb-counting-rules", name: "Grounds, Clamps & Yokes", cat: "Conduit & Box Fill", formula: "Grounds = 1 · Clamps = 1 · Yoke = 2",
+          hook: "Three special tenants: the grounds share one room, the clamps share one room, and the device takes two.",
+          teach: "314.16(B)(5): all equipment grounding conductors entering a box count as ONE allowance total (based on the largest EGC). 314.16(B)(2): one or more internal cable clamps count as ONE allowance. 314.16(B)(4): each device yoke or strap counts as TWO allowances. A conductor that originates and terminates inside the box (a pigtail) counts as ZERO.",
+          variants: [
+            { kind: "text", tag: "314.16(B)(5)", q: "How many volume allowances do the grounding conductors take?",
+              scenario: '<span class="given">Given</span>Three cables enter a box, each bringing its own <b>equipment grounding conductor</b> — three EGCs total.',
+              options: ["One allowance — all EGCs together", "Three allowances — one per EGC", "Zero — grounds never count", "Two allowances"], answer: 0,
+              steps: "314.16(B)(5) → all EGCs in the box = a single allowance",
+              why: "Three grounds, one allowance. Counting each ground separately is the most common box-fill error on the exam — and in the field." },
+            { kind: "text", tag: "314.16(B)(1)", q: "How many volume allowances does this conductor take?",
+              scenario: '<span class="given">Given</span>A <b>pigtail</b> spliced inside the box — it both originates and terminates in the box and never leaves it.',
+              options: ["Zero allowances", "One allowance", "Two allowances", "Half an allowance"], answer: 0,
+              steps: "Conductors originating and terminating in the box are not counted",
+              why: "Pigtails are free. Every conductor that enters from outside costs an allowance; one born and buried inside the box costs nothing." }
+          ] },
+        { id: "fb-pull-box", name: "Pull Box Sizing (314.28)", cat: "Conduit & Box Fill", formula: "Straight 8× · Angle 6× + others",
+          hook: "Straight pulls need runway: eight times the pipe. Angled pulls need six, plus tolls for every neighbor.",
+          teach: "314.28(A): for a straight pull, box length must be at least 8 times the largest raceway's trade diameter. For angle or U pulls, the distance from each raceway entry to the opposite wall is 6 times that raceway PLUS the diameters of all other raceways in the same row on the same wall.",
+          variants: [
+            { kind: "text", tag: "314.28(A)(1)", q: "What is the minimum length of this pull box?",
+              scenario: '<span class="given">Given</span>A <b>straight pull</b> through a box, largest raceway <b>2 in.</b>',
+              options: ["16 in.", "12 in.", "8 in.", "24 in."], answer: 0,
+              steps: "8 × 2 = 16 in. minimum",
+              why: "Straight pull = 8× the largest conduit, no additions. 12 in. is the angle-pull base (6×) — the wrong formula's answer, waiting for you." },
+            { kind: "text", tag: "314.28(A)(2)", q: "What is the minimum dimension for this angle pull?",
+              scenario: '<span class="given">Given</span>An <b>angle pull</b>: a <b>2 in.</b> raceway and a <b>1 in.</b> raceway enter the same wall in the same row.',
+              options: ["13 in.", "12 in.", "18 in.", "16 in."], answer: 0,
+              steps: "6 × 2 + 1 = 13 in. minimum",
+              why: "Six times the largest, plus every other raceway in that row. Forget the +1 for the second conduit and you land on 12 — short, and wrong." }
+          ] },
+
+        /* ================= VOLTAGE DROP ================= */
+        { id: "vd-single-phase", name: "Single-Phase Voltage Drop", cat: "Voltage Drop", formula: "VD = 2 × K × I × L ÷ CM",
+          hook: "The 2 is the round trip: current suffers the wire going out AND coming back.",
+          teach: "VD = 2KIL ÷ CM for single-phase. K = 12.9 for copper (21.2 for aluminum), L is the ONE-WAY distance in feet, CM is the conductor's circular mil area (12 AWG = 6,530; 10 AWG = 10,380; 8 AWG = 16,510). The 2 accounts for both conductors in the circuit.",
+          variants: [
+            { kind: "text", tag: "VD formula, 1φ", q: "What is the voltage drop on this circuit?",
+              scenario: '<span class="given">Given</span>Copper, <b>16A</b> load, <b>100 ft</b> one-way, <b>12 AWG</b> (6,530 CM), 120V circuit.',
+              options: ["6.3V", "3.2V", "12.6V", "1.6V"], answer: 0,
+              steps: "VD = 2 × 12.9 × 16 × 100 ÷ 6,530 = 41,280 ÷ 6,530 = 6.3V (5.3%)",
+              why: "6.3V on a 120V circuit is 5.3% — over the 3% branch-circuit recommendation by itself. 3.2V is the answer if you forget the round-trip 2." },
+            { kind: "text", tag: "VD formula, 1φ", q: "What is the voltage drop on this circuit?",
+              scenario: '<span class="given">Given</span>Copper, <b>20A</b> load, <b>50 ft</b> one-way, <b>10 AWG</b> (10,380 CM), 240V circuit.',
+              options: ["2.5V", "5.0V", "1.2V", "9.9V"], answer: 0,
+              steps: "VD = 2 × 12.9 × 20 × 50 ÷ 10,380 = 25,800 ÷ 10,380 = 2.5V (about 1%)",
+              why: "Short run, fat wire, higher voltage — about 1%. Voltage drop shrinks fast with voltage: the same watts at 240V draw half the amps of 120V." }
+          ] },
+        { id: "vd-percent", name: "Voltage Drop as a Percentage", cat: "Voltage Drop", formula: "%VD = VD ÷ source voltage × 100",
+          hook: "Volts lost mean nothing until you divide by volts delivered. 6V is nothing at 480 and a disaster at 120.",
+          teach: "The NEC's informational notes (210.19 and 215.2) recommend sizing so voltage drop doesn't exceed 3% on a branch circuit and 5% total for feeder plus branch — that's what keeps equipment running right. It's a recommendation in an informational note, not a hard mandate, but the exam treats 3%/5% as the targets. Percent = VD ÷ source voltage × 100.",
+          variants: [
+            { kind: "text", tag: "%VD", q: "What is the percent voltage drop, and does it meet the recommendation?",
+              scenario: '<span class="given">Given</span>A <b>240V</b> branch circuit with a calculated drop of <b>9.6V</b>.',
+              options: ["4% — over the 3% branch-circuit recommendation", "4% — fine, the limit is 5% for everything", "2.4% — meets the recommendation", "9.6% — voltage drop is already a percent"], answer: 0,
+              steps: "%VD = 9.6 ÷ 240 × 100 = 4%",
+              why: "The 5% figure is the TOTAL for feeder plus branch; a single branch circuit gets 3%. At 4% this branch is already over before the feeder drops anything." },
+            { kind: "text", tag: "%VD", q: "What is the maximum recommended voltage drop for this branch circuit?",
+              scenario: '<span class="given">Given</span>A <b>120V</b> branch circuit, applying the 3% recommendation.',
+              options: ["3.6V", "6V", "12V", "1.2V"], answer: 0,
+              steps: "120 × 0.03 = 3.6V",
+              why: "3% of 120 is 3.6 volts — a small budget, which is why long 120V runs so often need upsized conductors. 6V is 5%: that's the whole feeder-plus-branch budget spent in one place." }
+          ] },
+        { id: "vd-size-up", name: "Upsizing Conductors for Voltage Drop", cat: "Voltage Drop", formula: "CM needed = 2 × K × I × L ÷ VD allowed",
+          hook: "Solve the formula backwards: pick the drop you'll tolerate, and it tells you how fat the wire must be.",
+          teach: "Rearrange the voltage-drop formula to solve for circular mils: CM = 2KIL ÷ VD(allowed). Then pick the smallest standard conductor whose CM meets or EXCEEDS the result — 10 AWG = 10,380 CM, 8 AWG = 16,510 CM, 6 AWG = 26,240 CM. Falling a few hundred CM short still fails; wire sizes don't round.",
+          variants: [
+            { kind: "text", tag: "VD sizing", q: "What is the smallest copper conductor that keeps this run within a 3.6V drop?",
+              scenario: '<span class="given">Given</span><b>20A</b> load, <b>75 ft</b> one-way, 120V circuit, max drop <b>3.6V</b>. CM: 10 AWG = 10,380; 8 AWG = 16,510.',
+              options: ["8 AWG", "10 AWG", "12 AWG", "6 AWG"], answer: 0,
+              steps: "CM = 2 × 12.9 × 20 × 75 ÷ 3.6 = 38,700 ÷ 3.6 = 10,750 CM → 10 AWG (10,380) is short → 8 AWG",
+              why: "The needed 10,750 CM clears 10 AWG's 10,380 by only 370 CM — a designed near-miss. 'Close enough' fails voltage drop the same way it fails conduit fill." },
+            { kind: "text", tag: "VD sizing", q: "What CM is required to hold this drop to 4.8V?",
+              scenario: '<span class="given">Given</span>Copper, <b>16A</b> load, <b>125 ft</b> one-way, max drop <b>4.8V</b>.',
+              options: ["10,750 CM", "5,375 CM", "21,500 CM", "8,600 CM"], answer: 0,
+              steps: "CM = 2 × 12.9 × 16 × 125 ÷ 4.8 = 51,600 ÷ 4.8 = 10,750 CM",
+              why: "Same target CM, different road there. An answer of 10,750 CM means 8 AWG on the shelf (16,510) — you'd never install '10,750 CM,' you'd install the next size up." }
+          ] },
+        { id: "vd-three-phase", name: "Three-Phase Voltage Drop", cat: "Voltage Drop", formula: "VD = 1.732 × K × I × L ÷ CM",
+          hook: "Same formula, new multiplier: three-phase trades the 2 for 1.732 — the square root of 3 does the round trip's job.",
+          teach: "For a balanced three-phase circuit, VD = 1.732 × K × I × L ÷ CM, using line-to-line voltage for the percentage. Everything else carries over: K = 12.9 copper, L is one-way feet, CM from the conductor size. Don't use the single-phase 2 — that's the swap the exam is fishing for.",
+          variants: [
+            { kind: "text", tag: "VD formula, 3φ", q: "What is the voltage drop on this three-phase circuit?",
+              scenario: '<span class="given">Given</span>Copper, balanced 3-phase, <b>30A</b>, <b>200 ft</b> one-way, <b>8 AWG</b> (16,510 CM), 480V.',
+              options: ["8.1V", "9.4V", "4.7V", "14.0V"], answer: 0,
+              steps: "VD = 1.732 × 12.9 × 30 × 200 ÷ 16,510 = 134,050 ÷ 16,510 = 8.1V (1.7% of 480V)",
+              why: "9.4V is what the single-phase formula (×2) produces here. At 480V, even the wrong answer is only 2% — three-phase at high voltage forgives a lot of distance." },
+            { kind: "text", tag: "VD formula, 3φ", q: "Which multiplier replaces the 2 in the three-phase voltage-drop formula?",
+              scenario: '<span class="given">Given</span>You are converting the single-phase formula VD = 2KIL ÷ CM for use on a balanced three-phase circuit.',
+              options: ["1.732", "3", "1.5", "0.866"], answer: 0,
+              steps: "VD (3φ) = 1.732 × K × I × L ÷ CM",
+              why: "√3 ≈ 1.732 shows up everywhere three-phase lives: the power formula, transformer current, and voltage drop. Learn it once, use it in three categories." }
+          ] },
+        { id: "vd-aluminum", name: "Aluminum & the K Factor", cat: "Voltage Drop", formula: "K: copper 12.9 · aluminum 21.2",
+          hook: "Aluminum resists more, so its K is bigger — same wire size, roughly two-thirds more drop.",
+          teach: "K is the resistance of a one-foot, one-circular-mil conductor: 12.9 for copper, 21.2 for aluminum. Plug the wrong K and your voltage drop is off by 64%. CM values are identical for both metals at the same AWG — size and material are separate variables.",
+          variants: [
+            { kind: "text", tag: "VD formula, aluminum", q: "What is the voltage drop on this circuit?",
+              scenario: '<span class="given">Given</span><b>Aluminum</b>, <b>20A</b> load, <b>150 ft</b> one-way, <b>6 AWG</b> (26,240 CM).',
+              options: ["4.85V", "2.95V", "9.7V", "1.2V"], answer: 0,
+              steps: "VD = 2 × 21.2 × 20 × 150 ÷ 26,240 = 127,200 ÷ 26,240 = 4.85V",
+              why: "2.95V is the copper answer for identical everything — the exam's K-swap trap. Aluminum's savings on material are partly paid back in drop." },
+            { kind: "text", tag: "K factor", q: "What K value is used for copper conductors in the voltage-drop formula?",
+              scenario: '<span class="given">Given</span>You are setting up VD = 2KIL ÷ CM for a copper circuit.',
+              options: ["12.9", "21.2", "10.4", "1.732"], answer: 0,
+              steps: "K (copper) = 12.9 · K (aluminum) = 21.2",
+              why: "Two numbers worth cold-memorizing: 12.9 copper, 21.2 aluminum. They appear in every voltage-drop variant in this pack." }
+          ] },
+        { id: "vd-distance", name: "Maximum Run Length", cat: "Voltage Drop", formula: "L = VD × CM ÷ (2 × K × I)",
+          hook: "Turn the formula on its side and it answers the field question: how far can I run this before the drop eats me?",
+          teach: "Solving VD = 2KIL ÷ CM for L gives L = VD × CM ÷ (2KI). Feed it the allowed drop, the conductor you have, and the load current — out comes the maximum one-way distance. Electricians use this version to decide where a panel or a junction point has to go before the wire is ever pulled.",
+          variants: [
+            { kind: "text", tag: "VD distance", q: "How far can this circuit run before the drop exceeds 3.6V?",
+              scenario: '<span class="given">Given</span>Copper <b>12 AWG</b> (6,530 CM), <b>15A</b> load, max drop <b>3.6V</b>.',
+              options: ["About 60 ft", "About 30 ft", "About 121 ft", "About 200 ft"], answer: 0,
+              steps: "L = 3.6 × 6,530 ÷ (2 × 12.9 × 15) = 23,508 ÷ 387 = 60.7 ft → about 60 ft",
+              why: "121 ft is the trap for forgetting that L is one-way while the drop covers the round trip — the formula's 2 already handles it, so don't halve or double at the end." },
+            { kind: "text", tag: "VD distance", q: "How far can this circuit run before the drop exceeds 7.2V?",
+              scenario: '<span class="given">Given</span>Copper <b>10 AWG</b> (10,380 CM), <b>20A</b> load, 240V circuit with a 3% budget = <b>7.2V</b>.',
+              options: ["About 145 ft", "About 72 ft", "About 290 ft", "About 100 ft"], answer: 0,
+              steps: "L = 7.2 × 10,380 ÷ (2 × 12.9 × 20) = 74,736 ÷ 516 = 144.8 ft → about 145 ft",
+              why: "Compare with the 12 AWG / 120V variant: fatter wire, double the voltage budget, and the allowed run more than doubles. That's the whole economics of voltage drop in one comparison." }
+          ] },
+
+        /* ================= LOAD CALCULATIONS ================= */
+        { id: "lc-lighting-va", name: "Dwelling Lighting Load: 3 VA/ft²", cat: "Load Calculations", formula: "Lighting VA = area × 3 VA/ft²",
+          hook: "A house is billed by the square foot before a single appliance shows up: 3 volt-amps each.",
+          teach: "Table 220.12 sets the general lighting load for dwelling units at 3 VA per square foot, measured from the outside dimensions of the building (excluding open porches, garages not adaptable for future use, and unfinished space). This base load then flows into the demand-factor calculation.",
+          variants: [
+            { kind: "text", tag: "Table 220.12", q: "What is the general lighting load for this dwelling?",
+              scenario: '<span class="given">Given</span>A dwelling with <b>1,500 ft²</b> of livable floor area.',
+              options: ["4,500 VA", "1,500 VA", "3,000 VA", "6,000 VA"], answer: 0,
+              steps: "1,500 × 3 = 4,500 VA",
+              why: "Straight area times 3 VA. The ft² in the problem is never decoration — it's the multiplier the whole Article 220 dwelling method is built on." },
+            { kind: "text", tag: "Table 220.12", q: "What is the general lighting load for this dwelling?",
+              scenario: '<span class="given">Given</span>A dwelling with <b>2,000 ft²</b> of livable floor area.',
+              options: ["6,000 VA", "2,000 VA", "4,500 VA", "3,000 VA"], answer: 0,
+              steps: "2,000 × 3 = 6,000 VA",
+              why: "Same rule, bigger house. This lighting load later combines with the small-appliance and laundry loads before demand factors are applied." }
+          ] },
+        { id: "lc-small-appliance", name: "Small-Appliance & Laundry Loads", cat: "Load Calculations", formula: "1,500 VA × (SA circuits + laundry)",
+          hook: "Every kitchen circuit and the laundry circuit bring 1,500 VA to the calc — whether anything is plugged in or not.",
+          teach: "220.52: each small-appliance branch circuit counts at 1,500 VA, with a minimum of two circuits for a dwelling, and the laundry branch circuit counts at 1,500 VA. So the floor for almost every house calc is 3 × 1,500 = 4,500 VA on top of the lighting load — before any demand factor touches it.",
+          variants: [
+            { kind: "text", tag: "220.52", q: "What load do the small-appliance and laundry circuits add to the calculation?",
+              scenario: '<span class="given">Given</span>A dwelling with the Code-minimum <b>two small-appliance circuits</b> and <b>one laundry circuit</b>.',
+              options: ["4,500 VA", "3,000 VA", "1,500 VA", "6,000 VA"], answer: 0,
+              steps: "(2 + 1) × 1,500 = 4,500 VA",
+              why: "Two kitchen circuits plus one laundry at 1,500 VA apiece. These are load values for the calculation, not breaker sizes — the circuits themselves are still 20A." },
+            { kind: "text", tag: "220.52(A)", q: "A third small-appliance circuit is added to a kitchen. How much does the calculated load grow?",
+              scenario: '<span class="given">Given</span>The dwelling goes from two small-appliance circuits to <b>three</b>.',
+              options: ["1,500 VA — every SA circuit counts", "Nothing — only two are ever counted", "3,000 VA", "It depends on what's plugged in"], answer: 0,
+              steps: "Each small-appliance circuit = 1,500 VA → +1,500 VA",
+              why: "Two is the minimum count, not the cap. Every additional small-appliance circuit adds its own 1,500 VA to the feeder and service calculation." }
+          ] },
+        { id: "lc-demand-22042", name: "Dwelling Demand Factors (220.42)", cat: "Load Calculations", formula: "First 3,000 VA @ 100% + rest @ 35%",
+          hook: "Nobody runs everything at once — the Code's demand table is that fact, written as arithmetic.",
+          teach: "Table 220.42 applies to the combined lighting, small-appliance, and laundry load of a dwelling: the first 3,000 VA at 100%, everything from 3,001 to 120,000 VA at 35%. The trap is applying 35% to the whole amount — the first 3,000 always count in full.",
+          variants: [
+            { kind: "text", tag: "Table 220.42", q: "What is the demand load?",
+              scenario: '<span class="given">Given</span>The combined lighting + small-appliance + laundry load is <b>10,000 VA</b>.',
+              options: ["5,450 VA", "3,500 VA", "10,000 VA", "6,500 VA"], answer: 0,
+              steps: "3,000 × 100% + 7,000 × 35% = 3,000 + 2,450 = 5,450 VA",
+              why: "3,500 VA is 35% of everything — the single most common demand-factor error. The first 3,000 VA never gets discounted." },
+            { kind: "text", tag: "Table 220.42", q: "What is the demand load?",
+              scenario: '<span class="given">Given</span>The combined general load is <b>20,000 VA</b>.',
+              options: ["8,950 VA", "7,000 VA", "5,450 VA", "20,000 VA"], answer: 0,
+              steps: "3,000 + 17,000 × 0.35 = 3,000 + 5,950 = 8,950 VA",
+              why: "Same two-step shape at every size: full price on the first 3,000, 35 cents on the volt-amp after that. If your answer came out under 3,000 VA for a load this big, the method broke somewhere." }
+          ] },
+        { id: "lc-range", name: "Range Demand (Table 220.55)", cat: "Load Calculations", formula: "One 12 kW range → 8 kW demand",
+          hook: "A 12 kW range never runs all four burners and the oven at full blast together — the table knows it, and bills 8.",
+          teach: "Table 220.55, Column C: a single household range rated up to 12 kW counts as an 8 kW demand load. For a range rated above 12 kW (up to 27 kW), take the Column C value and increase it 5% for each kW — or major fraction — above 12. Nameplate rating goes in; demand value comes out.",
+          variants: [
+            { kind: "text", tag: "Table 220.55", q: "What demand load does this range add to the service calculation?",
+              scenario: '<span class="given">Given</span>One household range rated <b>12 kW</b>.',
+              options: ["8 kW", "12 kW", "9.6 kW", "6 kW"], answer: 0,
+              steps: "Table 220.55, Column C → one range ≤ 12 kW = 8 kW demand",
+              why: "The 12 kW nameplate would oversize the service by 4 kW if taken at face value. Diversity is the whole reason Table 220.55 exists." },
+            { kind: "text", tag: "Table 220.55, Note 1", q: "What demand load does this range add to the service calculation?",
+              scenario: '<span class="given">Given</span>One household range rated <b>16 kW</b>.',
+              options: ["9.6 kW", "16 kW", "8 kW", "12.8 kW"], answer: 0,
+              steps: "(16 − 12) = 4 kW over → 8 kW × (1 + 4 × 5%) = 8 × 1.20 = 9.6 kW",
+              why: "Each kW over 12 adds 5% to the 8 kW base — four extra kW is a 20% bump, not a flat addition of 4 kW (which would wrongly give 12.8 kW at 8 + 4.8, close to one of the decoys)." }
+          ] },
+        { id: "lc-dryer", name: "Dryer Load: 5,000 VA Floor", cat: "Load Calculations", formula: "Dryer = max(nameplate, 5,000 VA)",
+          hook: "A dryer's nameplate can whisper, but the Code hears 5,000 VA minimum, every time.",
+          teach: "220.54: the load for a household electric clothes dryer is 5,000 VA or the nameplate rating, whichever is LARGER. Table 220.54 then applies demand factors as dryers multiply: 1–4 dryers at 100%, 5 at 85% (and less beyond). The floor exists because a small nameplate doesn't change the heating element a dryer actually cycles.",
+          variants: [
+            { kind: "text", tag: "220.54", q: "What load does this dryer contribute to the calculation?",
+              scenario: '<span class="given">Given</span>One household dryer with a nameplate rating of <b>4,200W</b>.',
+              options: ["5,000 VA", "4,200 VA", "6,000 VA", "3,500 VA"], answer: 0,
+              steps: "max(4,200, 5,000) = 5,000 VA",
+              why: "The nameplate loses. Whenever a dryer nameplate shows under 5 kW, the Code floor quietly replaces it — an easy 800 VA to lose on an exam." },
+            { kind: "text", tag: "Table 220.54", q: "What is the demand load for these dryers?",
+              scenario: '<span class="given">Given</span><b>Five</b> household dryers in a multifamily laundry room, each counted at <b>5,000 VA</b>. Table 220.54 demand for 5 dryers = <b>85%</b>.',
+              options: ["21,250 VA", "25,000 VA", "5,000 VA", "17,500 VA"], answer: 0,
+              steps: "5 × 5,000 × 0.85 = 25,000 × 0.85 = 21,250 VA",
+              why: "Four dryers would stay at 100% — the fifth dryer is exactly where the demand factor switches on. Boundary counts are exam bait everywhere in Article 220." }
+          ] },
+        { id: "lc-noncoincident", name: "Noncoincident Loads (220.60)", cat: "Load Calculations", formula: "Heat OR cool — count the larger only",
+          hook: "The furnace and the air conditioner never fight for the service at the same moment. Charge for the winner only.",
+          teach: "220.60: where two loads cannot run at the same time (noncoincident loads), only the larger one is used in the calculation. The classic pair is electric heat and air conditioning in the same building. This is not a demand factor — the smaller load is omitted entirely, not discounted.",
+          variants: [
+            { kind: "text", tag: "220.60", q: "How much of this load enters the service calculation?",
+              scenario: '<span class="given">Given</span>A home with <b>9.6 kW</b> of electric heat and a <b>7 kW</b> air-conditioning load that never run simultaneously.',
+              options: ["9.6 kW — the larger load only", "16.6 kW — both loads", "7 kW — the smaller, since heat is seasonal", "11.6 kW — both, with a diversity credit"], answer: 0,
+              steps: "Noncoincident → use max(9.6, 7) = 9.6 kW",
+              why: "Adding both (16.6 kW) oversizes the service for a fight that never happens. The rule is all-or-nothing: smaller load omitted, not reduced." },
+            { kind: "text", tag: "220.60", q: "A building has a 12 kW heating load and a 15 kW cooling load that cannot operate together. What enters the calculation?",
+              scenario: '<span class="given">Given</span>Heating <b>12 kW</b>, cooling <b>15 kW</b>, interlocked so they never run at once.',
+              options: ["15 kW", "27 kW", "12 kW", "13.5 kW"], answer: 0,
+              steps: "Noncoincident → max(12, 15) = 15 kW",
+              why: "This time cooling wins. The rule doesn't favor heat or cool — it favors whichever single load is bigger, and erases the other from the math." }
+          ] },
+
+        /* ================= TRANSFORMERS ================= */
+        { id: "tx-current", name: "Transformer Current", cat: "Transformers", formula: "I(3φ) = kVA × 1,000 ÷ (V × 1.732)",
+          hook: "kVA is the transformer's native language: divide it out by voltage — times 1.732 if three-phase — and amps fall out.",
+          teach: "Transformer full-load current: single-phase I = (kVA × 1,000) ÷ V; three-phase I = (kVA × 1,000) ÷ (V × 1.732). The kVA rating is the same on both sides — step the voltage down and the current steps up in exact proportion.",
+          variants: [
+            { kind: "text", tag: "Transformer FLC", q: "What is the primary full-load current of this transformer?",
+              scenario: '<span class="given">Given</span>A <b>75 kVA</b>, three-phase transformer with a <b>480V</b> primary.',
+              options: ["90.2A", "156A", "52A", "75A"], answer: 0,
+              steps: "I = 75,000 ÷ (480 × 1.732) = 75,000 ÷ 831.4 = 90.2A",
+              why: "156A is the answer without the 1.732 (single-phase math on a three-phase unit). Same √3 as the power and voltage-drop formulas — it follows you everywhere." },
+            { kind: "text", tag: "Transformer FLC", q: "What is the secondary full-load current of this transformer?",
+              scenario: '<span class="given">Given</span>A <b>45 kVA</b>, three-phase transformer with a <b>208V</b> secondary.',
+              options: ["About 125A", "216A", "72A", "45A"], answer: 0,
+              steps: "I = 45,000 ÷ (208 × 1.732) = 45,000 ÷ 360.3 = 124.9A ≈ 125A",
+              why: "Stepping 480 down to 208 multiplies the current by roughly 2.3 on the secondary side. Check the direction: lower voltage, higher current — always." }
+          ] },
+        { id: "tx-single-phase", name: "Single-Phase Transformer Current", cat: "Transformers", formula: "I(1φ) = kVA × 1,000 ÷ V",
+          hook: "No 1.732 without three phases. Single-phase is a plain division.",
+          teach: "For a single-phase transformer, current is simply VA divided by voltage. It is the same VA = E × I relationship from the Ohm's law drills, with kVA converted to VA by the × 1,000. The exam's trap is reflexively adding 1.732 — it belongs only to three-phase.",
+          variants: [
+            { kind: "text", tag: "Transformer FLC, 1φ", q: "What is the secondary full-load current of this transformer?",
+              scenario: '<span class="given">Given</span>A <b>25 kVA</b>, single-phase transformer with a <b>240V</b> secondary.',
+              options: ["104A", "60A", "180A", "96A"], answer: 0,
+              steps: "I = 25,000 ÷ 240 = 104.2A ≈ 104A",
+              why: "60A is the phantom-1.732 answer (25,000 ÷ 415.7). Single-phase: divide VA by volts and stop." },
+            { kind: "text", tag: "Transformer FLC, 1φ", q: "What is the primary full-load current of this transformer?",
+              scenario: '<span class="given">Given</span>A <b>10 kVA</b>, single-phase transformer with a <b>480V</b> primary.',
+              options: ["20.8A", "48A", "12A", "36A"], answer: 0,
+              steps: "I = 10,000 ÷ 480 = 20.8A",
+              why: "Same 10 kVA that delivers 41.7A at 240V on the secondary draws only 20.8A at 480V on the primary — kVA is conserved, current trades against voltage." }
+          ] },
+        { id: "tx-protection", name: "Transformer Primary Protection (450.3(B))", cat: "Transformers", formula: "Primary OCPD max = 125% of primary I",
+          hook: "Primary-only protection rides at 125% — and the one place in the Code where rounding UP is written right into the note.",
+          teach: "Table 450.3(B): for a transformer 1,000V and under with primary current of 9A or more, primary-only protection is limited to 125% of the primary full-load current. Note 1 to the table: where 125% doesn't correspond to a standard breaker or fuse size, the NEXT HIGHER standard size is permitted.",
+          variants: [
+            { kind: "text", tag: "Table 450.3(B)", q: "What is the maximum standard primary breaker for this transformer?",
+              scenario: '<span class="given">Given</span>A <b>50 kVA</b>, three-phase transformer, <b>480V</b> primary. Primary current = 50,000 ÷ (480 × 1.732) = <b>60.1A</b>. Primary-only protection.',
+              options: ["80A", "70A", "75.2A", "100A"], answer: 0,
+              steps: "60.1 × 1.25 = 75.2A → next higher standard size = 80A",
+              why: "Two-step question: run the current, then the percentage, then the rounding note. Stopping at 70A means you rounded down — Note 1 to Table 450.3(B) explicitly permits going up." },
+            { kind: "text", tag: "Table 450.3(B)", q: "What percentage sets the maximum primary-only protection for this transformer?",
+              scenario: '<span class="given">Given</span>A transformer (1,000V or less) with a primary current of <b>30A</b>, protected on the primary side only.',
+              options: ["125%", "250%", "167%", "300%"], answer: 0,
+              steps: "450.3(B), primary current ≥ 9A → 125% max (30 × 1.25 = 37.5A → 40A standard)",
+              why: "250% belongs to motor branch circuits; transformer primary protection is a much tighter 125%, because a transformer has no starting inrush story that lasts — only a brief magnetizing surge the breaker curve absorbs." }
+          ] }
+      ];
+
+
+      /* 45th concept: the grounding conductor still takes up room. */
+      ITEMS.push(
+        { id: "fb-egc-fill", name: "The Ground Counts Toward Fill", cat: "Conduit & Box Fill", formula: "EGC = a conductor for fill",
+          hook: "It carries no load, but it takes up space — the pipe doesn't care what a conductor does for a living.",
+          teach: "Chapter 9, Table 1, Note 5: equipment grounding conductors (and bonding conductors) count toward conduit fill, using their actual cross-sectional area — for a bare EGC, the dimensions come from Chapter 9, Table 8. The same 'over 2 conductors = 40%' bracket applies to the total count including the ground.",
+          variants: [
+            { kind: "text", tag: "Ch. 9 Table 1, Note 5", q: "How is the equipment grounding conductor treated in a conduit-fill calculation?",
+              scenario: '<span class="given">Given</span>A conduit run with three THHN circuit conductors and one bare <b>equipment grounding conductor</b>.',
+              options: ["It counts — at its actual area", "It is ignored — grounds are exempt", "It counts as two conductors", "It counts only if it is insulated"], answer: 0,
+              steps: "Note 5 → EGCs count toward fill, sized by actual area (Table 8 if bare)",
+              why: "Forgetting the ground is the fill equivalent of forgetting the device yoke in a box: small, silent, and enough to push a borderline run over 40%." },
+            { kind: "text", tag: "Ch. 9 Table 1", q: "Which fill percentage applies to this conduit?",
+              scenario: '<span class="given">Given</span>Three circuit conductors plus one equipment grounding conductor — <b>four</b> conductors total in the raceway.',
+              options: ["40%", "31%", "53%", "60%"], answer: 0,
+              steps: "4 conductors total → over 2 → 40%",
+              why: "The ground pushes the count from three conductors to four — the percentage stays 40% here, but the total area grows, which is where the ground actually bites." }
+          ] }
+      );
+
+      var byId = {};
+      ITEMS.forEach(function (it) { byId[it.id] = it; });
+      var CATS = [];
+      ITEMS.forEach(function (it) { if (CATS.indexOf(it.cat) === -1) CATS.push(it.cat); });
+      function frontOf(it) {
+        return '<div class="thumb-name">' + it.name + '</div><div class="thumb-formula">' + it.formula + "</div>";
+      }
+      function cardFront(it) {
+        return '<span class="front-name">' + it.name + '</span><span class="front-formula">' + it.formula + "</span>";
+      }
+
+      /* ================= HOME ================= */
+      document.getElementById("item-count").textContent = ITEMS.length + " concepts";
+      document.getElementById("cat-strip").innerHTML = CATS.map(function (c) {
+        var n = ITEMS.filter(function (it) { return it.cat === c; }).length;
+        return '<span class="cat-chip">' + c + " · <b>" + n + "</b></span>";
+      }).join("");
+
+      (function countdown() {
+        var target = new Date(2027, 0, 1); /* January test window */
+        var now = new Date();
+        var weeks = Math.round((target - now) / (7 * 24 * 3600 * 1000));
+        if (weeks > 0 && weeks < 40) {
+          document.getElementById("countdown").hidden = false;
+          document.getElementById("countdown-text").textContent =
+            "About " + weeks + " weeks to the January test window — a few calculations a day beats cramming.";
+        }
+      })();
+
+      /* ================= QUIZ ENGINE ================= */
+      var quiz = null;
+      var runSeq = 0;
+      var sessionMissed = {};
+      var lastMissed = [];
+      var lastMode = "drill";
+
+      function optLabel(o) { return typeof o === "string" ? o : o.cap; }
+      function makeQuestion(item, vIdx) {
+        var vi = (typeof vIdx === "number") ? vIdx : Math.floor(Math.random() * item.variants.length);
+        var v = item.variants[vi];
+        return { item: item, vIdx: vi, variant: v, order: shuffle(v.options.map(function (_, i) { return i; })), picked: -1, requeue: false };
+      }
+      function otherVariant(item, cur) {
+        if (item.variants.length < 2) return cur;
+        var opts = item.variants.map(function (_, i) { return i; }).filter(function (i) { return i !== cur; });
+        return opts[Math.floor(Math.random() * opts.length)];
+      }
+      function startQuiz(mode, pool) {
+        var usePool = pool && pool.length ? pool.slice() : ITEMS.slice();
+        var count = mode === "mock" ? 20 : mode === "drill" ? 12 : usePool.length;
+        var pickedItems = shuffle(usePool).slice(0, Math.min(count, usePool.length));
+        if (quiz && quiz.timerInt) clearInterval(quiz.timerInt);
+        quiz = {
+          mode: mode,
+          queue: pickedItems.map(function (it) { return makeQuestion(it); }),
+          i: 0, score: 0, streak: 0,
+          firstTry: {}, firstPick: {}, firstVariant: {}, mastered: {}, attempts: {},
+          startedAt: Date.now(), timerInt: null, runId: ++runSeq
+        };
+        show("quiz");
+        document.getElementById("q-mode").textContent =
+          mode === "mock" ? "MOCK EXAM" : mode === "missed" ? "REVIEW YOUR MISSES" : "QUICK DRILL";
+        var timerEl = document.getElementById("q-timer");
+        if (mode === "mock") {
+          timerEl.hidden = false;
+          quiz.timerInt = setInterval(function () {
+            var s = Math.floor((Date.now() - quiz.startedAt) / 1000);
+            timerEl.querySelector("b").textContent = Math.floor(s / 60) + ":" + ("0" + (s % 60)).slice(-2);
+          }, 500);
+        } else { timerEl.hidden = true; }
+        renderQuestion();
+      }
+      function renderQuestion() {
+        var q = quiz.queue[quiz.i];
+        var v = q.variant;
+        var total = quiz.queue.length;
+        document.getElementById("q-count").textContent = "QUESTION " + (quiz.i + 1) + " OF " + total;
+        document.getElementById("q-score").textContent = quiz.score;
+        var streakEl = document.getElementById("q-streak");
+        streakEl.hidden = quiz.streak < 2;
+        streakEl.querySelector("b").textContent = quiz.streak;
+        document.getElementById("q-progress").style.width = ((quiz.i) / total * 100) + "%";
+        document.getElementById("tb-cat").textContent = "Category: " + q.item.cat;
+        document.getElementById("q-explain").className = "explain";
+        document.getElementById("q-explain").innerHTML = "";
+        document.getElementById("q-next").classList.add("hidden");
+
+        document.getElementById("q-prompt").textContent = (q.requeue ? "Second look · " : "") + (v.tag || q.item.cat);
+        document.getElementById("q-question").textContent = v.q;
+
+        var stage = document.getElementById("q-stage");
+        if (v.scenario) stage.innerHTML = '<div class="scenario">' + v.scenario + "</div>";
+        else stage.innerHTML = '<div class="scenario"><span class="given">' + q.item.cat + "</span>" + q.item.formula + "</div>";
+        var note = document.getElementById("q-note");
+        if (v.note) { note.textContent = v.note; note.classList.remove("hidden"); }
+        else { note.textContent = ""; note.classList.add("hidden"); }
+
+        var opts = document.getElementById("q-opts");
+        opts.innerHTML = "";
+        q.order.forEach(function (optIdx, pos) {
+          var o = v.options[optIdx];
+          var b = document.createElement("button");
+          b.className = "opt";
+          b.innerHTML = '<span class="letter">' + "ABCD"[pos] + "</span><span>" + o + "</span>";
+          b.addEventListener("click", function () { choose(pos); });
+          opts.appendChild(b);
+        });
+      }
+      function choose(pos) {
+        var q = quiz.queue[quiz.i];
+        if (!q || q.picked !== -1) return;
+        q.picked = pos;
+        var v = q.variant;
+        var correctPos = q.order.indexOf(v.answer);
+        var right = pos === correctPos;
+        var id = q.item.id;
+        quiz.attempts[id] = (quiz.attempts[id] || 0) + 1;
+        if (!(id in quiz.firstTry)) { quiz.firstTry[id] = right; quiz.firstPick[id] = v.options[q.order[pos]]; quiz.firstVariant[id] = q.vIdx; }
+        var comingBack = false;
+        if (right) {
+          quiz.score++; quiz.streak++; quiz.mastered[id] = true;
+        } else {
+          quiz.streak = 0; sessionMissed[id] = true;
+          if (quiz.mode !== "mock" && quiz.attempts[id] <= 3) {
+            var rq = makeQuestion(q.item, otherVariant(q.item, q.vIdx));
+            rq.requeue = true;
+            quiz.queue.splice(Math.min(quiz.i + 3, quiz.queue.length), 0, rq);
+            comingBack = true;
+          }
+        }
+
+        var btns = document.getElementById("q-opts").children;
+        for (var k = 0; k < btns.length; k++) {
+          btns[k].disabled = true;
+          if (k === correctPos) btns[k].classList.add("correct");
+          else if (k === pos) btns[k].classList.add("wrong");
+          else btns[k].classList.add("dim");
+        }
+        document.getElementById("q-score").textContent = quiz.score;
+        var streakEl = document.getElementById("q-streak");
+        streakEl.hidden = quiz.streak < 2;
+        streakEl.querySelector("b").textContent = quiz.streak;
+        document.getElementById("q-progress").style.width = ((quiz.i + 1) / quiz.queue.length * 100) + "%";
+
+        if (quiz.mode === "mock") {
+          var rid = quiz.runId;
+          setTimeout(function () { if (quiz && quiz.runId === rid) nextQuestion(); }, 450);
+          return;
+        }
+        var ex = document.getElementById("q-explain");
+        ex.className = "explain show";
+        var pickedOpt = v.options[q.order[pos]];
+        var verdict = right ? "Correct." : "Not quite — you picked: " + optLabel(pickedOpt);
+        ex.innerHTML =
+          '<p class="verdict ' + (right ? "good" : "bad") + '">' + verdict + "</p>" +
+          (v.steps ? '<div class="steps">' + v.steps + "</div>" : "") +
+          "<p>" + v.why + "</p>" +
+          '<p class="hook"><b>Think of it as</b><br>' + q.item.hook + "</p>" +
+          (comingBack
+            ? '<p class="again">This one comes back around in a few questions — with different numbers — and keeps coming back until you nail it.</p>'
+            : (!right ? '<p class="again">It stays tagged in your misses — the review round at the end is built from them.</p>' : ""));
+        var next = document.getElementById("q-next");
+        next.textContent = quiz.i === quiz.queue.length - 1 ? "See results →" : "Next question →";
+        next.classList.remove("hidden");
+        next.focus();
+        if (ex.scrollIntoView) {
+          var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+          ex.scrollIntoView({ block: "nearest", behavior: reduce ? "auto" : "smooth" });
+        }
+      }
+      function nextQuestion() {
+        if (!quiz) return;
+        if (quiz.i < quiz.queue.length - 1) { quiz.i++; renderQuestion(); }
+        else showResults();
+      }
+      document.getElementById("q-next").addEventListener("click", nextQuestion);
+      document.addEventListener("keydown", function (e) {
+        if (document.getElementById("view-quiz").classList.contains("hidden")) return;
+        var q = quiz && quiz.queue[quiz.i];
+        if (!q) return;
+        if (q.picked === -1 && ["1", "2", "3", "4"].indexOf(e.key) !== -1) choose(Number(e.key) - 1);
+        else if (q.picked !== -1 && quiz.mode !== "mock" && (e.key === "Enter" || e.key === " ")) {
+          var next = document.getElementById("q-next");
+          if (document.activeElement === next) return;
+          if (!next.classList.contains("hidden")) { e.preventDefault(); nextQuestion(); }
+        }
+      });
+
+      /* ================= RESULTS ================= */
+      function showResults() {
+        if (!quiz) return;
+        if (quiz.timerInt) clearInterval(quiz.timerInt);
+        lastMode = quiz.mode;
+        var ids = Object.keys(quiz.firstTry);
+        var total = ids.length;
+        var rightFirst = ids.filter(function (id) { return quiz.firstTry[id]; }).length;
+        var masteredCount = ids.filter(function (id) { return quiz.mastered[id]; }).length;
+        var pct = total ? Math.round(rightFirst / total * 100) : 0;
+        document.getElementById("r-mode").textContent =
+          (quiz.mode === "mock" ? "Mock Exam" : quiz.mode === "missed" ? "Review Your Misses" : "Quick Drill") + " · Results";
+        document.getElementById("r-score").textContent = pct + "%";
+        var pass = document.getElementById("r-pass");
+        if (quiz.mode === "mock") {
+          pass.className = "pass-tag " + (pct >= 70 ? "pass" : "fail");
+          pass.textContent = pct >= 70 ? "✓ Passing range" : "✗ Below the bar";
+          pass.style.display = "";
+        } else { pass.style.display = "none"; }
+        var mins = Math.max(1, Math.round((Date.now() - quiz.startedAt) / 60000));
+        document.getElementById("r-sub").textContent =
+          "You got " + rightFirst + " of " + total + " right on the first try in about " + mins + (mins === 1 ? " minute" : " minutes") + "." +
+          (masteredCount > rightFirst ? " Counting the second looks, you finished having mastered " + masteredCount + " of " + total + "." : "") +
+          (quiz.mode === "mock"
+            ? (pct >= 70 ? " Most licensing exams set the bar near 70% — you would have cleared it. Keep the reps going and it only gets safer." : " Most licensing exams set the bar near 70%. The misses below are exactly what to drill before the test.")
+            : (pct === 100 ? " Flawless run. That's exam-day automatic." : " Every miss below is now tagged in the study deck so you can hammer it."));
+
+        var bd = {};
+        ids.forEach(function (id) {
+          var c = byId[id].cat;
+          bd[c] = bd[c] || { right: 0, total: 0 };
+          bd[c].total++; if (quiz.firstTry[id]) bd[c].right++;
+        });
+        document.getElementById("r-breakdown").innerHTML =
+          "<h3>By category</h3>" + Object.keys(bd).map(function (c) {
+            var p = Math.round(bd[c].right / bd[c].total * 100);
+            return '<div class="bd-row"><span>' + c + '</span><span class="bd-num">' + bd[c].right + "/" + bd[c].total + '</span>' +
+              '<span class="bd-bar"><span class="bd-fill' + (p < 70 ? " low" : "") + '" style="display:block;width:' + p + '%"></span></span></div>';
+          }).join("");
+
+        var missedItems = ids.filter(function (id) { return !quiz.firstTry[id]; }).map(function (id) { return byId[id]; });
+        lastMissed = missedItems;
+        var weak = document.getElementById("r-weak");
+        if (missedItems.length === 0) {
+          weak.innerHTML = "";
+        } else {
+          var weakCats = Object.keys(bd).filter(function (c) { return bd[c].right < bd[c].total; })
+            .sort(function (a, b) { return (bd[a].right / bd[a].total) - (bd[b].right / bd[b].total); });
+          weak.innerHTML = "<h3>Weak spots</h3>" +
+            '<p style="margin:0;color:var(--muted);font-size:15px;">Shakiest category: <strong style="color:var(--ink);">' + weakCats[0] + "</strong>. " +
+            "These are the concepts that tripped you up — the review round is built from exactly this list.</p>" +
+            '<div class="weak-list">' + missedItems.map(function (it) {
+              var got = quiz.mastered[it.id];
+              return '<span class="weak-chip' + (got ? " mastered" : "") + '">' + it.name + (got ? " · got it on retry" : " · still shaky") + "</span>";
+            }).join("") + "</div>";
+        }
+
+        var review = document.getElementById("r-review");
+        if (missedItems.length === 0) {
+          review.innerHTML = '<p class="allgood">Nothing to review — you nailed every concept this run.</p>';
+        } else {
+          review.innerHTML = "<h3>Review your misses (" + missedItems.length + ")</h3>" + missedItems.map(function (it) {
+            var fv = it.variants[quiz.firstVariant[it.id] || 0];
+            var picked = quiz.firstPick[it.id];
+            return '<div class="miss"><div class="thumb">' + frontOf(it) + "</div><div>" +
+              "<h4>" + it.name + "</h4>" +
+              '<p class="yours">You picked: ' + (picked !== undefined ? optLabel(picked) : "—") + "</p>" +
+              "<p><strong>Right answer:</strong> " + optLabel(fv.options[fv.answer]) + "</p>" +
+              (fv.steps ? "<p><strong>The math:</strong> " + fv.steps + "</p>" : "") +
+              "<p>" + it.teach + "</p>" +
+              "<p><strong>Think of it as:</strong> " + it.hook + "</p></div></div>";
+          }).join("");
+        }
+        var retryBtn = document.getElementById("r-retry-missed");
+        retryBtn.hidden = missedItems.length === 0;
+        retryBtn.textContent = "Review your misses (" + missedItems.length + ")";
+        document.getElementById("r-again").textContent = quiz.mode === "mock" ? "Retake mock exam" : "Run it again";
+        refreshHomeReview();
+        show("results");
+      }
+
+      /* ================= STUDY ================= */
+      var studyFilter = "All";
+      function renderStudy() {
+        var chips = document.getElementById("study-chips");
+        chips.innerHTML = "";
+        ["All"].concat(CATS).concat(["Missed this session"]).forEach(function (c) {
+          var b = document.createElement("button");
+          b.className = "chip-btn" + (studyFilter === c ? " active" : "");
+          b.textContent = c;
+          b.addEventListener("click", function () { studyFilter = c; renderStudy(); });
+          chips.appendChild(b);
+        });
+        var term = document.getElementById("study-search").value.trim().toLowerCase();
+        var list = document.getElementById("study-list");
+        list.innerHTML = "";
+        CATS.forEach(function (cat) {
+          var items = ITEMS.filter(function (it) {
+            if (it.cat !== cat) return false;
+            if (studyFilter === "Missed this session" && !sessionMissed[it.id]) return false;
+            if (studyFilter !== "All" && studyFilter !== "Missed this session" && it.cat !== studyFilter) return false;
+            if (term && (it.name + " " + it.teach + " " + it.hook + " " + it.formula).toLowerCase().indexOf(term) === -1) return false;
+            return true;
+          });
+          if (!items.length) return;
+          var h = document.createElement("h3");
+          h.className = "study-cat";
+          h.innerHTML = cat + " <small>" + items.length + " concepts</small>";
+          list.appendChild(h);
+          var grid = document.createElement("div");
+          grid.className = "grid";
+          items.forEach(function (it) {
+            var card = document.createElement("div");
+            card.className = "flip";
+            card.innerHTML =
+              (sessionMissed[it.id] ? '<span class="missed-tag">Missed</span>' : "") +
+              '<button class="flip-inner" aria-label="Flip card for ' + it.name + '">' +
+              '<span class="face front">' + cardFront(it) + '<span class="tap">Tap to flip</span></span>' +
+              '<span class="face back"><h4>' + it.name + "</h4><p>" + it.teach + "<br><br><strong>Think of it as:</strong> " + it.hook + "</p></span>" +
+              "</button>";
+            card.querySelector(".flip-inner").addEventListener("click", function () { card.classList.toggle("flipped"); });
+            grid.appendChild(card);
+          });
+          list.appendChild(grid);
+        });
+        if (!list.children.length) {
+          list.innerHTML = '<p style="color:var(--muted)">No concepts match. ' +
+            (studyFilter === "Missed this session" ? "Take a quiz first — anything you miss will land here." : "Try a different search.") + "</p>";
+        }
+      }
+      document.getElementById("study-search").addEventListener("input", renderStudy);
+
+      /* ================= WIRING ================= */
+      function refreshHomeReview() {
+        var n = Object.keys(sessionMissed).length;
+        var b = document.getElementById("btn-review-home");
+        b.classList.toggle("hidden", n === 0);
+        b.textContent = "Review your misses — " + n + " concept" + (n === 1 ? "" : "s") + " from this session →";
+      }
+      document.getElementById("btn-drill").addEventListener("click", function () { startQuiz("drill"); });
+      document.getElementById("btn-mock").addEventListener("click", function () { startQuiz("mock"); });
+      document.getElementById("btn-study").addEventListener("click", function () { studyFilter = "All"; renderStudy(); show("study"); });
+      document.getElementById("btn-formulas").addEventListener("click", function () { show("formulas"); });
+      document.getElementById("btn-review-home").addEventListener("click", function () {
+        var pool = Object.keys(sessionMissed).map(function (id) { return byId[id]; });
+        if (pool.length) startQuiz("missed", pool);
+      });
+      document.getElementById("r-again").addEventListener("click", function () {
+        if (lastMode === "missed") startQuiz("missed", lastMissed);
+        else startQuiz(lastMode);
+      });
+      document.getElementById("r-study").addEventListener("click", function () { studyFilter = "All"; renderStudy(); show("study"); });
+      document.getElementById("r-retry-missed").addEventListener("click", function () { startQuiz("missed", lastMissed); });
+      document.querySelectorAll("[data-home]").forEach(function (b) {
+        b.addEventListener("click", function () {
+          if (quiz && quiz.timerInt) clearInterval(quiz.timerInt);
+          quiz = null;
+          refreshHomeReview();
+          show("home");
+        });
+      });
+    </script>
+  </body>
+</html>
